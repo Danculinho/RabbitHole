@@ -18,6 +18,20 @@ Rozhranie aj otázky sú dvojjazyčné (slovensky / anglicky), prepínač je vpr
 
 Maximum je **21 bodov** za sedem otázok.
 
+## Odmeny
+
+Hra si pamätá tvoju kariéru, takže je dôvod vrátiť sa aj zajtra:
+
+- **Hodnosti** — z nazbieraných bodov rastie kariéra od *Zberača lôpt* až po
+  *Legendu*. Na výsledkovej obrazovke vidíš, koľko bodov chýba do ďalšej.
+- **Trofeje** — dvanásť odomykateľných úspechov vo vitríne (čisté konto,
+  hra bez nápovedy, séria siedmich dní, prejdenie celého archívu a ďalšie).
+- **Séria** — koľko dní po sebe si hral; vynechaný deň ju vynuluje.
+- **Odpočet** — po dohraní beží čas do polnoci, keď sa otvorí ďalšia nora.
+
+Trofeje a hodnosti sa počítajú len z dennej nory. Voľná hra z archívu sa do
+štatistík nezapočítava (okrem trofeje *Archivár*, ktorá sleduje prejdené reťaze).
+
 ## Spustenie
 
 Netreba build ani inštaláciu — sú to statické súbory.
@@ -46,9 +60,10 @@ data/puzzles.js     # obsah — reťaze otázok (RH_PUZZLES)
 js/i18n.js          # texty rozhrania SK/EN
 js/answers.js       # porovnávanie odpovedí (diakritika, preklepy)
 js/daily.js         # výber reťaze podľa dátumu
-js/storage.js       # localStorage — jazyk, rozohraná hra, štatistiky
+js/storage.js       # localStorage — jazyk, rozohraná hra, štatistiky, trofeje
 js/share.js         # zdieľateľný výsledok s emoji
 js/game.js          # pravidlá a skórovanie (bez DOM)
+js/awards.js        # hodnosti, trofeje, odpočet do ďalšej nory
 js/main.js          # renderovanie a obsluha udalostí
 tools/validate.mjs  # kontrola obsahu
 ```
@@ -98,8 +113,8 @@ Po každej zmene obsahu spusti kontrolu:
 node tools/validate.mjs
 ```
 
-Reťaze sa striedajú podľa dátumu, takže s ôsmimi reťazami sa cyklus opakuje
-každých osem dní — čím viac ich pridáš, tým dlhšie hra vydrží.
+Reťaze sa striedajú podľa dátumu, takže so štrnástimi reťazami sa cyklus
+opakuje každé dva týždne — čím viac ich pridáš, tým dlhšie hra vydrží.
 
 ## Nasadenie na GitHub Pages
 

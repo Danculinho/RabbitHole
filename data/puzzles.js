@@ -610,6 +610,462 @@ const RH_PUZZLES = {
           "distractors": { "en": ["Thomas Müller", "Mario Gómez", "Arjen Robben"], "sk": ["Thomas Müller", "Mario Gómez", "Arjen Robben"] }
         }
       ]
+    },
+    {
+      "id": "keepers-01",
+      "title": { "en": "Between the posts", "sk": "Medzi žrďami" },
+      "questions": [
+        {
+          "topic": { "en": "Goalkeepers", "sk": "Brankári" },
+          "question": { "en": "Which goalkeeper captained Spain to their World Cup title in 2010?", "sk": "Ktorý brankár doviedol Španielsko ako kapitán k titulu majstrov sveta 2010?" },
+          "answer": {
+            "display": { "en": "Iker Casillas", "sk": "Iker Casillas" },
+            "accept": { "en": ["iker casillas", "casillas"], "sk": ["iker casillas", "casillas"] }
+          },
+          "hint": { "en": "Nicknamed \"San Iker\" — Saint Iker.", "sk": "Prezývaný „San Iker“ — Svätý Iker." },
+          "distractors": { "en": ["Víctor Valdés", "David de Gea", "Pepe Reina"], "sk": ["Víctor Valdés", "David de Gea", "Pepe Reina"] }
+        },
+        {
+          "topic": { "en": "Iker Casillas", "sk": "Iker Casillas" },
+          "question": { "en": "Casillas made more than 700 appearances for which club?", "sk": "Casillas odohral vyše 700 zápasov za ktorý klub?" },
+          "answer": {
+            "display": { "en": "Real Madrid", "sk": "Real Madrid" },
+            "accept": { "en": ["real madrid", "real"], "sk": ["real madrid", "real"] }
+          },
+          "hint": { "en": "He came through their academy, La Fábrica.", "sk": "Prešiel ich akadémiou La Fábrica." },
+          "distractors": { "en": ["FC Barcelona", "Atlético Madrid", "Valencia"], "sk": ["FC Barcelona", "Atlético Madrid", "Valencia"] }
+        },
+        {
+          "topic": { "en": "Real Madrid", "sk": "Real Madrid" },
+          "question": { "en": "Which Costa Rican goalkeeper won three consecutive Champions Leagues with Real Madrid?", "sk": "Ktorý kostarický brankár získal s Realom Madrid tri Ligy majstrov po sebe?" },
+          "answer": {
+            "display": { "en": "Keylor Navas", "sk": "Keylor Navas" },
+            "accept": { "en": ["keylor navas", "navas"], "sk": ["keylor navas", "navas"] }
+          },
+          "hint": { "en": "He arrived from Levante in 2014.", "sk": "Prišiel z Levante v roku 2014." },
+          "distractors": { "en": ["Thibaut Courtois", "Diego López", "Andriy Lunin"], "sk": ["Thibaut Courtois", "Diego López", "Andrij Lunin"] }
+        },
+        {
+          "topic": { "en": "Keylor Navas", "sk": "Keylor Navas" },
+          "question": { "en": "Navas left Real Madrid in 2019 for which French club?", "sk": "Navas odišiel z Realu Madrid v roku 2019 do ktorého francúzskeho klubu?" },
+          "answer": {
+            "display": { "en": "Paris Saint-Germain", "sk": "Paríž Saint-Germain" },
+            "accept": { "en": ["paris saint germain", "psg", "paris sg"], "sk": ["paris saint germain", "psg", "pariz saint germain"] }
+          },
+          "hint": { "en": "Alphonse Areola moved the other way.", "sk": "Opačným smerom putoval Alphonse Areola." },
+          "distractors": { "en": ["Olympique Lyon", "AS Monaco", "Lille"], "sk": ["Olympique Lyon", "AS Monaco", "Lille"] }
+        },
+        {
+          "topic": { "en": "Paris Saint-Germain", "sk": "Paríž Saint-Germain" },
+          "question": { "en": "Which Italian goalkeeper, named best player of Euro 2020, joined PSG in 2021?", "sk": "Ktorý taliansky brankár, vyhlásený za najlepšieho hráča ME 2020, prišiel do PSG v roku 2021?" },
+          "answer": {
+            "display": { "en": "Gianluigi Donnarumma", "sk": "Gianluigi Donnarumma" },
+            "accept": { "en": ["gianluigi donnarumma", "donnarumma"], "sk": ["gianluigi donnarumma", "donnarumma"] }
+          },
+          "hint": { "en": "He saved two penalties in the final shootout.", "sk": "Vo finálovom rozstrele chytil dve jedenástky." },
+          "distractors": { "en": ["Alex Meret", "Salvatore Sirigu", "Mattia Perin"], "sk": ["Alex Meret", "Salvatore Sirigu", "Mattia Perin"] }
+        },
+        {
+          "topic": { "en": "Gianluigi Donnarumma", "sk": "Gianluigi Donnarumma" },
+          "question": { "en": "Donnarumma made his Serie A debut aged 16 for which club?", "sk": "Donnarumma debutoval v Serii A ako 16-ročný za ktorý klub?" },
+          "answer": {
+            "display": { "en": "AC Milan", "sk": "AC Miláno" },
+            "accept": { "en": ["milan", "milano"], "sk": ["milan", "milano"] }
+          },
+          "hint": { "en": "The Rossoneri of the San Siro.", "sk": "Rossoneri zo San Sira." },
+          "distractors": { "en": ["Inter Milan", "Napoli", "Juventus"], "sk": ["Inter Miláno", "Neapol", "Juventus"] }
+        },
+        {
+          "topic": { "en": "AC Milan", "sk": "AC Miláno" },
+          "question": { "en": "Which Brazilian goalkeeper won the Champions League with Milan in both 2003 and 2007?", "sk": "Ktorý brazílsky brankár vyhral s Milánom Ligu majstrov v rokoch 2003 aj 2007?" },
+          "answer": {
+            "display": { "en": "Dida", "sk": "Dida" },
+            "accept": { "en": ["dida"], "sk": ["dida"] }
+          },
+          "hint": { "en": "He was also in Brazil's 2002 World Cup squad.", "sk": "Bol aj v brazílskom kádri na MS 2002." },
+          "distractors": { "en": ["Júlio César", "Cláudio Taffarel", "Marcos"], "sk": ["Júlio César", "Cláudio Taffarel", "Marcos"] }
+        }
+      ]
+    },
+    {
+      "id": "derbies-01",
+      "title": { "en": "Rivals and derbies", "sk": "Rivali a derby" },
+      "questions": [
+        {
+          "topic": { "en": "Derbies", "sk": "Derby" },
+          "question": { "en": "The Old Firm derby is contested by Celtic and which other Glasgow club?", "sk": "Derby Old Firm hrá Celtic a ktorý ďalší glasgowský klub?" },
+          "answer": {
+            "display": { "en": "Rangers", "sk": "Rangers" },
+            "accept": { "en": ["rangers", "glasgow rangers"], "sk": ["rangers", "glasgow rangers"] }
+          },
+          "hint": { "en": "They play in blue at Ibrox.", "sk": "Hrávajú v modrom na štadióne Ibrox." },
+          "distractors": { "en": ["Aberdeen", "Hearts", "Hibernian"], "sk": ["Aberdeen", "Hearts", "Hibernian"] }
+        },
+        {
+          "topic": { "en": "Rangers", "sk": "Rangers" },
+          "question": { "en": "Rangers and Celtic are both based in which city?", "sk": "Rangers aj Celtic sídlia v ktorom meste?" },
+          "answer": {
+            "display": { "en": "Glasgow", "sk": "Glasgow" },
+            "accept": { "en": ["glasgow"], "sk": ["glasgow"] }
+          },
+          "hint": { "en": "Scotland's largest city.", "sk": "Najväčšie mesto Škótska." },
+          "distractors": { "en": ["Edinburgh", "Aberdeen", "Dundee"], "sk": ["Edinburgh", "Aberdeen", "Dundee"] }
+        },
+        {
+          "topic": { "en": "Glasgow", "sk": "Glasgow" },
+          "question": { "en": "Which Glasgow club became the first British side to win the European Cup, in 1967?", "sk": "Ktorý glasgowský klub sa v roku 1967 stal prvým britským víťazom Pohára európskych majstrov?" },
+          "answer": {
+            "display": { "en": "Celtic", "sk": "Celtic" },
+            "accept": { "en": ["celtic", "celtic glasgow"], "sk": ["celtic", "celtic glasgow"] }
+          },
+          "hint": { "en": "Their hoops are green and white.", "sk": "Ich pruhy sú zeleno-biele." },
+          "distractors": { "en": ["Rangers", "Partick Thistle", "Queen's Park"], "sk": ["Rangers", "Partick Thistle", "Queen's Park"] }
+        },
+        {
+          "topic": { "en": "Celtic", "sk": "Celtic" },
+          "question": { "en": "Celtic's 1967 European Cup-winning side is known by which nickname?", "sk": "Celtic z roku 1967, víťaz Pohára európskych majstrov, je známy pod akou prezývkou?" },
+          "answer": {
+            "display": { "en": "The Lisbon Lions", "sk": "Lisabonské levy" },
+            "accept": { "en": ["lisbon lions"], "sk": ["lisabonske levy", "lisbon lions"] }
+          },
+          "hint": { "en": "Named after the city where the final was played.", "sk": "Podľa mesta, kde sa finále hralo." },
+          "distractors": { "en": ["The Busby Babes", "The Invincibles", "The Famous Five"], "sk": ["Busby Babes", "Neporaziteľní", "Famous Five"] }
+        },
+        {
+          "topic": { "en": "The Lisbon Lions", "sk": "Lisabonské levy" },
+          "question": { "en": "Celtic won that final in Lisbon against which Italian club?", "sk": "Celtic vyhral to finále v Lisabone proti ktorému talianskemu klubu?" },
+          "answer": {
+            "display": { "en": "Inter Milan", "sk": "Inter Miláno" },
+            "accept": { "en": ["inter milan", "inter", "inter milano"], "sk": ["inter milano", "inter", "inter milan"] }
+          },
+          "hint": { "en": "The Nerazzurri, coached by Helenio Herrera.", "sk": "Nerazzurri, ktorých viedol Helenio Herrera." },
+          "distractors": { "en": ["Juventus", "AC Milan", "AS Roma"], "sk": ["Juventus", "AC Miláno", "AS Rím"] }
+        },
+        {
+          "topic": { "en": "Inter Milan", "sk": "Inter Miláno" },
+          "question": { "en": "Which club, Inter's city rivals, has won seven European Cups?", "sk": "Ktorý klub, mestský rival Interu, vyhral sedem európskych pohárov?" },
+          "answer": {
+            "display": { "en": "AC Milan", "sk": "AC Miláno" },
+            "accept": { "en": ["milan", "milano"], "sk": ["milan", "milano"] }
+          },
+          "hint": { "en": "Their fans fill the Curva Sud.", "sk": "Ich fanúšikovia plnia Curva Sud." },
+          "distractors": { "en": ["Juventus", "Napoli", "Lazio"], "sk": ["Juventus", "Neapol", "Lazio"] }
+        },
+        {
+          "topic": { "en": "AC Milan", "sk": "AC Miláno" },
+          "question": { "en": "Milan and Inter share which stadium, officially named after Giuseppe Meazza?", "sk": "Miláno a Inter zdieľajú ktorý štadión, oficiálne pomenovaný po Giuseppem Meazzovi?" },
+          "answer": {
+            "display": { "en": "San Siro", "sk": "San Siro" },
+            "accept": { "en": ["san siro"], "sk": ["san siro"] }
+          },
+          "hint": { "en": "Named after the district where it stands.", "sk": "Podľa mestskej štvrte, kde stojí." },
+          "distractors": { "en": ["Stadio Olimpico", "Allianz Stadium", "Stadio Diego Armando Maradona"], "sk": ["Stadio Olimpico", "Allianz Stadium", "Stadio Diego Armando Maradona"] }
+        }
+      ]
+    },
+    {
+      "id": "euros-01",
+      "title": { "en": "The Euros", "sk": "Majstrovstvá Európy" },
+      "questions": [
+        {
+          "topic": { "en": "The European Championship", "sk": "Majstrovstvá Európy" },
+          "question": { "en": "Which country stunned the continent by winning Euro 2004 as massive outsiders?", "sk": "Ktorá krajina šokovala kontinent výhrou na ME 2004 ako obrovský outsider?" },
+          "answer": {
+            "display": { "en": "Greece", "sk": "Grécko" },
+            "accept": { "en": ["greece"], "sk": ["grecko"] }
+          },
+          "hint": { "en": "Coached by the German Otto Rehhagel.", "sk": "Trénoval ich Nemec Otto Rehhagel." },
+          "distractors": { "en": ["Denmark", "Czech Republic", "Portugal"], "sk": ["Dánsko", "Česko", "Portugalsko"] }
+        },
+        {
+          "topic": { "en": "Greece", "sk": "Grécko" },
+          "question": { "en": "Greece beat which host nation in the Euro 2004 final?", "sk": "Grécko zdolalo vo finále ME 2004 ktorú domácu krajinu?" },
+          "answer": {
+            "display": { "en": "Portugal", "sk": "Portugalsko" },
+            "accept": { "en": ["portugal"], "sk": ["portugalsko"] }
+          },
+          "hint": { "en": "They lost at home in Lisbon.", "sk": "Prehrali doma v Lisabone." },
+          "distractors": { "en": ["Spain", "France", "Netherlands"], "sk": ["Španielsko", "Francúzsko", "Holandsko"] }
+        },
+        {
+          "topic": { "en": "Portugal", "sk": "Portugalsko" },
+          "question": { "en": "At which tournament did Portugal finally win their first major trophy?", "sk": "Na ktorom turnaji získalo Portugalsko konečne svoju prvú veľkú trofej?" },
+          "answer": {
+            "display": { "en": "Euro 2016", "sk": "ME 2016" },
+            "accept": { "en": ["euro 2016", "me 2016"], "sk": ["me 2016", "euro 2016"] }
+          },
+          "hint": { "en": "The tournament was held in France.", "sk": "Turnaj sa konal vo Francúzsku." },
+          "distractors": { "en": ["Euro 2012", "the 2006 World Cup", "Euro 2004"], "sk": ["ME 2012", "MS 2006", "ME 2004"] }
+        },
+        {
+          "topic": { "en": "Euro 2016", "sk": "ME 2016" },
+          "question": { "en": "Which Portuguese substitute scored the winning goal in the Euro 2016 final?", "sk": "Ktorý portugalský striedajúci hráč strelil víťazný gól vo finále ME 2016?" },
+          "answer": {
+            "display": { "en": "Éder", "sk": "Éder" },
+            "accept": { "en": ["eder"], "sk": ["eder"] }
+          },
+          "hint": { "en": "He struck from long range in extra time.", "sk": "Skóroval z diaľky v predĺžení." },
+          "distractors": { "en": ["Nani", "Ricardo Quaresma", "João Mário"], "sk": ["Nani", "Ricardo Quaresma", "João Mário"] }
+        },
+        {
+          "topic": { "en": "Éder", "sk": "Éder" },
+          "question": { "en": "Éder's goal beat which host nation in that final?", "sk": "Éderov gól zdolal vo finále ktorú domácu krajinu?" },
+          "answer": {
+            "display": { "en": "France", "sk": "Francúzsko" },
+            "accept": { "en": ["france"], "sk": ["francuzsko"] }
+          },
+          "hint": { "en": "Cristiano Ronaldo had limped off in tears against them.", "sk": "Cristiano Ronaldo proti nim so slzami odkuľhal z ihriska." },
+          "distractors": { "en": ["Belgium", "Italy", "Wales"], "sk": ["Belgicko", "Taliansko", "Wales"] }
+        },
+        {
+          "topic": { "en": "France", "sk": "Francúzsko" },
+          "question": { "en": "Which country won the very first European Championship, held in France in 1960?", "sk": "Ktorá krajina vyhrala úplne prvé majstrovstvá Európy, ktoré sa konali vo Francúzsku v roku 1960?" },
+          "answer": {
+            "display": { "en": "The Soviet Union", "sk": "Sovietsky zväz" },
+            "accept": { "en": ["soviet union", "ussr"], "sk": ["sovietsky zvaz", "zssr"] }
+          },
+          "hint": { "en": "A state that no longer exists.", "sk": "Štát, ktorý už neexistuje." },
+          "distractors": { "en": ["Yugoslavia", "Hungary", "Spain"], "sk": ["Juhoslávia", "Maďarsko", "Španielsko"] }
+        },
+        {
+          "topic": { "en": "The Soviet Union", "sk": "Sovietsky zväz" },
+          "question": { "en": "Which Soviet goalkeeper, the only keeper ever to win the Ballon d'Or, played in that 1960 final?", "sk": "Ktorý sovietsky brankár, jediný brankár s Zlatou loptou, hral v tom finále v roku 1960?" },
+          "answer": {
+            "display": { "en": "Lev Yashin", "sk": "Lev Jašin" },
+            "accept": { "en": ["lev yashin", "yashin", "lev jasin", "jasin"], "sk": ["lev jasin", "jasin", "lev yashin", "yashin"] }
+          },
+          "hint": { "en": "Known as the Black Spider.", "sk": "Prezývaný Čierny pavúk." },
+          "distractors": { "en": ["Rinat Dasayev", "Oleg Blokhin", "Anatoli Banishevski"], "sk": ["Rinat Dasajev", "Oleg Blochin", "Anatolij Baniševskij"] }
+        }
+      ]
+    },
+    {
+      "id": "ballondor-01",
+      "title": { "en": "The golden ball", "sk": "Zlatá lopta" },
+      "questions": [
+        {
+          "topic": { "en": "The Ballon d'Or", "sk": "Zlatá lopta" },
+          "question": { "en": "Who has won the Ballon d'Or more times than anyone else?", "sk": "Kto získal Zlatú loptu viackrát než ktokoľvek iný?" },
+          "answer": {
+            "display": { "en": "Lionel Messi", "sk": "Lionel Messi" },
+            "accept": { "en": ["lionel messi", "messi", "leo messi"], "sk": ["lionel messi", "messi", "leo messi"] }
+          },
+          "hint": { "en": "An Argentine who spent two decades at Barcelona.", "sk": "Argentínčan, ktorý strávil dve dekády v Barcelone." },
+          "distractors": { "en": ["Cristiano Ronaldo", "Michel Platini", "Johan Cruyff"], "sk": ["Cristiano Ronaldo", "Michel Platini", "Johan Cruyff"] }
+        },
+        {
+          "topic": { "en": "Lionel Messi", "sk": "Lionel Messi" },
+          "question": { "en": "Which Brazilian took the 2007 Ballon d'Or, the last one before Messi and Ronaldo took over?", "sk": "Ktorý Brazílčan získal Zlatú loptu v roku 2007, poslednú pred nadvládou Messiho a Ronalda?" },
+          "answer": {
+            "display": { "en": "Kaká", "sk": "Kaká" },
+            "accept": { "en": ["kaka", "ricardo kaka"], "sk": ["kaka", "ricardo kaka"] }
+          },
+          "hint": { "en": "A devout Christian who wore an \"I Belong to Jesus\" shirt.", "sk": "Hlboko veriaci hráč s tričkom „I Belong to Jesus“." },
+          "distractors": { "en": ["Ronaldinho", "Robinho", "Adriano"], "sk": ["Ronaldinho", "Robinho", "Adriano"] }
+        },
+        {
+          "topic": { "en": "Kaká", "sk": "Kaká" },
+          "question": { "en": "Kaká won that award while playing for which Italian club?", "sk": "Kaká získal to ocenenie ako hráč ktorého talianskeho klubu?" },
+          "answer": {
+            "display": { "en": "AC Milan", "sk": "AC Miláno" },
+            "accept": { "en": ["milan", "milano"], "sk": ["milan", "milano"] }
+          },
+          "hint": { "en": "He joined them from São Paulo in 2003.", "sk": "Prišiel k nim zo São Paula v roku 2003." },
+          "distractors": { "en": ["Inter Milan", "Juventus", "AS Roma"], "sk": ["Inter Miláno", "Juventus", "AS Rím"] }
+        },
+        {
+          "topic": { "en": "AC Milan", "sk": "AC Miláno" },
+          "question": { "en": "Which Liberian striker, later his country's president, won the 1995 Ballon d'Or at Milan?", "sk": "Ktorý libérijský útočník, neskôr prezident svojej krajiny, získal v roku 1995 Zlatú loptu ako hráč Milána?" },
+          "answer": {
+            "display": { "en": "George Weah", "sk": "George Weah" },
+            "accept": { "en": ["george weah", "weah"], "sk": ["george weah", "weah"] }
+          },
+          "hint": { "en": "He became a head of state in 2018.", "sk": "V roku 2018 sa stal hlavou štátu." },
+          "distractors": { "en": ["Didier Drogba", "Samuel Eto'o", "Nwankwo Kanu"], "sk": ["Didier Drogba", "Samuel Eto'o", "Nwankwo Kanu"] }
+        },
+        {
+          "topic": { "en": "George Weah", "sk": "George Weah" },
+          "question": { "en": "Weah was brought from Africa to Europe to join which principality club?", "sk": "Weaha priviedli z Afriky do Európy do ktorého klubu z kniežatstva?" },
+          "answer": {
+            "display": { "en": "AS Monaco", "sk": "AS Monaco" },
+            "accept": { "en": ["monaco"], "sk": ["monaco"] }
+          },
+          "hint": { "en": "The club of the Stade Louis II.", "sk": "Klub zo Stade Louis II." },
+          "distractors": { "en": ["Olympique Marseille", "Paris Saint-Germain", "Nantes"], "sk": ["Olympique Marseille", "Paríž Saint-Germain", "Nantes"] }
+        },
+        {
+          "topic": { "en": "AS Monaco", "sk": "AS Monaco" },
+          "question": { "en": "Which manager signed Weah for Monaco and later spent 22 years at Arsenal?", "sk": "Ktorý tréner priviedol Weaha do Monaka a neskôr strávil 22 rokov v Arsenale?" },
+          "answer": {
+            "display": { "en": "Arsène Wenger", "sk": "Arsène Wenger" },
+            "accept": { "en": ["arsene wenger", "wenger"], "sk": ["arsene wenger", "wenger"] }
+          },
+          "hint": { "en": "An Alsatian nicknamed \"Le Professeur\".", "sk": "Alsasan prezývaný „Le Professeur“." },
+          "distractors": { "en": ["Claude Puel", "Didier Deschamps", "Jean Tigana"], "sk": ["Claude Puel", "Didier Deschamps", "Jean Tigana"] }
+        },
+        {
+          "topic": { "en": "Arsène Wenger", "sk": "Arsène Wenger" },
+          "question": { "en": "Wenger's Arsenal went a whole league season unbeaten in 2003/04. What is that team called?", "sk": "Wengerov Arsenal prešiel sezónou 2003/04 bez prehry. Ako sa tento tím nazýva?" },
+          "answer": {
+            "display": { "en": "The Invincibles", "sk": "Neporaziteľní" },
+            "accept": { "en": ["invincibles"], "sk": ["neporazitelni", "invincibles"] }
+          },
+          "hint": { "en": "The name says exactly what they were.", "sk": "Názov hovorí presne to, čím boli." },
+          "distractors": { "en": ["The Gunners", "The Busby Babes", "The Entertainers"], "sk": ["Gunners", "Busby Babes", "Entertainers"] }
+        }
+      ]
+    },
+    {
+      "id": "womens-01",
+      "title": { "en": "The women's game", "sk": "Ženský futbal" },
+      "questions": [
+        {
+          "topic": { "en": "The Women's World Cup", "sk": "MS žien" },
+          "question": { "en": "Which country has won the most Women's World Cup titles?", "sk": "Ktorá krajina získala najviac titulov na majstrovstvách sveta žien?" },
+          "answer": {
+            "display": { "en": "The United States", "sk": "Spojené štáty" },
+            "accept": { "en": ["united states", "usa", "america"], "sk": ["spojene staty", "usa", "amerika"] }
+          },
+          "hint": { "en": "They have also topped the podium at several Olympics.", "sk": "Vyhrali aj viacero olympijských turnajov." },
+          "distractors": { "en": ["Germany", "Norway", "Japan"], "sk": ["Nemecko", "Nórsko", "Japonsko"] }
+        },
+        {
+          "topic": { "en": "The United States", "sk": "Spojené štáty" },
+          "question": { "en": "Which American scored the winning penalty in the 1999 Women's World Cup final?", "sk": "Ktorá Američanka premenila víťaznú jedenástku vo finále MS žien 1999?" },
+          "answer": {
+            "display": { "en": "Brandi Chastain", "sk": "Brandi Chastain" },
+            "accept": { "en": ["brandi chastain", "chastain"], "sk": ["brandi chastain", "chastain"] }
+          },
+          "hint": { "en": "Her celebration became one of sport's most famous photographs.", "sk": "Jej oslava sa stala jednou z najslávnejších športových fotografií." },
+          "distractors": { "en": ["Mia Hamm", "Julie Foudy", "Kristine Lilly"], "sk": ["Mia Hamm", "Julie Foudy", "Kristine Lilly"] }
+        },
+        {
+          "topic": { "en": "Brandi Chastain", "sk": "Brandi Chastain" },
+          "question": { "en": "Chastain's penalty beat which country in that 1999 final?", "sk": "Chastainovej jedenástka zdolala vo finále 1999 ktorú krajinu?" },
+          "answer": {
+            "display": { "en": "China", "sk": "Čína" },
+            "accept": { "en": ["china"], "sk": ["cina"] }
+          },
+          "hint": { "en": "The most populous country in the world at the time.", "sk": "Vtedy najľudnatejšia krajina sveta." },
+          "distractors": { "en": ["Norway", "Sweden", "Brazil"], "sk": ["Nórsko", "Švédsko", "Brazília"] }
+        },
+        {
+          "topic": { "en": "China", "sk": "Čína" },
+          "question": { "en": "Which Chinese forward won the Golden Ball as best player of that 1999 tournament?", "sk": "Ktorá čínska útočníčka získala Zlatú loptu pre najlepšiu hráčku turnaja v roku 1999?" },
+          "answer": {
+            "display": { "en": "Sun Wen", "sk": "Sun Wen" },
+            "accept": { "en": ["sun wen"], "sk": ["sun wen"] }
+          },
+          "hint": { "en": "In Chinese naming order her surname comes first.", "sk": "V čínskom poradí mien je jej priezvisko prvé." },
+          "distractors": { "en": ["Liu Ailing", "Zhao Lihong", "Wang Liping"], "sk": ["Liu Ailing", "Zhao Lihong", "Wang Liping"] }
+        },
+        {
+          "topic": { "en": "Sun Wen", "sk": "Sun Wen" },
+          "question": { "en": "Sun Wen shared FIFA's Female Player of the Century award with which American?", "sk": "Sun Wen sa o ocenenie FIFA Hráčka storočia delila s ktorou Američankou?" },
+          "answer": {
+            "display": { "en": "Michelle Akers", "sk": "Michelle Akers" },
+            "accept": { "en": ["michelle akers", "akers"], "sk": ["michelle akers", "akers"] }
+          },
+          "hint": { "en": "She scored ten goals at the 1991 tournament.", "sk": "Na turnaji v roku 1991 strelila desať gólov." },
+          "distractors": { "en": ["Mia Hamm", "Brandi Chastain", "Abby Wambach"], "sk": ["Mia Hamm", "Brandi Chastain", "Abby Wambach"] }
+        },
+        {
+          "topic": { "en": "Michelle Akers", "sk": "Michelle Akers" },
+          "question": { "en": "Akers was honoured alongside Sun Wen. Which Brazilian is the all-time top scorer at Women's World Cups?", "sk": "Akers ocenili spolu so Sun Wen. Ktorá Brazílčanka je historicky najlepšou strelkyňou MS žien?" },
+          "answer": {
+            "display": { "en": "Marta", "sk": "Marta" },
+            "accept": { "en": ["marta"], "sk": ["marta"] }
+          },
+          "hint": { "en": "She won six consecutive World Player of the Year awards.", "sk": "Získala šesť ocenení Hráčka roka za sebou." },
+          "distractors": { "en": ["Cristiane", "Formiga", "Sissi"], "sk": ["Cristiane", "Formiga", "Sissi"] }
+        },
+        {
+          "topic": { "en": "Marta", "sk": "Marta" },
+          "question": { "en": "Marta spent most of her club career in which European country?", "sk": "Marta strávila väčšinu klubovej kariéry v ktorej európskej krajine?" },
+          "answer": {
+            "display": { "en": "Sweden", "sk": "Švédsko" },
+            "accept": { "en": ["sweden"], "sk": ["svedsko"] }
+          },
+          "hint": { "en": "She played there for Umeå IK and Rosengård.", "sk": "Hrala tam za Umeå IK a Rosengård." },
+          "distractors": { "en": ["Germany", "Norway", "Denmark"], "sk": ["Nemecko", "Nórsko", "Dánsko"] }
+        }
+      ]
+    },
+    {
+      "id": "stadiums-01",
+      "title": { "en": "Cathedrals of the game", "sk": "Chrámy futbalu" },
+      "questions": [
+        {
+          "topic": { "en": "Famous grounds", "sk": "Slávne štadióny" },
+          "question": { "en": "Which London stadium, rebuilt in 2007 with a huge arch, hosts England's home matches?", "sk": "Ktorý londýnsky štadión, prestavaný v roku 2007 s obrovským oblúkom, hostí domáce zápasy Anglicka?" },
+          "answer": {
+            "display": { "en": "Wembley", "sk": "Wembley" },
+            "accept": { "en": ["wembley", "wembley stadium"], "sk": ["wembley", "stadion wembley"] }
+          },
+          "hint": { "en": "Its arch is visible from across the city.", "sk": "Jeho oblúk vidno cez celé mesto." },
+          "distractors": { "en": ["The Emirates Stadium", "Stamford Bridge", "Tottenham Hotspur Stadium"], "sk": ["Emirates Stadium", "Stamford Bridge", "Tottenham Hotspur Stadium"] }
+        },
+        {
+          "topic": { "en": "Wembley", "sk": "Wembley" },
+          "question": { "en": "Wembley is the home ground of which national team?", "sk": "Wembley je domovským štadiónom ktorej reprezentácie?" },
+          "answer": {
+            "display": { "en": "England", "sk": "Anglicko" },
+            "accept": { "en": ["england"], "sk": ["anglicko"] }
+          },
+          "hint": { "en": "They won the 1966 World Cup on that site.", "sk": "Na tom mieste vyhrali MS 1966." },
+          "distractors": { "en": ["Scotland", "Wales", "Northern Ireland"], "sk": ["Škótsko", "Wales", "Severné Írsko"] }
+        },
+        {
+          "topic": { "en": "England", "sk": "Anglicko" },
+          "question": { "en": "Which English club plays its home games at Anfield?", "sk": "Ktorý anglický klub hráva domáce zápasy na Anfielde?" },
+          "answer": {
+            "display": { "en": "Liverpool", "sk": "Liverpool" },
+            "accept": { "en": ["liverpool"], "sk": ["liverpool"] }
+          },
+          "hint": { "en": "Their anthem rings out before kick-off.", "sk": "Pred výkopom znie ich hymna." },
+          "distractors": { "en": ["Everton", "Manchester City", "Newcastle United"], "sk": ["Everton", "Manchester City", "Newcastle United"] }
+        },
+        {
+          "topic": { "en": "Liverpool", "sk": "Liverpool" },
+          "question": { "en": "Anfield's most famous stand is known by which short name?", "sk": "Najslávnejšia tribúna Anfieldu je známa pod akým krátkym názvom?" },
+          "answer": {
+            "display": { "en": "The Kop", "sk": "The Kop" },
+            "accept": { "en": ["kop", "spion kop"], "sk": ["kop", "spion kop"] }
+          },
+          "hint": { "en": "Named after a hill from a South African battle.", "sk": "Podľa kopca z bitky v Južnej Afrike." },
+          "distractors": { "en": ["The Shed", "The Stretford End", "The Holte End"], "sk": ["The Shed", "The Stretford End", "The Holte End"] }
+        },
+        {
+          "topic": { "en": "The Kop", "sk": "The Kop" },
+          "question": { "en": "Europe's largest terrace, nicknamed the Yellow Wall, stands at which German stadium?", "sk": "Najväčšia státie tribúna v Európe, prezývaná Žltá stena, stojí na ktorom nemeckom štadióne?" },
+          "answer": {
+            "display": { "en": "Signal Iduna Park", "sk": "Signal Iduna Park" },
+            "accept": { "en": ["signal iduna park", "westfalenstadion"], "sk": ["signal iduna park", "westfalenstadion"] }
+          },
+          "hint": { "en": "Also known by its older name, Westfalenstadion.", "sk": "Známy aj pod starším názvom Westfalenstadion." },
+          "distractors": { "en": ["The Allianz Arena", "The Olympiastadion", "The Veltins-Arena"], "sk": ["Allianz Arena", "Olympiastadion", "Veltins-Arena"] }
+        },
+        {
+          "topic": { "en": "Signal Iduna Park", "sk": "Signal Iduna Park" },
+          "question": { "en": "Which club fills that Yellow Wall every other week?", "sk": "Ktorý klub zapĺňa tú Žltú stenu každý druhý týždeň?" },
+          "answer": {
+            "display": { "en": "Borussia Dortmund", "sk": "Borussia Dortmund" },
+            "accept": { "en": ["borussia dortmund", "dortmund", "bvb"], "sk": ["borussia dortmund", "dortmund", "bvb"] }
+          },
+          "hint": { "en": "They play in black and yellow.", "sk": "Hrávajú v čierno-žltom." },
+          "distractors": { "en": ["Schalke 04", "Bayer Leverkusen", "VfB Stuttgart"], "sk": ["Schalke 04", "Bayer Leverkusen", "VfB Stuttgart"] }
+        },
+        {
+          "topic": { "en": "Borussia Dortmund", "sk": "Borussia Dortmund" },
+          "question": { "en": "Which manager won back-to-back Bundesliga titles at Dortmund before taking over at Liverpool?", "sk": "Ktorý tréner získal s Dortmundom dva bundesligové tituly po sebe, než prevzal Liverpool?" },
+          "answer": {
+            "display": { "en": "Jürgen Klopp", "sk": "Jürgen Klopp" },
+            "accept": { "en": ["jurgen klopp", "klopp"], "sk": ["jurgen klopp", "klopp"] }
+          },
+          "hint": { "en": "Famous for heavy-metal football and big glasses.", "sk": "Známy „heavy metalovým“ futbalom a veľkými okuliarmi." },
+          "distractors": { "en": ["Thomas Tuchel", "Lucien Favre", "Ottmar Hitzfeld"], "sk": ["Thomas Tuchel", "Lucien Favre", "Ottmar Hitzfeld"] }
+        }
+      ]
     }
   ]
 };

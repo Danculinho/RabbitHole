@@ -45,7 +45,16 @@
 
     <p class="notice hidden" id="intro-notice" data-i18n="alreadyPlayed"></p>
     <button type="button" class="btn btn--primary" id="btn-play" data-i18n="play">Padáme dolu</button>
-    <button type="button" class="linkbtn linkbtn--block" id="btn-archive-intro" data-i18n="archive">Archív nôr</button>
+
+    <div class="introlinks">
+      <button type="button" class="linkbtn" id="btn-cabinet-intro" data-i18n="cabinet">Vitrína</button>
+      <button type="button" class="linkbtn" id="btn-archive-intro" data-i18n="archive">Archív nôr</button>
+    </div>
+
+    <div class="rankstrip hidden" id="intro-rank">
+      <span class="rankstrip__badge" id="intro-rank-name"></span>
+      <span class="rankstrip__streak" id="intro-streak"></span>
+    </div>
   </section>
 
   <!-- QUESTION -->
@@ -84,6 +93,25 @@
     <p class="praise" id="praise"></p>
     <p class="grid" id="result-grid"></p>
 
+    <div class="unlocks hidden" id="unlocks">
+      <p class="unlocks__title" id="unlocks-title"></p>
+      <ul class="unlocks__list" id="unlocks-list"></ul>
+    </div>
+
+    <div class="rankcard hidden" id="rankcard">
+      <div class="rankcard__head">
+        <span class="rankcard__label" data-i18n="rankLabel">Hodnosť</span>
+        <span class="rankcard__name" id="rank-name"></span>
+      </div>
+      <div class="rankbar"><span class="rankbar__fill" id="rank-fill"></span></div>
+      <p class="rankcard__foot" id="rank-foot"></p>
+    </div>
+
+    <p class="countdown hidden" id="countdown">
+      <span class="countdown__label" data-i18n="nextHole">Ďalšia nora o</span>
+      <span class="countdown__clock" id="countdown-clock">00:00:00</span>
+    </p>
+
     <button type="button" class="btn btn--primary" id="btn-share" data-i18n="share">Zdieľať výsledok</button>
 
     <div class="stats hidden" id="stats">
@@ -99,7 +127,29 @@
     <h2 class="section-title" data-i18n="recap">Prehľad odpovedí</h2>
     <ol class="recap" id="recap"></ol>
 
-    <button type="button" class="linkbtn linkbtn--block" id="btn-archive-results" data-i18n="playAnother">Zahrať si inú</button>
+    <div class="introlinks">
+      <button type="button" class="linkbtn" id="btn-cabinet-results" data-i18n="cabinet">Vitrína</button>
+      <button type="button" class="linkbtn" id="btn-archive-results" data-i18n="playAnother">Zahrať si inú</button>
+    </div>
+  </section>
+
+  <!-- TROPHY CABINET -->
+  <section class="screen screen--cabinet hidden" id="screen-cabinet">
+    <h1 class="title title--sm" data-i18n="cabinetTitle">Tvoja vitrína</h1>
+
+    <div class="rankcard rankcard--big" id="cabinet-rankcard">
+      <div class="rankcard__head">
+        <span class="rankcard__label" data-i18n="careerTitle">Kariéra</span>
+        <span class="rankcard__name" id="cabinet-rank-name"></span>
+      </div>
+      <div class="rankbar"><span class="rankbar__fill" id="cabinet-rank-fill"></span></div>
+      <p class="rankcard__foot" id="cabinet-rank-foot"></p>
+    </div>
+
+    <h2 class="section-title"><span data-i18n="trophies">Trofeje</span> <span id="trophy-count"></span></h2>
+    <ul class="trophies" id="trophies"></ul>
+
+    <button type="button" class="linkbtn linkbtn--block" id="btn-cabinet-back" data-i18n="back">Späť</button>
   </section>
 
   <!-- ARCHIVE -->
@@ -121,6 +171,7 @@
 <script src="js/storage.js"></script>
 <script src="js/share.js"></script>
 <script src="js/game.js"></script>
+<script src="js/awards.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

@@ -18,7 +18,16 @@ RH.share = (function () {
       : RH.i18n.t('puzzleNumber') + ' ' + state.puzzleNumber;
     var header = '⚽ ' + RH.i18n.t('appName') + ' — ' + label;
     var score = RH.game.bankedScore(state) + '/' + RH.game.MAX_SCORE;
-    return header + '\n' + score + '\n' + grid;
+
+    var lines = [header, score, grid];
+    if (!state.freePlay) {
+      var stats = RH.storage.getStats();
+      var rank = RH.i18n.t('rank.' + RH.awards.rankFor(stats.totalScore).rank.id);
+      var tail = rank;
+      if (stats.streak > 1) tail += ' · 🔥 ' + stats.streak;
+      lines.push(tail);
+    }
+    return lines.join('\n');
   }
 
   // Clipboard API needs a secure context, which file:// is not — hence the

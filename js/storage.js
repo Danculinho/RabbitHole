@@ -81,6 +81,37 @@ RH.storage = (function () {
     return stats;
   }
 
+  function getAwards() { return readJSON('awards', {}) || {}; }
+
+  function unlockAward(id) {
+    var awards = getAwards();
+    if (awards[id]) return false;
+    // Stored as a date key rather than `true` so the cabinet can show when
+    // each trophy was won.
+    awards[id] = RH.daily.toDateKey(new Date());
+    writeJSON('awards', awards);
+    return true;
+  }
+
+  function readList(key) {
+    var list = readJSON(key, []);
+    return Array.isArray(list) ? list : [];
+  }
+
+  function addToList(key, value) {
+    var list = readList(key);
+    if (list.indexOf(value) !== -1) return list;
+    list.push(value);
+    writeJSON(key, list);
+    return list;
+  }
+
+  function getChainsPlayed() { return readList('chainsPlayed'); }
+  function markChainPlayed(chainId) { return addToList('chainsPlayed', chainId); }
+
+  function getLangsPlayed() { return readList('langsPlayed'); }
+  function markLangPlayed(lang) { return addToList('langsPlayed', lang); }
+
   return {
     available: available,
     getLang: getLang,
@@ -88,6 +119,12 @@ RH.storage = (function () {
     getDay: getDay,
     setDay: setDay,
     getStats: getStats,
-    recordResult: recordResult
+    recordResult: recordResult,
+    getAwards: getAwards,
+    unlockAward: unlockAward,
+    getChainsPlayed: getChainsPlayed,
+    markChainPlayed: markChainPlayed,
+    getLangsPlayed: getLangsPlayed,
+    markLangPlayed: markLangPlayed
   };
 })();

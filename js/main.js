@@ -7,13 +7,34 @@
       intro: $('screen-intro'),
       question: $('screen-question'),
       results: $('screen-results'),
-      archive: $('screen-archive')
+      archive: $('screen-archive'),
+      cabinet: $('screen-cabinet')
     },
     langToggle: $('lang-toggle'),
     introNumber: $('intro-number'),
     introNotice: $('intro-notice'),
     btnPlay: $('btn-play'),
     btnArchiveIntro: $('btn-archive-intro'),
+    btnCabinetIntro: $('btn-cabinet-intro'),
+    introRank: $('intro-rank'),
+    introRankName: $('intro-rank-name'),
+    introStreak: $('intro-streak'),
+    unlocks: $('unlocks'),
+    unlocksTitle: $('unlocks-title'),
+    unlocksList: $('unlocks-list'),
+    rankcard: $('rankcard'),
+    rankName: $('rank-name'),
+    rankFill: $('rank-fill'),
+    rankFoot: $('rank-foot'),
+    countdown: $('countdown'),
+    countdownClock: $('countdown-clock'),
+    btnCabinetResults: $('btn-cabinet-results'),
+    cabinetRankName: $('cabinet-rank-name'),
+    cabinetRankFill: $('cabinet-rank-fill'),
+    cabinetRankFoot: $('cabinet-rank-foot'),
+    trophyCount: $('trophy-count'),
+    trophies: $('trophies'),
+    btnCabinetBack: $('btn-cabinet-back'),
     depth: $('depth'),
     depthCount: $('depth-count'),
     card: $('question-card'),
@@ -49,6 +70,10 @@
   var currentScreen = 'intro';
   var resolved = null;
   var lastRenderedIndex = -1;
+  var freshAwards = [];
+  var rankBefore = null;
+  var countdownTimer = null;
+  var previousScreen = 'intro';
 
   var reducedMotion = window.matchMedia
     ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -61,6 +86,8 @@
   }
 
   function showScreen(name) {
+    if (currentScreen === 'results' && name !== 'results') stopCountdown();
+    if (name !== currentScreen) previousScreen = currentScreen;
     currentScreen = name;
     Object.keys(el.screens).forEach(function (key) {
       el.screens[key].classList.toggle('hidden', key !== name);
@@ -85,6 +112,102 @@
 
   // --- Intro -------------------------------------------------------------
 
+  // --- Ranks, trophies, countdown ----------------------------------------
+
+  function rankName(rank) { return RH.i18n.t('rank.' + rank.id); }
+
+  function fillRankCard(nameEl, fillEl, footEl) {
+    var stats = RH.storage.getStats();
+    var info = RH.awards.rankFor(stats.totalScore);
+    nameEl.textContent = rankName(info.rank);
+    fillEl.style.width = Math.round(info.progress * 100) + '%';
+    footEl.textContent = info.next
+      ? info.pointsToNext + ' ' + RH.i18n.t('points') + ' ' + RH.i18n.t('toNextRank') +
+        ' — ' + rankName(info.next)
+      : RH.i18n.t('maxRank');
+    return info;
+  }
+
+  function renderUnlocks() {
+    if (!freshAwards.length) { el.unlocks.classList.add('hidden'); return; }
+    el.unlocks.classList.remove('hidden');
+    el.unlocksTitle.textContent = freshAwards.length > 1
+      ? RH.i18n.t('newTrophies')
+      : RH.i18n.t('newTrophy');
+    el.unlocksList.innerHTML = '';
+    freshAwards.forEach(function (award) {
+      var li = document.createElement('li');
+      li.className = 'unlocks__item';
+
+      var icon = document.createElement('span');
+      icon.className = 'unlocks__icon';
+      icon.textContent = award.icon;
+
+      var name = document.createElement('span');
+      name.className = 'unlocks__name';
+      name.textContent = RH.i18n.t('award.' + award.id + '.name');
+
+      li.appendChild(icon);
+      li.appendChild(name);
+      el.unlocksList.appendChild(li);
+    });
+  }
+
+  function stopCountdown() {
+    if (countdownTimer) { window.clearInterval(countdownTimer); countdownTimer = null; }
+  }
+
+  // Ticks down to the next local midnight, when a new hole opens.
+  function startCountdown() {
+    stopCountdown();
+    var tick = function () {
+      var left = RH.awards.msUntilNextPuzzle();
+      if (left <= 0) { stopCountdown(); el.countdownClock.textContent = '00:00:00'; return; }
+      el.countdownClock.textContent = RH.awards.formatCountdown(left);
+    };
+    tick();
+    countdownTimer = window.setInterval(tick, 1000);
+  }
+
+  function renderCabinet() {
+    fillRankCard(el.cabinetRankName, el.cabinetRankFill, el.cabinetRankFoot);
+    var stats = RH.storage.getStats();
+    el.cabinetRankFoot.textContent += ' · ' + stats.totalScore + ' ' + RH.i18n.t('pointsTotal');
+
+    var owned = RH.storage.getAwards();
+    var all = RH.awards.all();
+    var ownedCount = all.filter(function (a) { return !!owned[a.id]; }).length;
+    el.trophyCount.textContent = ownedCount + '/' + all.length;
+
+    el.trophies.innerHTML = '';
+    all.forEach(function (award) {
+      var unlocked = !!owned[award.id];
+      var li = document.createElement('li');
+      li.className = 'trophy' + (unlocked ? '' : ' is-locked');
+
+      var icon = document.createElement('span');
+      icon.className = 'trophy__icon';
+      icon.textContent = unlocked ? award.icon : '🔒';
+
+      var body = document.createElement('div');
+      body.className = 'trophy__body';
+
+      var name = document.createElement('p');
+      name.className = 'trophy__name';
+      name.textContent = RH.i18n.t('award.' + award.id + '.name');
+
+      var desc = document.createElement('p');
+      desc.className = 'trophy__desc';
+      desc.textContent = RH.i18n.t('award.' + award.id + '.desc');
+
+      body.appendChild(name);
+      body.appendChild(desc);
+      li.appendChild(icon);
+      li.appendChild(body);
+      el.trophies.appendChild(li);
+    });
+  }
+
   function renderIntro() {
     var finished = state && state.done;
     el.introNumber.textContent = resolved.freePlay
@@ -97,6 +220,15 @@
       : (inProgress ? RH.i18n.t('resume') : RH.i18n.t('play'));
     el.introNotice.classList.toggle('hidden', !finished);
     el.btnArchiveIntro.textContent = RH.i18n.t('archive');
+
+    // Returning players see where their career stands before they even start.
+    var stats = RH.storage.getStats();
+    if (!stats.played) { el.introRank.classList.add('hidden'); return; }
+    el.introRank.classList.remove('hidden');
+    el.introRankName.textContent = rankName(RH.awards.rankFor(stats.totalScore).rank);
+    el.introStreak.textContent = stats.streak > 0
+      ? '🔥 ' + stats.streak + ' ' + RH.i18n.t('days')
+      : '';
   }
 
   // --- Question ----------------------------------------------------------
@@ -265,6 +397,27 @@
 
     el.btnShare.textContent = RH.i18n.t('share');
     el.btnArchiveResults.textContent = RH.i18n.t('playAnother');
+
+    renderUnlocks();
+
+    // Career progress and the countdown only make sense for the daily hole.
+    if (state.freePlay) {
+      el.rankcard.classList.add('hidden');
+      el.countdown.classList.add('hidden');
+      stopCountdown();
+    } else {
+      el.rankcard.classList.remove('hidden');
+      var info = fillRankCard(el.rankName, el.rankFill, el.rankFoot);
+      if (rankBefore != null && info.index > rankBefore) {
+        el.rankcard.classList.add('rankcard--up');
+        el.rankFoot.textContent = RH.i18n.t('rankUp') + ' ' + rankName(info.rank) + ' · ' + el.rankFoot.textContent;
+      } else {
+        el.rankcard.classList.remove('rankcard--up');
+      }
+      el.countdown.classList.remove('hidden');
+      startCountdown();
+    }
+
     renderStats();
   }
 
@@ -293,6 +446,7 @@
     else if (currentScreen === 'question') renderQuestion();
     else if (currentScreen === 'results') renderResults();
     else if (currentScreen === 'archive') renderArchive();
+    else if (currentScreen === 'cabinet') renderCabinet();
   }
 
   // --- Flow --------------------------------------------------------------
@@ -300,9 +454,18 @@
   function finish() {
     state.done = true;
     persist();
+
+    // Snapshot the rank before the score lands so a promotion can be spotted.
+    rankBefore = RH.awards.rankFor(RH.storage.getStats().totalScore).index;
+
+    var stats = RH.storage.getStats();
     if (!state.freePlay && state.dateKey) {
-      RH.storage.recordResult(state.dateKey, RH.game.bankedScore(state), RH.game.MAX_SCORE);
+      stats = RH.storage.recordResult(state.dateKey, RH.game.bankedScore(state), RH.game.MAX_SCORE);
     }
+    RH.storage.markChainPlayed(state.chainId);
+    RH.storage.markLangPlayed(RH.i18n.lang());
+    freshAwards = RH.awards.evaluate(state, stats);
+
     showScreen('results');
     render();
   }
@@ -386,10 +549,18 @@
   el.btnArchiveIntro.addEventListener('click', openArchive);
   el.btnArchiveResults.addEventListener('click', openArchive);
 
-  el.btnArchiveBack.addEventListener('click', function () {
-    showScreen(state && state.done && !state.freePlay ? 'results' : 'intro');
+  function openCabinet() { showScreen('cabinet'); render(); }
+  el.btnCabinetIntro.addEventListener('click', openCabinet);
+  el.btnCabinetResults.addEventListener('click', openCabinet);
+
+  // Both secondary screens return to wherever the player opened them from.
+  function goBack() {
+    var target = previousScreen === 'question' ? 'intro' : previousScreen;
+    showScreen(target || 'intro');
     render();
-  });
+  }
+  el.btnArchiveBack.addEventListener('click', goBack);
+  el.btnCabinetBack.addEventListener('click', goBack);
 
   el.archiveList.addEventListener('click', function (event) {
     var btn = event.target.closest('.archive__item');
