@@ -626,8 +626,69 @@ body {
   }
 }
 
+/* --- Larger screens ---------------------------------------------------- */
+
 @media (min-width: 40rem) {
   body { font-size: 18px; }
+  .topbar, #app { max-width: 38rem; }
   .card { padding: 1.75rem 1.6rem 1.85rem; }
-  .question { font-size: 1.5rem; }
+  .question { font-size: 1.55rem; }
+}
+
+/* On a desktop the mobile column looks marooned, so the whole thing scales
+   up rather than just sitting in the middle of a lot of nothing. */
+@media (min-width: 64rem) {
+  :root { --gutter: 2rem; --radius: 18px; }
+
+  body { font-size: 20px; }
+  .topbar { max-width: 52rem; padding-top: 1.4rem; }
+  #app { max-width: 52rem; padding-bottom: 4rem; }
+
+  .topbar__ball { font-size: 1.3rem; }
+  .topbar__name, .linkbtn { font-size: 0.78rem; }
+
+  .card { padding: 2.5rem 2.5rem 2.75rem; }
+  .question { font-size: 2rem; }
+  .topic__value { font-size: 0.85rem; padding: 0.28rem 0.9rem; }
+  .topic__label { font-size: 0.68rem; }
+  .hintbox { font-size: 1.02rem; padding-left: 1rem; }
+
+  .answerform { gap: 0.85rem; }
+  .answerform__input { min-height: 3.9rem; font-size: 1.22rem; padding: 0.9rem 1.2rem; }
+  .btn { min-height: 3.9rem; font-size: 0.9rem; }
+  .choice { min-height: 3.7rem; font-size: 1.14rem; padding: 0.9rem 1.2rem; }
+  .verdict { font-size: 0.92rem; }
+
+  .depth { gap: 7px; margin-top: 0; }
+  .depth__seg { height: 5px; }
+  .depth__label { font-size: 0.74rem; }
+
+  .tagline { font-size: 1.15rem; }
+  .rules { padding: 1.5rem 1.7rem 1.6rem; }
+  .rules__list { font-size: 1.02rem; }
+  .rules__title, .section-title { font-size: 0.78rem; }
+
+  .grid { font-size: 2rem; }
+  .stats__item { padding: 0.9rem 0.4rem; }
+  .stats__item dt { font-size: 0.64rem; }
+  .stats__item dd { font-size: 2.1rem; }
+  .recap__q { font-size: 1.02rem; }
+  .recap__a { font-size: 1.75rem; }
+  .archive__item { font-size: 1.65rem; padding: 1.2rem 1.4rem; }
+}
+
+/* Vertical centring only where there is genuinely room for it. The auto
+   margins collapse to zero once a screen outgrows the viewport, so long
+   pages (results, archive) still scroll from the top instead of clipping. */
+@media (min-width: 64rem) and (min-height: 46rem) {
+  body { display: flex; flex-direction: column; min-height: 100vh; }
+  #app { flex: 1 1 auto; display: flex; flex-direction: column; }
+  .screen { margin-top: auto; margin-bottom: auto; width: 100%; }
+}
+
+@media (min-width: 90rem) {
+  body { font-size: 21px; }
+  .topbar, #app { max-width: 58rem; }
+  .question { font-size: 2.3rem; }
+  .card { padding: 3rem 3rem 3.2rem; }
 }
