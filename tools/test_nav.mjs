@@ -25,6 +25,24 @@ try {
     if (!ok) failed++;
     console.log(`${ok ? 'PASS' : 'FAIL'} logo from ${r} -> ${res.hash} (home page shown: ${res.home})`);
   }
+  // empty state names the selected sport and day, and offers a way out
+  await page.goto(base + '?now=2026-11-04T10:00#/s/slovak-university-of-technology-in-bratislava', { settleMs: 600 });
+  for (const [lang, sport, day] of [['sk', 'Futbal', 'v stredu'], ['en', 'Football', 'on Wednesday']]) {
+    const res = await page.eval((lang) => {
+      localStorage.setItem('wiuc.lang', lang);
+      return null;
+    }, lang);
+    await page.goto(base + '?now=2026-11-04T10:00&l=' + lang + '#/s/slovak-university-of-technology-in-bratislava', { settleMs: 600 });
+    const out = await page.eval(() => {
+      document.querySelector('[data-day="2026-11-04"]').click();
+      document.querySelector('.chip[data-sport="football"]').click();
+      const e = document.querySelector('#list .empty');
+      return { text: e ? e.textContent : '', reset: !!document.querySelector('#list .empty [data-sport="all"]') };
+    });
+    const ok = out.text.includes(sport) && out.text.includes(day) && out.reset;
+    if (!ok) failed++;
+    console.log(`${ok ? 'PASS' : 'FAIL'} empty state (${lang}) names sport and day: "${out.text.trim()}" reset button: ${out.reset}`);
+  }
 } finally {
   await browser.close();
 }

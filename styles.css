@@ -198,6 +198,8 @@ h2 small { font-weight: 600; color: var(--muted); font-size: 15px; }
 .playoff .events { margin: 0 0 8px; }
 
 .empty { margin: 8px 16px 0; background: var(--card); padding: 24px 18px; text-align: center; color: var(--muted); font-size: 16px; }
+.empty p { margin: 0; font-size: 17px; font-weight: 600; color: var(--ink); }
+.empty-actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
 
 /* ---------- school picker: the city, then the list ---------- */
 .pick-head { position: relative; background: var(--sign); color: var(--sign-ink); overflow: hidden; }
@@ -231,7 +233,8 @@ h2 small { font-weight: 600; color: var(--muted); font-size: 15px; }
 .quick-links { display: flex; gap: 8px; flex-wrap: wrap; margin: 20px 16px 0; }
 
 /* ---------- venues ---------- */
-.venue-grid { padding: 12px 16px 0; display: grid; gap: 6px; }
+.venue-grid { padding: 12px 16px 0; display: grid; gap: 14px; }
+@media (min-width: 1024px) { .venue-grid { gap: 24px; } }
 .venue { margin: 0; background: var(--card); display: grid; grid-template-columns: minmax(0, 1fr) 72px; overflow: hidden; }
 .venue .vbody { padding: 14px 16px; min-width: 0; }
 .venue .vname { font-weight: 800; font-size: 20px; letter-spacing: -.01em; line-height: 1.2; }

@@ -731,6 +731,22 @@
   }
 
   // ---- school view
+  // "Football: your university has no match on Wednesday." with a way out
+  function onDayWords(d) {
+    var sk = { "2026-11-04": "v stredu", "2026-11-05": "vo štvrtok", "2026-11-06": "v piatok", "2026-11-07": "v sobotu", "all": "počas turnaja" };
+    var en = { "2026-11-04": "on Wednesday", "2026-11-05": "on Thursday", "2026-11-06": "on Friday", "2026-11-07": "on Saturday", "all": "during the championship" };
+    return (state.lang === "sk" ? sk : en)[d] || d;
+  }
+  function emptyState() {
+    var when = onDayWords(state.day);
+    var msg = state.sport === "all"
+      ? (state.lang === "sk" ? "Vaša univerzita " + when + " nehrá žiadny zápas." : "Your university has no match " + when + ".")
+      : (state.lang === "sk" ? sportName(state.sport) + ": vaša univerzita " + when + " nehrá žiadny zápas." : sportName(state.sport) + ": your university has no match " + when + ".");
+    var actions = [];
+    if (state.sport !== "all") actions.push(h`<button class="btn" type="button" data-sport="all">${state.lang === "sk" ? "Zobraziť všetky športy" : "Show all sports"}</button>`);
+    if (state.day !== "all") actions.push(h`<button class="btn" type="button" data-day="all">${t("allDaysShort")}</button>`);
+    return h`<div class="empty"><p>${msg}</p>${raw(actions.length ? '<div class="empty-actions">' + actions.join("") + "</div>" : "")}</div>`;
+  }
   function renderSchool(sid) {
     var s = SCHOOLS[sid];
     var sports = schoolSports(sid);
@@ -774,7 +790,7 @@
 
     var body = allDays ? DAYS.map(function (d) { return dayBody(d.d, true); }).join("") : dayBody(state.day, false);
     if (!body) {
-      body = h`<p class="empty">${state.sport === "all" ? t("noEvents") : t("noEventsSport")}</p>`;
+      body = emptyState();
     }
     var todayN = mine.filter(function (e) { return onDay(e) && !e.all; }).length;
     var lead = s.country + " · " + nSports(sports.length) + " · " + nMatches(todayN);
