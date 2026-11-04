@@ -1,0 +1,822 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-04T09:46:33Z",
+  "title": "Design System: WIUC 2026 Bratislava schedule helper",
+  "source": {
+    "stylesheet": "wiuc/styles.css",
+    "markup": "wiuc/index.html",
+    "components": "wiuc/app.js",
+    "surface": ".impeccable/surfaces/wiuc-index-html.md"
+  },
+  "extensions": {
+    "colorMeta": {
+      "navy-signboard": {
+        "role": "primary",
+        "displayName": "Navy Signboard",
+        "canonical": "#051c2c",
+        "oklch": "oklch(22% 0.043 242.0)",
+        "tonalRamp": [
+          "#000c1b",
+          "#0f2637",
+          "#2d4557",
+          "#4e677a",
+          "#708a9e",
+          "#94afc4",
+          "#b6d2e8",
+          "#e0f1fe"
+        ],
+        "dark": "#020d16"
+      },
+      "gate-blue": {
+        "role": "primary",
+        "displayName": "Gate Blue",
+        "canonical": "#1f40e6",
+        "oklch": "oklch(48% 0.248 266.3)",
+        "tonalRamp": [
+          "#010036",
+          "#060375",
+          "#110ec3",
+          "#2348ed",
+          "#4d7afe",
+          "#85a8fd",
+          "#b8cdff",
+          "#e7efff"
+        ]
+      },
+      "gate-blue-pressed": {
+        "role": "primary",
+        "displayName": "Gate Blue Pressed",
+        "canonical": "#1836c4",
+        "oklch": "oklch(43% 0.220 266.1)",
+        "tonalRamp": [
+          "#010036",
+          "#050475",
+          "#1024b4",
+          "#2850de",
+          "#4c7afe",
+          "#85a8fc",
+          "#b8cdff",
+          "#e7efff"
+        ]
+      },
+      "signal-cyan": {
+        "role": "primary",
+        "displayName": "Signal Cyan",
+        "canonical": "#22b8f0",
+        "oklch": "oklch(73% 0.140 230.3)",
+        "tonalRamp": [
+          "#000d17",
+          "#002838",
+          "#004963",
+          "#0b6d90",
+          "#0093c2",
+          "#26baf2",
+          "#8fd9fd",
+          "#dbf3ff"
+        ]
+      },
+      "stripe-yellow": {
+        "role": "secondary",
+        "displayName": "Stripe Yellow",
+        "canonical": "#ffc315",
+        "oklch": "oklch(85% 0.171 85.6)",
+        "tonalRamp": [
+          "#120900",
+          "#302100",
+          "#553e00",
+          "#7d5e06",
+          "#a77f10",
+          "#d5a203",
+          "#fec42d",
+          "#feedc7"
+        ]
+      },
+      "stripe-orange": {
+        "role": "secondary",
+        "displayName": "Stripe Orange",
+        "canonical": "#ee792c",
+        "oklch": "oklch(70% 0.167 49.4)",
+        "tonalRamp": [
+          "#1a0400",
+          "#3e1700",
+          "#6c2e00",
+          "#9c4705",
+          "#d0620f",
+          "#fc863c",
+          "#fdbd9b",
+          "#ffeade"
+        ]
+      },
+      "stripe-red": {
+        "role": "secondary",
+        "displayName": "Stripe Red",
+        "canonical": "#e93a3f",
+        "oklch": "oklch(62% 0.211 24.6)",
+        "tonalRamp": [
+          "#200000",
+          "#4b0006",
+          "#800312",
+          "#bb001f",
+          "#ea3b40",
+          "#fc807a",
+          "#febab4",
+          "#ffe9e6"
+        ]
+      },
+      "stripe-pink": {
+        "role": "secondary",
+        "displayName": "Stripe Pink",
+        "canonical": "#ee1953",
+        "oklch": "oklch(61% 0.235 15.2)",
+        "tonalRamp": [
+          "#200003",
+          "#4a0013",
+          "#7f0327",
+          "#b9023c",
+          "#f22056",
+          "#fd7d8a",
+          "#feb9bc",
+          "#ffe8e9"
+        ]
+      },
+      "stripe-purple": {
+        "role": "secondary",
+        "displayName": "Stripe Purple",
+        "canonical": "#674381",
+        "oklch": "oklch(45% 0.105 309.6)",
+        "tonalRamp": [
+          "#150024",
+          "#330e49",
+          "#532f6c",
+          "#755190",
+          "#9974b6",
+          "#bf98dd",
+          "#e1bdfe",
+          "#f5e9ff"
+        ]
+      },
+      "stripe-green": {
+        "role": "secondary",
+        "displayName": "Stripe Green",
+        "canonical": "#24a75b",
+        "oklch": "oklch(64% 0.157 152.2)",
+        "tonalRamp": [
+          "#001003",
+          "#002d12",
+          "#005126",
+          "#0a773d",
+          "#16a054",
+          "#4dc678",
+          "#74eb9a",
+          "#c6ffd4"
+        ]
+      },
+      "stripe-lime": {
+        "role": "secondary",
+        "displayName": "Stripe Lime",
+        "canonical": "#88b54e",
+        "oklch": "oklch(72% 0.142 129.1)",
+        "tonalRamp": [
+          "#050f00",
+          "#192a00",
+          "#314c00",
+          "#4b7105",
+          "#6b962c",
+          "#8ebc55",
+          "#b1e078",
+          "#d5ffa7"
+        ]
+      },
+      "stripe-blue": {
+        "role": "secondary",
+        "displayName": "Stripe Blue",
+        "canonical": "#0e5ea5",
+        "oklch": "oklch(48% 0.134 251.7)",
+        "tonalRamp": [
+          "#000b20",
+          "#002448",
+          "#04437a",
+          "#1965ac",
+          "#4289d4",
+          "#67affd",
+          "#aad2ff",
+          "#e3f0ff"
+        ]
+      },
+      "stripe-cyan": {
+        "role": "secondary",
+        "displayName": "Stripe Cyan",
+        "canonical": "#008fb3",
+        "oklch": "oklch(60% 0.113 223.8)",
+        "tonalRamp": [
+          "#000e15",
+          "#002936",
+          "#044a5d",
+          "#066e8a",
+          "#1194b8",
+          "#4abadf",
+          "#80dcfe",
+          "#d9f4ff"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#051c2c",
+        "oklch": "oklch(22% 0.043 242.0)",
+        "tonalRamp": [
+          "#000c1b",
+          "#0f2637",
+          "#2d4557",
+          "#4e677a",
+          "#708a9e",
+          "#94afc4",
+          "#b6d2e8",
+          "#e0f1fe"
+        ],
+        "dark": "#eef3f8"
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Ink 2",
+        "canonical": "#3f5064",
+        "oklch": "oklch(43% 0.040 252.8)",
+        "tonalRamp": [
+          "#010b1b",
+          "#162537",
+          "#334457",
+          "#53657a",
+          "#76889e",
+          "#9aadc4",
+          "#bcd0e8",
+          "#e3f0ff"
+        ],
+        "dark": "#c3cedb"
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted",
+        "canonical": "#5c6b7d",
+        "oklch": "oklch(52% 0.034 253.1)",
+        "tonalRamp": [
+          "#020b19",
+          "#182534",
+          "#364454",
+          "#566577",
+          "#78889b",
+          "#9cadc0",
+          "#bfd0e4",
+          "#e3f0ff"
+        ],
+        "dark": "#93a3b5"
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Line",
+        "canonical": "#d9e0e8",
+        "oklch": "oklch(90% 0.013 251.6)",
+        "tonalRamp": [
+          "#070c11",
+          "#1f252a",
+          "#3d4349",
+          "#5e646b",
+          "#80878e",
+          "#a5acb3",
+          "#c8cfd6",
+          "#e8eff7"
+        ],
+        "dark": "#243648"
+      },
+      "ground": {
+        "role": "neutral",
+        "displayName": "Ground",
+        "canonical": "#eef1f5",
+        "oklch": "oklch(96% 0.006 255.5)",
+        "tonalRamp": [
+          "#090b0e",
+          "#222427",
+          "#404346",
+          "#616367",
+          "#84868a",
+          "#a8abaf",
+          "#cbced2",
+          "#eceff3"
+        ],
+        "dark": "#07131d"
+      },
+      "card": {
+        "role": "neutral",
+        "displayName": "Card",
+        "canonical": "#ffffff",
+        "oklch": "oklch(100% 0.000 89.9)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242424",
+          "#424242",
+          "#636363",
+          "#868686",
+          "#ababab",
+          "#cecece",
+          "#eeeeee"
+        ],
+        "dark": "#0f2232"
+      },
+      "card-2": {
+        "role": "neutral",
+        "displayName": "Card 2",
+        "canonical": "#f6f8fb",
+        "oklch": "oklch(98% 0.005 258.3)",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#232426",
+          "#414245",
+          "#626366",
+          "#848689",
+          "#a9abae",
+          "#ccced1",
+          "#edeff1"
+        ],
+        "dark": "#142b3e"
+      },
+      "sign-ink": {
+        "role": "neutral",
+        "displayName": "Sign Ink",
+        "canonical": "#ffffff",
+        "oklch": "oklch(100% 0.000 89.9)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242424",
+          "#424242",
+          "#636363",
+          "#868686",
+          "#ababab",
+          "#cecece",
+          "#eeeeee"
+        ]
+      },
+      "live-ink": {
+        "role": "secondary",
+        "displayName": "Live Ink",
+        "canonical": "#e93a3f",
+        "oklch": "oklch(62% 0.211 24.6)",
+        "tonalRamp": [
+          "#200000",
+          "#4b0006",
+          "#800312",
+          "#bb001f",
+          "#ea3b40",
+          "#fc807a",
+          "#febab4",
+          "#ffe9e6"
+        ],
+        "dark": "#ffc315"
+      },
+      "sign-muted": {
+        "role": "neutral",
+        "displayName": "Sign Muted",
+        "canonical": "rgba(255,255,255,.72)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#242424",
+          "#424242",
+          "#636363",
+          "#868686",
+          "#ababab",
+          "#cecece",
+          "#eeeeee"
+        ],
+        "note": "72% white on navy; the second text colour on any signboard surface."
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The destination: university name on the signboard, picker and panel titles. 30px from 640px."
+      },
+      "numeral": {
+        "displayName": "Numeral",
+        "purpose": "Match time, day number, hall number. 27px (time) / 28px (gate) from 640px; the hall plate uses 22px, 26px from 640px."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section titles on the ground: venue groups, Slovak universities, organiser PDFs."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "The match line; own university at 800 inside it. 16px from 640px. School names use 700, venue names 800 at 16px."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Leads (14px), notes (13px), meta lines (12.5px), buttons (14px/700), capsules (13px/700)."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "The sport line heading every row, uppercase, in the zone label colour; gate weekday and picker country are 600 variants."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Unit word under the plate number (HALA / KURT / IHRISKO / MAPA); category under the time at 600; badges at 800."
+      }
+    },
+    "shadows": [
+      {
+        "name": "rest",
+        "value": "0 2px 8px rgba(0,0,0,.08)",
+        "dark": "0 2px 10px rgba(0,0,0,.35)",
+        "purpose": "Every row, card, school button, PDF link and the next row at rest."
+      },
+      {
+        "name": "lift",
+        "value": "0 10px 24px rgba(0,0,0,.18)",
+        "dark": "0 10px 24px rgba(0,0,0,.5)",
+        "purpose": "A plate raised by state: the live row and a hovered school button, with translateY(-2px) / (-1px)."
+      },
+      {
+        "name": "ring-live",
+        "value": "0 0 0 2.5px #ffc315, 0 10px 24px rgba(0,0,0,.18)",
+        "purpose": "The live row at rest; pulses to 0 0 0 6px at 45% yellow (keyframes ring, 2s ease-out infinite)."
+      },
+      {
+        "name": "ring-next",
+        "value": "0 0 0 2px #24a75b, 0 2px 8px rgba(0,0,0,.08)",
+        "purpose": "The next row, static."
+      },
+      {
+        "name": "ring-home",
+        "value": "0 0 0 2px #ffc315, 0 2px 8px rgba(0,0,0,.08)",
+        "purpose": "The remembered university in the picker, static."
+      },
+      {
+        "name": "field-focus",
+        "value": "0 0 0 3px rgba(31,64,230,.18)",
+        "purpose": "Search field focus halo together with a Gate Blue border; all other controls use the 3px solid outline."
+      }
+    ],
+    "motion": [
+      {
+        "name": "duration-state",
+        "value": "180ms",
+        "purpose": "Every state transition: background, border, colour, transform, box-shadow, opacity."
+      },
+      {
+        "name": "ease-state",
+        "value": "ease-out",
+        "purpose": "The only easing in the system."
+      },
+      {
+        "name": "ring-pulse",
+        "value": "ring 2s ease-out infinite",
+        "purpose": "The live row's yellow ring breathing between 2.5px solid and 6px at 45%."
+      },
+      {
+        "name": "press",
+        "value": "translateY(1px)",
+        "purpose": "Active state of capsule buttons."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "transition: none; animation: none",
+        "purpose": "Under prefers-reduced-motion everything is switched off, including the live pulse."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide",
+        "value": "640px"
+      }
+    ],
+    "darkScheme": {
+      "ink": "#eef3f8",
+      "ink-2": "#c3cedb",
+      "muted": "#93a3b5",
+      "line": "#243648",
+      "ground": "#07131d",
+      "card": "#0f2232",
+      "card-2": "#142b3e",
+      "navy-signboard": "#020d16",
+      "live-ink": "#ffc315",
+      "focus": "#22b8f0",
+      "sport-line": "var(--z)",
+      "note": "Follows prefers-color-scheme; forced with data-theme=\"light\" | \"dark\" on <html>. Stripe palette, Gate Blue and badge colours do not change."
+    },
+    "sportZones": [
+      {
+        "key": "football",
+        "sk": "Futbal",
+        "en": "Football",
+        "zone": "#24a75b",
+        "label": "#1b7d44"
+      },
+      {
+        "key": "futsal",
+        "sk": "Futsal",
+        "en": "Futsal",
+        "zone": "#ffc315",
+        "label": "#8a6a00"
+      },
+      {
+        "key": "basketball",
+        "sk": "Basketbal",
+        "en": "Basketball",
+        "zone": "#ee792c",
+        "label": "#b4530f"
+      },
+      {
+        "key": "volleyball",
+        "sk": "Volejbal",
+        "en": "Volleyball",
+        "zone": "#e93a3f",
+        "label": "#c0232a"
+      },
+      {
+        "key": "handball",
+        "sk": "Hádzaná",
+        "en": "Handball",
+        "zone": "#674381",
+        "label": "#674381"
+      },
+      {
+        "key": "rugby",
+        "sk": "Rugby 7s",
+        "en": "Rugby 7s",
+        "zone": "#ee1953",
+        "label": "#c20f42"
+      },
+      {
+        "key": "floorball",
+        "sk": "Florbal",
+        "en": "Floorball",
+        "zone": "#0e5ea5",
+        "label": "#0e5ea5"
+      },
+      {
+        "key": "tennis",
+        "sk": "Tenis",
+        "en": "Tennis",
+        "zone": "#008fb3",
+        "label": "#007392"
+      },
+      {
+        "key": "padel",
+        "sk": "Padel",
+        "en": "Padel",
+        "zone": "#88b54e",
+        "label": "#4f7a1d"
+      },
+      {
+        "key": "badminton",
+        "sk": "Bedminton",
+        "en": "Badminton",
+        "zone": "#1f40e6",
+        "label": "#1f40e6"
+      },
+      {
+        "key": "tabletennis",
+        "sk": "Stolný tenis",
+        "en": "Table tennis",
+        "zone": "#c2185b",
+        "label": "#c2185b"
+      },
+      {
+        "key": "swimming",
+        "sk": "Plávanie",
+        "en": "Swimming",
+        "zone": "#22b8f0",
+        "label": "#0b7fa8"
+      },
+      {
+        "key": "athletics",
+        "sk": "Atletika",
+        "en": "Athletics",
+        "zone": "#c98a00",
+        "label": "#8a5f00"
+      },
+      {
+        "key": "ceremony",
+        "sk": "Ceremoniál",
+        "en": "Ceremony",
+        "zone": "#051c2c",
+        "label": "#051c2c"
+      }
+    ],
+    "stripeBand": {
+      "height": "6px",
+      "segments": [
+        "#ffc315",
+        "#ee792c",
+        "#e93a3f",
+        "#ee1953",
+        "#674381",
+        "#24a75b",
+        "#0e5ea5"
+      ],
+      "value": "linear-gradient(90deg, #ffc315 0 14.3%, #ee792c 14.3% 28.6%, #e93a3f 28.6% 42.9%, #ee1953 42.9% 57.2%, #674381 57.2% 71.5%, #24a75b 71.5% 85.8%, #0e5ea5 85.8%)",
+      "note": "Seven equal segments under the header; lime and stripe cyan are zone colours only."
+    },
+    "iconSet": {
+      "viewBox": "0 0 24 24",
+      "stroke": "currentColor 2px, round caps and joins, no fill",
+      "sizes": {
+        "sport-line": "15px",
+        "search": "18px",
+        "hall-plate": "20px",
+        "venue-plate": "22px"
+      },
+      "names": [
+        "pin",
+        "arrow",
+        "search",
+        "doc",
+        "back",
+        "chev",
+        "flag",
+        "football",
+        "futsal",
+        "basketball",
+        "volleyball",
+        "handball",
+        "rugby",
+        "floorball",
+        "tennis",
+        "padel",
+        "badminton",
+        "tabletennis",
+        "swimming",
+        "athletics",
+        "ceremony"
+      ]
+    }
+  },
+  "components": [
+    {
+      "name": "Signboard Header",
+      "kind": "nav",
+      "refersTo": "signboard",
+      "description": "Sticky navy band with brand title, unofficial-helper subtitle, language toggle and the seven-segment stripe under it.",
+      "html": "<header class=\"ds-top\"><div class=\"ds-top-inner\"><a class=\"ds-brand\" href=\"#\"><span class=\"ds-brand-title\">WIUC 2026 Bratislava</span><span class=\"ds-brand-sub\">Neoficiálny pomocník · 4. až 8. 11.</span></a><button class=\"ds-lang\" type=\"button\">EN</button></div><div class=\"ds-stripe\"></div></header>",
+      "css": ".ds-top { background: #051c2c; color: #fff; font-family: 'Work Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-top-inner { padding: 7px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; } .ds-brand { display: flex; align-items: baseline; gap: 10px; color: inherit; text-decoration: none; flex-wrap: wrap; } .ds-brand-title { font-weight: 800; font-size: 15px; letter-spacing: .02em; } .ds-brand-sub { font-size: 12px; color: rgba(255,255,255,.72); } .ds-lang { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,.5); border-radius: 999px; padding: 4px 11px; font: inherit; font-weight: 700; font-size: 13px; min-width: 46px; cursor: pointer; transition: background .18s ease-out; } .ds-lang:hover { background: rgba(255,255,255,.12); } .ds-lang:focus-visible { outline: 3px solid #22b8f0; outline-offset: 2px; border-radius: 6px; } .ds-stripe { height: 6px; background: linear-gradient(90deg, #ffc315 0 14.3%, #ee792c 14.3% 28.6%, #e93a3f 28.6% 42.9%, #ee1953 42.9% 57.2%, #674381 57.2% 71.5%, #24a75b 71.5% 85.8%, #0e5ea5 85.8%); }"
+    },
+    {
+      "name": "Destination Panel",
+      "kind": "nav",
+      "refersTo": "button-on-sign",
+      "description": "Navy band naming the destination (university) with a Sign Muted lead and the on-signboard capsule button.",
+      "html": "<div class=\"ds-dest\"><div class=\"ds-dest-inner\"><div><h1 class=\"ds-h1\">Comenius University Bratislava</h1><p class=\"ds-lead\">Slovakia · 9 športov · 14 zápasov</p></div><a class=\"ds-btn-sign\" href=\"#\">Zmeniť</a></div></div>",
+      "css": ".ds-dest { background: #051c2c; color: #fff; padding: 10px 16px 12px; font-family: 'Work Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-dest-inner { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; } .ds-h1 { font-size: 22px; margin: 0; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; text-wrap: balance; } .ds-lead { margin: 6px 0 0; color: rgba(255,255,255,.72); font-size: 13px; } .ds-btn-sign { background: rgba(255,255,255,.12); color: #fff; border: 1.5px solid rgba(255,255,255,.35); border-radius: 999px; padding: 9px 16px; font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; display: inline-flex; align-items: center; gap: 7px; transition: background .18s ease-out, transform .18s ease-out; } .ds-btn-sign:hover { background: rgba(255,255,255,.2); } .ds-btn-sign:active { transform: translateY(1px); } .ds-btn-sign:focus-visible { outline: 3px solid #22b8f0; outline-offset: 2px; }"
+    },
+    {
+      "name": "Gate Strip",
+      "kind": "nav",
+      "refersTo": "gate",
+      "description": "Four equal day gates on navy: weekday, big day number, count. Selected gate is Gate Blue with a yellow bottom bar; today's gate carries a yellow dot.",
+      "html": "<div class=\"ds-gates\"><div class=\"ds-gates-inner\" role=\"tablist\"><button class=\"ds-gate ds-on ds-today\" role=\"tab\" aria-selected=\"true\" type=\"button\"><span>Streda</span><b>4.</b><span class=\"ds-n\">14</span></button><button class=\"ds-gate\" role=\"tab\" aria-selected=\"false\" type=\"button\"><span>Štvrtok</span><b>5.</b><span class=\"ds-n\">43</span></button><button class=\"ds-gate\" role=\"tab\" aria-selected=\"false\" type=\"button\"><span>Piatok</span><b>6.</b><span class=\"ds-n\">11</span></button><button class=\"ds-gate\" role=\"tab\" aria-selected=\"false\" type=\"button\"><span>Sobota</span><b>7.</b><span class=\"ds-n\">play-off</span></button></div></div>",
+      "css": ".ds-gates { background: #051c2c; border-top: 1px solid rgba(255,255,255,.12); font-family: 'Work Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-gates-inner { display: grid; grid-template-columns: repeat(4, 1fr); } .ds-gate { border: 0; background: transparent; color: rgba(255,255,255,.62); padding: 8px 4px 9px; display: flex; flex-direction: column; align-items: center; line-height: 1; font: inherit; font-weight: 600; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; border-bottom: 4px solid transparent; cursor: pointer; transition: background .18s ease-out, color .18s ease-out; } .ds-gate b { font-size: 24px; font-weight: 800; letter-spacing: -.03em; margin: 3px 0 4px; font-variant-numeric: tabular-nums; } .ds-gate .ds-n { font-size: 11px; font-weight: 600; letter-spacing: 0; text-transform: none; opacity: .85; } .ds-gate:hover { color: #fff; background: rgba(255,255,255,.06); } .ds-gate.ds-on { color: #fff; background: #1f40e6; border-bottom-color: #ffc315; } .ds-gate.ds-today .ds-n::before { content: ''; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #ffc315; margin-right: 5px; vertical-align: 1px; } .ds-gate:focus-visible { outline: 3px solid #22b8f0; outline-offset: -3px; border-radius: 6px; }"
+    },
+    {
+      "name": "Sport Capsules",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Horizontal filter row: white capsules with a zone-colour dot and a muted count; the selected capsule turns Navy Signboard.",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip ds-on\" type=\"button\">Všetko</button><button class=\"ds-chip\" type=\"button\" style=\"--z:#ffc315\"><span class=\"ds-dot\"></span>Futsal<span class=\"ds-cnt\">2</span></button><button class=\"ds-chip\" type=\"button\" style=\"--z:#e93a3f\"><span class=\"ds-dot\"></span>Volejbal<span class=\"ds-cnt\">2</span></button><button class=\"ds-chip\" type=\"button\" style=\"--z:#674381\"><span class=\"ds-dot\"></span>Hádzaná<span class=\"ds-cnt\">1</span></button><button class=\"ds-chip\" type=\"button\" style=\"--z:#008fb3\"><span class=\"ds-dot\"></span>Tenis<span class=\"ds-cnt\">7</span></button></div>",
+      "css": ".ds-chips { display: flex; gap: 6px; overflow-x: auto; padding: 10px 16px 2px; scrollbar-width: none; scroll-snap-type: x proximity; background: #eef1f5; font-family: 'Work Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-chips::-webkit-scrollbar { display: none; } .ds-chip { scroll-snap-align: start; flex: 0 0 auto; border: 1.5px solid #d9e0e8; background: #fff; border-radius: 999px; padding: 7px 12px 7px 10px; font: inherit; font-size: 13px; font-weight: 700; color: #051c2c; display: inline-flex; gap: 7px; align-items: center; cursor: pointer; transition: background .18s ease-out, border-color .18s ease-out; } .ds-chip .ds-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--z, #5c6b7d); box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); } .ds-chip .ds-cnt { color: #5c6b7d; font-weight: 600; } .ds-chip:hover { border-color: #5c6b7d; } .ds-chip.ds-on { background: #051c2c; color: #fff; border-color: #051c2c; } .ds-chip.ds-on .ds-cnt { color: rgba(255,255,255,.7); } .ds-chip:focus-visible { outline: 3px solid #1f40e6; outline-offset: 2px; }"
+    },
+    {
+      "name": "Sign Row",
+      "kind": "card",
+      "refersTo": "sign-row",
+      "description": "One match as a wayfinding sign: time, zone band, sport line, match line, meta line, navy hall plate. Shown live (pulsing yellow ring), next (green ring) and past (dimmed).",
+      "html": "<ul class=\"ds-events\"><li class=\"ds-ev ds-live\" style=\"--z:#ffc315;--zt:#8a6a00\"><div class=\"ds-time\">11:00<small>muži</small></div><div class=\"ds-zone\"></div><div class=\"ds-main\"><div class=\"ds-sport\"><svg class=\"ds-ic\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"4\"/></svg>Futsal <span class=\"ds-badge ds-badge-live\">Prebieha</span></div><div class=\"ds-match\"><span class=\"ds-me\">UK Bratislava</span> <span class=\"ds-vs\">vs</span> <span>Holy Spirit University of Kaslik</span></div><div class=\"ds-meta\"><a href=\"#\"><svg class=\"ds-ic\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 21s-6-5.4-6-11a6 6 0 0 1 12 0c0 5.6-6 11-6 11z\"/><circle cx=\"12\" cy=\"10\" r=\"2\"/></svg>Dom športu</a> · Skupina D</div></div><a class=\"ds-plate\" href=\"#\">1<small>HALA</small></a></li><li class=\"ds-ev ds-next\" style=\"--z:#e93a3f;--zt:#c0232a\"><div class=\"ds-time\">11:15<small>ženy</small></div><div class=\"ds-zone\"></div><div class=\"ds-main\"><div class=\"ds-sport\"><svg class=\"ds-ic\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 3c-4 4-4 10 0 18M4.5 8.5c5 .5 10 3 14.5 8M4.5 15.5c5-.5 10-3 14.5-8\"/></svg>Volejbal <span class=\"ds-badge ds-badge-next\">Nasleduje</span></div><div class=\"ds-match\"><span class=\"ds-me\">UK Bratislava</span> <span class=\"ds-vs\">vs</span> <span>Medical University of Plovdiv</span></div><div class=\"ds-meta\"><a href=\"#\"><svg class=\"ds-ic\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 21s-6-5.4-6-11a6 6 0 0 1 12 0c0 5.6-6 11-6 11z\"/><circle cx=\"12\" cy=\"10\" r=\"2\"/></svg>Mlynská dolina PRIF / MATFYZ</a> · Skupina T</div></div><a class=\"ds-plate\" href=\"#\">2<small>HALA</small></a></li><li class=\"ds-ev ds-past\" style=\"--z:#674381;--zt:#674381\"><div class=\"ds-time\">09:40<small>ženy</small></div><div class=\"ds-zone\"></div><div class=\"ds-main\"><div class=\"ds-sport\"><svg class=\"ds-ic\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M8 8l8 8M16 8l-8 8\"/></svg>Hádzaná</div><div class=\"ds-match\"><span class=\"ds-me\">UK Bratislava</span> <span class=\"ds-vs\">vs</span> <span>IESEG Lille</span></div><div class=\"ds-meta\"><a href=\"#\"><svg class=\"ds-ic\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 21s-6-5.4-6-11a6 6 0 0 1 12 0c0 5.6-6 11-6 11z\"/><circle cx=\"12\" cy=\"10\" r=\"2\"/></svg>Dom športu</a> · Skupina X</div></div><a class=\"ds-plate\" href=\"#\"><svg class=\"ds-ic\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg><small>MAPA</small></a></li></ul>",
+      "css": ".ds-events { list-style: none; margin: 0; padding: 12px 16px 8px; background: #eef1f5; color: #051c2c; font-variant-numeric: tabular-nums; font-family: 'Work Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-ic { width: 1em; height: 1em; display: inline-block; vertical-align: -0.15em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; } .ds-ev { display: grid; grid-template-columns: 72px 8px minmax(0, 1fr) 60px; margin: 0 0 8px; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.08); min-height: 76px; transition: transform .18s ease-out, box-shadow .18s ease-out, opacity .18s ease-out; } .ds-time { padding: 11px 2px 10px 10px; font-size: 24px; font-weight: 800; letter-spacing: -.03em; line-height: 1; white-space: nowrap; } .ds-time small { display: block; font-size: 11px; font-weight: 600; color: #5c6b7d; letter-spacing: .02em; margin-top: 5px; } .ds-zone { background: var(--z, #5c6b7d); } .ds-main { padding: 10px 10px 10px 11px; min-width: 0; } .ds-sport { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--zt, #3f5064); } .ds-sport .ds-ic { width: 15px; height: 15px; } .ds-badge { display: inline-block; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 999px; background: #f6f8fb; color: #3f5064; letter-spacing: .04em; text-transform: none; } .ds-badge-live { background: #ffc315; color: #051c2c; } .ds-badge-next { background: #24a75b; color: #fff; } .ds-match { font-weight: 600; font-size: 15px; margin: 3px 0 2px; line-height: 1.25; overflow-wrap: break-word; } .ds-me { font-weight: 800; white-space: nowrap; } .ds-vs { color: #5c6b7d; font-weight: 500; font-size: 12px; margin: 0 5px; text-transform: uppercase; } .ds-meta { font-size: 12.5px; color: #5c6b7d; display: flex; flex-wrap: wrap; gap: 2px 8px; align-items: center; } .ds-meta a { color: #3f5064; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; } .ds-meta a:hover { color: #1f40e6; } .ds-plate { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; background: #051c2c; color: #fff; text-decoration: none; font-weight: 800; font-size: 22px; letter-spacing: -.02em; line-height: 1; transition: background .18s ease-out; } .ds-plate small { font-size: 11px; font-weight: 700; letter-spacing: .08em; color: rgba(255,255,255,.72); } .ds-plate .ds-ic { width: 20px; height: 20px; } .ds-plate:hover { background: #1f40e6; } .ds-plate:focus-visible { outline: 3px solid #1f40e6; outline-offset: -3px; } .ds-ev.ds-past { opacity: .5; } .ds-ev.ds-live { box-shadow: 0 0 0 2.5px #ffc315, 0 10px 24px rgba(0,0,0,.18); transform: translateY(-2px); animation: ds-ring 2s ease-out infinite; } .ds-ev.ds-live .ds-time { color: #e93a3f; } @keyframes ds-ring { 0% { box-shadow: 0 0 0 2.5px #ffc315, 0 10px 24px rgba(0,0,0,.18); } 50% { box-shadow: 0 0 0 6px rgba(255,195,21,.45), 0 10px 24px rgba(0,0,0,.18); } 100% { box-shadow: 0 0 0 2.5px #ffc315, 0 10px 24px rgba(0,0,0,.18); } } .ds-ev.ds-next { box-shadow: 0 0 0 2px #24a75b, 0 2px 8px rgba(0,0,0,.08); } @media (prefers-reduced-motion: reduce) { .ds-ev { transition: none; animation: none; } }"
+    },
+    {
+      "name": "Default Button",
+      "kind": "button",
+      "refersTo": "button",
+      "description": "White capsule with a Line border, Ink text and an optional icon; hover tints to Card 2, press drops 1px.",
+      "html": "<a class=\"ds-btn\" href=\"#\"><svg class=\"ds-ic\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 21s-6-5.4-6-11a6 6 0 0 1 12 0c0 5.6-6 11-6 11z\"/><circle cx=\"12\" cy=\"10\" r=\"2\"/></svg> Miesta</a>",
+      "css": ".ds-btn { background: #fff; border: 1.5px solid #d9e0e8; border-radius: 999px; padding: 9px 16px; font-weight: 700; font-size: 14px; color: #051c2c; text-decoration: none; white-space: nowrap; display: inline-flex; align-items: center; gap: 7px; cursor: pointer; transition: background .18s ease-out, transform .18s ease-out; font-family: 'Work Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-btn .ds-ic { width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; } .ds-btn:hover { background: #f6f8fb; } .ds-btn:active { transform: translateY(1px); } .ds-btn:focus-visible { outline: 3px solid #1f40e6; outline-offset: 2px; }"
+    },
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Gate Blue capsule, white text; one per screen (Celý rozpis in the sticky bar). Hover deepens to Gate Blue Pressed.",
+      "html": "<a class=\"ds-btn-primary\" href=\"#\">Celý rozpis</a>",
+      "css": ".ds-btn-primary { background: #1f40e6; border: 1.5px solid #1f40e6; border-radius: 999px; padding: 9px 16px; font-weight: 700; font-size: 14px; color: #fff; text-decoration: none; white-space: nowrap; display: inline-flex; align-items: center; gap: 7px; cursor: pointer; transition: background .18s ease-out, transform .18s ease-out; font-family: 'Work Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-btn-primary:hover { background: #1836c4; } .ds-btn-primary:active { transform: translateY(1px); } .ds-btn-primary:focus-visible { outline: 3px solid #1f40e6; outline-offset: 2px; }"
+    },
+    {
+      "name": "Search Field",
+      "kind": "input",
+      "refersTo": "search-input",
+      "description": "University search: white 12px plate with a Line stroke and an inset search icon; focus turns the stroke Gate Blue with an 18% blue halo.",
+      "html": "<div class=\"ds-search-wrap\"><svg class=\"ds-ic\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"7\"/><path d=\"M20 20l-3.5-3.5\"/></svg><input class=\"ds-search\" type=\"search\" placeholder=\"Hľadať univerzitu alebo krajinu\" aria-label=\"Hľadať univerzitu alebo krajinu\"></div>",
+      "css": ".ds-search-wrap { position: relative; margin: 0; font-family: 'Work Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-search-wrap .ds-ic { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #5c6b7d; width: 18px; height: 18px; pointer-events: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; } .ds-search { width: 100%; box-sizing: border-box; padding: 13px 14px 13px 42px; font: inherit; font-size: 16px; border: 1.5px solid #d9e0e8; border-radius: 12px; background: #fff; color: #051c2c; outline: none; transition: border-color .18s ease-out, box-shadow .18s ease-out; } .ds-search::placeholder { color: #5c6b7d; } .ds-search:focus { border-color: #1f40e6; box-shadow: 0 0 0 3px rgba(31,64,230,.18); }"
+    },
+    {
+      "name": "School Button",
+      "kind": "custom",
+      "refersTo": "school-button",
+      "description": "Full-width white plate in the picker: name left, uppercase country right; hover lifts 1px; the remembered university carries the static yellow Home ring.",
+      "html": "<ul class=\"ds-school-list\"><li><button class=\"ds-school-btn ds-home\" type=\"button\"><span class=\"ds-name\">Comenius University Bratislava</span><span class=\"ds-country\">Slovakia</span></button></li><li><button class=\"ds-school-btn\" type=\"button\"><span class=\"ds-name\">Slovak University of Technology in Bratislava</span><span class=\"ds-country\">Slovakia</span></button></li></ul>",
+      "css": ".ds-school-list { list-style: none; margin: 0; padding: 12px 16px; background: #eef1f5; font-family: 'Work Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-school-list li { margin: 0 0 6px; } .ds-school-btn { width: 100%; text-align: left; background: #fff; border: 0; border-radius: 12px; padding: 12px 14px; box-shadow: 0 2px 8px rgba(0,0,0,.08); display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; font: inherit; color: #051c2c; cursor: pointer; transition: transform .18s ease-out, box-shadow .18s ease-out; } .ds-school-btn:hover { box-shadow: 0 10px 24px rgba(0,0,0,.18); transform: translateY(-1px); } .ds-school-btn .ds-name { font-weight: 700; font-size: 15px; line-height: 1.25; } .ds-school-btn .ds-country { color: #5c6b7d; font-size: 12px; font-weight: 600; white-space: nowrap; text-transform: uppercase; letter-spacing: .06em; } .ds-school-btn.ds-home { box-shadow: 0 0 0 2px #ffc315, 0 2px 8px rgba(0,0,0,.08); } .ds-school-btn:focus-visible { outline: 3px solid #1f40e6; outline-offset: 2px; }"
+    },
+    {
+      "name": "Venue Card",
+      "kind": "card",
+      "refersTo": "venue-card",
+      "description": "White plate with the venue name, address and sports, and a 64px navy map plate at the right (pin over MAPA); hover Gate Blue.",
+      "html": "<div class=\"ds-venue\"><div class=\"ds-vbody\"><div class=\"ds-vname\">Dom športu</div><div class=\"ds-addr\">Junácka 8, Bratislava</div><div class=\"ds-vsports\">Futsal, Hádzaná, Basketbal · Streda: 12 zápasov</div></div><a class=\"ds-vplate\" href=\"#\"><svg class=\"ds-ic\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 21s-6-5.4-6-11a6 6 0 0 1 12 0c0 5.6-6 11-6 11z\"/><circle cx=\"12\" cy=\"10\" r=\"2\"/></svg>MAPA</a></div>",
+      "css": ".ds-venue { margin: 0; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.08); display: grid; grid-template-columns: minmax(0, 1fr) 64px; overflow: hidden; color: #051c2c; font-family: 'Work Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-vbody { padding: 12px 14px; min-width: 0; } .ds-vname { font-weight: 800; font-size: 16px; letter-spacing: -.01em; line-height: 1.2; } .ds-addr { color: #3f5064; font-size: 13px; margin-top: 2px; } .ds-vsports { font-size: 12.5px; color: #5c6b7d; margin-top: 6px; } .ds-vplate { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; background: #051c2c; color: #fff; text-decoration: none; font-size: 11px; font-weight: 700; letter-spacing: .1em; transition: background .18s ease-out; } .ds-vplate .ds-ic { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; } .ds-vplate:hover { background: #1f40e6; } .ds-vplate:focus-visible { outline: 3px solid #1f40e6; outline-offset: -3px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Hall Signboard",
+    "overview": "Every screen is a wayfinding sign on the way to a hall. The page is read while walking between Bratislava venues, on a phone, often outdoors or in a loud hall, by someone who has seconds to decide where to go next. So the system borrows the grammar of stadium signage: a deep navy signboard shell with white type for everything that names a destination (header, university name, day gates, hall plates), a flat light ground for the rows, and the WIUC stripe palette as the colour of the sport zones, never as decoration. Big tabular numerals (time, day number, hall number) are the loudest thing on the page; prose is small and grey and stays out of the way.\n\nThe voice is fast, legible while walking, tournament-coloured, and never official-looking. It is an unofficial helper and must not read as the organiser's site: it uses the organiser's colour language and stripe motif, not their logo or photography. Density is high but every row has the same anatomy, so the eye learns the column positions once and then scans top to bottom like a departure board. The one moving thing on the page is the live row, which lifts and glows yellow; everything else is still.\n\nConfirmed rejections: no same-size white cards with a coloured left border and a small time label (the category default the build refuses); no entrance choreography; no glyph or icon-font icons; no photography.",
+    "keyCharacteristics": [
+      "Navy signboard surfaces carry white type only; the light grey ground carries lifted white rows.",
+      "Colour is content: a sport's zone colour appears as the row's full-height zone band, the capsule dot and the sport line, never as a card background.",
+      "Numbers lead the type ramp: times and day numbers at 24 to 28px, hall numbers at 22 to 26px, all weight 800, tabular, tight.",
+      "One glowing state: only live rows lift with a pulsing Stripe Yellow ring; past rows dim to 50%.",
+      "Capsules for filters and actions, plates for destinations: 999px pills on the ground, square navy plates inside 12px rows.",
+      "Light by day, navy-black by night: both schemes are required and both are tokenised on `:root`."
+    ],
+    "rules": [
+      {
+        "name": "The Zone Band Rule",
+        "body": "A sport's colour is content, not chrome. It appears in exactly three places: the 8px full-height zone band inside the row, the 10px dot in the sport capsule, and the sport line's text and icon. It never fills a card, a button or a badge, and it never colours body text.",
+        "section": "colors"
+      },
+      {
+        "name": "The Readable Zone Rule",
+        "body": "Light zone colours (yellow, orange, lime, green, cyan, pink, red) are too pale for 12px text on white, so each carries a darker label colour (`t` in the sport map, set as `--zt`) used for the sport line in the light scheme. At night the sport line switches to the raw zone colour (`--z`), which reads on navy. Dark zones (purple, floorball blue, Gate Blue, navy) use themselves in both schemes.",
+        "section": "colors"
+      },
+      {
+        "name": "The Signboard Rule",
+        "body": "Navy surfaces carry white type only (Sign Ink at full strength, Sign Muted for the second line). Controls on a navy surface are transparent or 12% white with a 35 to 50% white border; the selected one turns Gate Blue. Nothing on navy is grey.",
+        "section": "colors"
+      },
+      {
+        "name": "The Status Trio Rule",
+        "body": "Three stripe colours double as status: Stripe Yellow means \"now / yours\" (live row, today dot, remembered home school), Stripe Green means \"up next\", Stripe Red means \"the live time and a score\". No fourth status colour; everything else is Muted.",
+        "section": "colors"
+      },
+      {
+        "name": "The Night Flip Rule",
+        "body": "The dark scheme flips the neutrals (ground `#07131d`, card `#0f2232`, card-2 `#142b3e`, line `#243648`, ink `#eef3f8`, ink-2 `#c3cedb`, muted `#93a3b5`), deepens the signboard to `#020d16`, moves Live Ink to Stripe Yellow and the focus ring to Signal Cyan. The stripe palette, Gate Blue and the two badge colours do not change. The flip follows `prefers-color-scheme` and can be forced with `data-theme` on `<html>`.",
+        "section": "colors"
+      },
+      {
+        "name": "The Big Number Rule",
+        "body": "On a mobile screen the match time and the day number (24px) are the largest type, ahead of the destination and the hall number (both 22px); only the desktop destination (30px) outranks them. Prose never reaches numeral size: the biggest non-numeric text below the destination is the 17px headline.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tabular Rule",
+        "body": "`font-variant-numeric: tabular-nums` is set on `body` and inherited everywhere, so times, counts and scores line up in columns and do not shift as the minute changes.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tight-Then-Open Rule",
+        "body": "Tracking tightens as size grows (-0.03em on numerals, -0.02em on display, -0.01em on headlines) and opens as size shrinks (0.04 to 0.1em on uppercase labels and captions). Body text stays at normal tracking.",
+        "section": "typography"
+      },
+      {
+        "name": "The Lifted Row Rule",
+        "body": "Rows rest at the Rest shadow and lift only in response to state: live, or a pointer over a school button. Nothing lifts on page load, and nothing else lifts on hover.",
+        "section": "elevation"
+      },
+      {
+        "name": "The One Glow Rule",
+        "body": "Glow means lift plus a pulsing ring, and only a live row has it; when several matches overlap, each live row glows and nothing else does. The next row and the home school share the ring device at rest (2px, static, Rest shadow) but never the lift or the pulse. A pulsing or lifted element that is not a live row is a defect.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Neutral Shadow Rule",
+        "body": "Shadows are black alpha only. Colour sits in rings and bands, never in a shadow.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do put every destination on navy and every list on the ground: header, destination panel, gate strip and hall plates are Navy Signboard with white type; rows and cards are white plates on Ground.",
+      "Do carry a sport's colour as the 8px zone band, the capsule dot and the sport line, with the darker label colour (`--zt`) for light zones in the light scheme and the raw zone colour at night.",
+      "Do set times and day numbers in Numeral (800, 24px, -0.03em, tabular, line-height 1) and hall numbers in the same style at 22px, and keep them ahead of every line of prose.",
+      "Do use the Rest shadow (`0 2px 8px rgba(0,0,0,.08)`) on every plate and the Lift shadow only for the live row and a hovered school button.",
+      "Do reserve Stripe Yellow for \"now / yours\", Stripe Green for \"up next\" and Gate Blue for the single selected or primary control on a screen.",
+      "Do use the two radii only: 12px plates for surfaces, 999px capsules for controls and badges; let plates and bands inside a row stay square and be clipped by the row.",
+      "Do draw icons from the authored 24-unit stroke set (2px round stroke, no fill) at 15, 18, 20 or 22px.",
+      "Do animate only state changes, at 180ms ease-out, and switch everything off under `prefers-reduced-motion`.",
+      "Do separate meta values with a spaced middot (venue · group · count) and never with an em-dash in UI text."
+    ],
+    "donts": [
+      "Don't fill a card, button or badge with a sport's zone colour, or colour body text with it.",
+      "Don't pulse or lift anything that is not a live row; live is the one glowing state.",
+      "Don't put grey text on navy; use Sign Ink or Sign Muted (72% white) only.",
+      "Don't tint a shadow or use a shadow in place of the state rings; shadows are black alpha, rings are colour.",
+      "Don't add borders to rows, cards or plates; the 1.5px Line border belongs to capsules, chips and the search field.",
+      "Don't change the sign row's four-column anatomy between views or days; the full schedule and the university view share the same row.",
+      "Don't introduce a second typeface, italics, a display face, icon fonts or glyph icons, or photography and the organiser's logo.",
+      "Don't add entrance animations, parallax or scroll effects; the page must work on older phones and read instantly."
+    ]
+  }
+}

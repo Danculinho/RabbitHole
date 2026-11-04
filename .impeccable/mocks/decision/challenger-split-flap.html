@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="sk"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;width:390px;height:844px;overflow:hidden;font-family:"Work Sans",sans-serif;background:#1a1a1a;color:#f5f5f5}
+  .top{padding:16px 16px 10px;border-bottom:2px solid #3a3a3a;background:#222}
+  .brand{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#ffb000;font-weight:700}
+  h1{font-size:22px;font-weight:800;margin:6px 0 0;letter-spacing:-.01em;text-transform:uppercase}
+  .days{display:flex;background:#111}
+  .d{flex:1;text-align:center;padding:10px 0;font-size:12px;font-weight:700;color:#888;border-bottom:3px solid #222;text-transform:uppercase}
+  .d.on{color:#ffb000;border-color:#ffb000}
+  .hdr{display:grid;grid-template-columns:62px 1fr 64px;padding:8px 14px;font-size:10px;letter-spacing:.12em;color:#888;text-transform:uppercase;border-bottom:1px solid #333}
+  .row{display:grid;grid-template-columns:62px 1fr 64px;padding:10px 14px;border-bottom:1px solid #2c2c2c;align-items:center}
+  .cell{display:inline-block;background:#0d0d0d;border-radius:3px;padding:3px 5px;font-weight:800;font-size:18px;letter-spacing:.06em;font-variant-numeric:tabular-nums;box-shadow:inset 0 -1px 0 #000,inset 0 1px 0 #333}
+  .m{font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:.02em;line-height:1.3}
+  .w{font-size:11px;color:#aaa;letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+  .hall{text-align:right}
+  .hall .cell{font-size:16px}
+  .row.live .cell{color:#ffb000}
+  .row.live .m{color:#ffb000}
+  .row.past{opacity:.45}
+  .lamp{display:inline-block;width:7px;height:7px;border-radius:50%;background:#ffb000;box-shadow:0 0 8px #ffb000;margin-right:6px;vertical-align:middle}
+  .bar{position:absolute;left:0;right:0;bottom:0;display:flex;gap:8px;padding:10px 16px 18px;background:#1a1a1a;border-top:2px solid #3a3a3a}
+  .btn{flex:1;text-align:center;padding:12px;border-radius:4px;background:#2a2a2a;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.08em}
+  .btn.p{background:#ffb000;color:#111}
+</style></head><body>
+<div class="top"><div class="brand">WIUC 2026 Bratislava · Rozpis</div><h1>Comenius University Bratislava</h1></div>
+<div class="days"><div class="d">St 4.</div><div class="d on">Št 5.</div><div class="d">Pi 6.</div><div class="d">So 7.</div></div>
+<div class="hdr"><span>Čas</span><span>Zápas</span><span style="text-align:right">Hala</span></div>
+<div class="row past"><span class="cell">09:00</span><div><div class="m">Futbal · UK vs Czech Technical Uni</div><div class="w">Mladá Garda · skupina H</div></div><div class="hall"><span class="cell">IH 1</span></div></div>
+<div class="row live"><span class="cell">11:00</span><div><div class="m"><span class="lamp"></span>Futsal · UK vs Holy Spirit Kaslik</div><div class="w">Dom športu · skupina D · prebieha</div></div><div class="hall"><span class="cell">H 1</span></div></div>
+<div class="row"><span class="cell">12:00</span><div><div class="m">Volejbal ženy · UK vs Misr Intl</div><div class="w">Mlynská dolina LF / ŠKP · skupina R</div></div><div class="hall"><span class="cell">H 2</span></div></div>
+<div class="row"><span class="cell">12:45</span><div><div class="m">Tenis · Dzhurdzha vs Betti</div><div class="w">TK Slovan · skupina 1</div></div><div class="hall"><span class="cell">K 3</span></div></div>
+<div class="row"><span class="cell">18:20</span><div><div class="m">Basketbal · UK vs Sapienza Roma</div><div class="w">Hala prof. Rovného · skupina A</div></div><div class="hall"><span class="cell">H 1</span></div></div>
+<div class="row"><span class="cell">19:00</span><div><div class="m">Otvárací ceremoniál</div><div class="w">GOPASS Aréna · všetci</div></div><div class="hall"><span class="cell">→</span></div></div>
+<div class="bar"><div class="btn">Miesta</div><div class="btn p">Celý rozpis</div></div>
+</body></html>

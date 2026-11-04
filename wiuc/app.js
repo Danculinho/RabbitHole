@@ -15,29 +15,30 @@
     "tk-inter":     { name: "Tenisový klub Inter Bratislava",       addr: "Trnavská cesta 33" },
     "tk-slovan":    { name: "TK Slovan Bratislava",                 addr: "Odbojárov 3" },
     "kalinciakova": { name: "ZŠ Kalinčiakova, futbalové ihrisko",   addr: "Kalinčiakova 12" },
-    "stu-cas":      { name: "STU Centrum akademického športu (Mladá Garda)", addr: "Račianska 103" },
-    "rovny":        { name: "Hala prof. Rovného, FTVŠ UK",          addr: "Nábr. arm. gen. L. Svobodu 9" },
+    "stu-cas":      { name: "Mladá Garda (STU CAŠ)",                 addr: "Račianska 103" },
+    "rovny":        { name: "Hala prof. Rovného (FTVŠ UK)",         addr: "Nábr. arm. gen. L. Svobodu 9" },
     "mlynska-lf":   { name: "Mlynská dolina LF / ŠKP",              addr: "Staré Grunty 36" },
-    "mlynska-prif": { name: "Mlynská dolina PRIF / MATFYZ (telocvičňa FMFI UK)", addr: "Staré Grunty 36" },
+    "mlynska-prif": { name: "Mlynská dolina PRIF / MATFYZ",         addr: "Staré Grunty 36" },
     "pionierska":   { name: "Hala Pionierska",                      addr: "Pionierska 16" },
     "plavaren":     { name: "Plaváreň Pasienky",                    addr: "Junácka 4" }
   };
 
+  // zone colour c (stripe palette), optional darker text colour t for light zones
   var SPORTS = {
-    basketball:  { sk: "Basketbal",    en: "Basketball",   c: "#e8731a" },
-    floorball:   { sk: "Florbal",      en: "Floorball",    c: "#3b6fd6" },
-    football:    { sk: "Futbal",       en: "Football",     c: "#2e9e44" },
-    futsal:      { sk: "Futsal",       en: "Futsal",       c: "#c9a227" },
-    handball:    { sk: "Hádzaná",      en: "Handball",     c: "#8e44ad" },
-    rugby:       { sk: "Rugby 7s",     en: "Rugby 7s",     c: "#6d4c41" },
-    volleyball:  { sk: "Volejbal",     en: "Volleyball",   c: "#d6232b" },
-    tennis:      { sk: "Tenis",        en: "Tennis",       c: "#2a9d8f" },
-    padel:       { sk: "Padel",        en: "Padel",        c: "#0d7a4f" },
-    badminton:   { sk: "Bedminton",    en: "Badminton",    c: "#6b7280" },
-    tabletennis: { sk: "Stolný tenis", en: "Table tennis", c: "#b23a48" },
-    swimming:    { sk: "Plávanie",     en: "Swimming",     c: "#0ea5e9" },
-    athletics:   { sk: "Atletika",     en: "Athletics",    c: "#16a34a" },
-    ceremony:    { sk: "Ceremoniál",   en: "Ceremony",     c: "#0f2342" }
+    football:    { sk: "Futbal",       en: "Football",     c: "#24a75b", t: "#1b7d44" },
+    futsal:      { sk: "Futsal",       en: "Futsal",       c: "#ffc315", t: "#8a6a00" },
+    basketball:  { sk: "Basketbal",    en: "Basketball",   c: "#ee792c", t: "#b4530f" },
+    volleyball:  { sk: "Volejbal",     en: "Volleyball",   c: "#e93a3f", t: "#c0232a" },
+    handball:    { sk: "Hádzaná",      en: "Handball",     c: "#674381" },
+    rugby:       { sk: "Rugby 7s",     en: "Rugby 7s",     c: "#ee1953", t: "#c20f42" },
+    floorball:   { sk: "Florbal",      en: "Floorball",    c: "#0e5ea5" },
+    tennis:      { sk: "Tenis",        en: "Tennis",       c: "#008fb3", t: "#007392" },
+    padel:       { sk: "Padel",        en: "Padel",        c: "#88b54e", t: "#4f7a1d" },
+    badminton:   { sk: "Bedminton",    en: "Badminton",    c: "#1f40e6" },
+    tabletennis: { sk: "Stolný tenis", en: "Table tennis", c: "#c2185b" },
+    swimming:    { sk: "Plávanie",     en: "Swimming",     c: "#22b8f0", t: "#0b7fa8" },
+    athletics:   { sk: "Atletika",     en: "Athletics",    c: "#c98a00", t: "#8a5f00" },
+    ceremony:    { sk: "Ceremoniál",   en: "Ceremony",     c: "#051c2c" }
   };
 
   var DAYS = [
@@ -154,6 +155,10 @@
     sport: store.get("wiuc.sport") || "all"
   };
   function t(k) { return (I18N[state.lang] && I18N[state.lang][k]) || I18N.sk[k] || k; }
+  function nSports(n) {
+    if (state.lang !== "sk") return n + " " + (n === 1 ? "sport" : "sports");
+    return n + " " + (n === 1 ? "šport" : n >= 2 && n <= 4 ? "športy" : "športov");
+  }
   function nMatches(n) {
     if (state.lang !== "sk") return n + " " + (n === 1 ? "match" : "matches");
     return n + " " + (n === 1 ? "zápas" : n >= 2 && n <= 4 ? "zápasy" : "zápasov");
@@ -166,12 +171,17 @@
   var SCHOOLS = {};
   DATA.schools.forEach(function (s) { SCHOOLS[s.id] = s; });
 
+  var NOW_OVERRIDE = (function () {
+    var m = /[?&]now=(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/.exec(location.search);
+    return m ? { d: m[1], t: m[2] } : null;
+  })();
   function todayISO() {
+    if (NOW_OVERRIDE) return NOW_OVERRIDE.d;
     var n = new Date();
     return n.getFullYear() + "-" + pad(n.getMonth() + 1) + "-" + pad(n.getDate());
   }
   function pad(n) { return (n < 10 ? "0" : "") + n; }
-  function nowHM() { var n = new Date(); return pad(n.getHours()) + ":" + pad(n.getMinutes()); }
+  function nowHM() { if (NOW_OVERRIDE) return NOW_OVERRIDE.t; var n = new Date(); return pad(n.getHours()) + ":" + pad(n.getMinutes()); }
   function defaultDay() {
     var td = todayISO();
     if (DAYS.some(function (d) { return d.d === td; })) return td;
@@ -283,6 +293,7 @@
     var r = route();
     document.documentElement.lang = state.lang;
     document.getElementById("langBtn").textContent = state.lang === "sk" ? "EN" : "SK";
+    document.getElementById("brandSub").textContent = state.lang === "sk" ? "Neoficiálny pomocník · 4. až 8. 11." : "Unofficial helper · 4 to 8 Nov";
     if (r.view === "pick") renderPick();
     else if (r.view === "all") renderAll();
     else if (r.view === "venues") renderVenues();
@@ -296,18 +307,52 @@
       h`${t("source")} ${DATA.generated || ""}. <a href="${SOURCE_URL}" target="_blank" rel="noopener">Google Drive</a> · <a href="${OFFICIAL_URL}" target="_blank" rel="noopener">${t("official")}</a>. ${t("results")}`;
   }
 
+  // ------------------------------------------------------------ icons (authored SVG, one stroke weight)
+  var ICON = {
+    pin: '<path d="M12 21s-6-5.4-6-11a6 6 0 0 1 12 0c0 5.6-6 11-6 11z"/><circle cx="12" cy="10" r="2"/>',
+    arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+    search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
+    doc: '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 13h6M9 17h6"/>',
+    back: '<path d="M15 6l-6 6 6 6"/>',
+    chev: '<path d="M9 6l6 6-6 6"/>',
+    flag: '<path d="M5 21V4M5 4h12l-2 4 2 4H5"/>',
+    football: '<circle cx="12" cy="12" r="9"/><path d="M12 7.5l4.3 3.1-1.6 5h-5.4l-1.6-5z"/>',
+    futsal: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/>',
+    basketball: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3v18M6 5.5c3 3 3 10 0 13M18 5.5c-3 3-3 10 0 13"/>',
+    volleyball: '<circle cx="12" cy="12" r="9"/><path d="M12 3c-4 4-4 10 0 18M4.5 8.5c5 .5 10 3 14.5 8M4.5 15.5c5-.5 10-3 14.5-8"/>',
+    handball: '<circle cx="12" cy="12" r="9"/><path d="M8 8l8 8M16 8l-8 8"/>',
+    rugby: '<path d="M4 20C4 10 14 4 20 4c0 6-6 16-16 16z"/><path d="M9 15l6-6M10 12l2 2M12 10l2 2"/>',
+    floorball: '<circle cx="12" cy="12" r="9"/><path d="M9 9h.01M15 9h.01M9 15h.01M15 15h.01M12 12h.01" stroke-width="3"/>',
+    tennis: '<circle cx="10" cy="9" r="6"/><path d="M14.5 13.5L20 19M7 6.5c2 1 4 3.5 5 6.5"/>',
+    padel: '<rect x="5" y="3" width="10" height="12" rx="5"/><path d="M10 15v6M8 8h.01M12 8h.01M10 11h.01" stroke-width="3"/>',
+    badminton: '<path d="M14 4l6 6-8 8-4-4z"/><circle cx="8" cy="16" r="2"/><path d="M6 18l-2 2"/>',
+    tabletennis: '<circle cx="10" cy="10" r="6"/><path d="M14 14l5 5"/><circle cx="19" cy="7" r="1.5"/>',
+    swimming: '<path d="M3 15c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 19c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/><circle cx="16" cy="7" r="2"/><path d="M4 11l5-3 4 3"/>',
+    athletics: '<rect x="3" y="7" width="18" height="10" rx="5"/><rect x="7" y="10" width="10" height="4" rx="2"/>',
+    ceremony: '<path d="M5 21V4M5 4h12l-2 4 2 4H5"/>'
+  };
+  function icon(name, cls) {
+    return '<svg class="ic ' + (cls || "") + '" viewBox="0 0 24 24" aria-hidden="true">' + (ICON[name] || "") + '</svg>';
+  }
+  function unitWord(ev) {
+    if (!ev.court) return "";
+    var w = (ev.sport === "tennis" || ev.sport === "padel") ? t("court") :
+            (ev.sport === "football" || ev.sport === "rugby") ? t("pitch") : t("hall");
+    return w.toUpperCase();
+  }
+
   // ---- school picker
   function renderPick() {
     var q = "";
     app.innerHTML = h`
-      <h1>${t("pickTitle")}</h1>
-      <p class="lead">${t("pickLead")}</p>
-      <input class="search" id="q" type="search" placeholder="${t("search")}" autocomplete="off">
+      <div class="pick-head"><div class="wrap"><h1>${t("pickTitle")}</h1><p class="lead">${t("pickLead")}</p></div></div>
+      <div class="wrap">
+      <div class="search-wrap">${raw(icon("search"))}<input class="search" id="q" type="search" placeholder="${t("search")}" autocomplete="off" aria-label="${t("search")}"></div>
       <div id="schoolList"></div>
       <div class="quick-links">
         <a class="btn" href="#/all">${t("allMatches")}</a>
-        <a class="btn" href="#/venues">${t("venues")}</a>
-      </div>`;
+        <a class="btn" href="#/venues">${raw(icon("pin"))} ${t("venues")}</a>
+      </div></div>`;
     var input = document.getElementById("q");
     function draw() {
       var ql = q.trim().toLowerCase();
@@ -334,21 +379,22 @@
     draw();
   }
 
-  // ---- shared: day tabs + sport chips + event list
+  // ---- shared: gate strip (days) + capsule filters (sports) + sign rows
   function dayTabs(countFn) {
-    return h`<div class="tabs" role="tablist">${raw(DAYS.map(function (d) {
+    return h`<div class="gates"><div class="gates-inner" role="tablist">${raw(DAYS.map(function (d) {
       var n = countFn ? countFn(d.d) : null;
       var isToday = d.d === todayISO();
-      return h`<button class="tab${d.d === state.day ? " on" : ""}" data-day="${d.d}" role="tab" type="button">
-        <span>${state.lang === "sk" ? d.skShort : d.en}${isToday ? " · " + t("today") : ""}</span><small>${d.num}</small>${n != null ? raw('<span class="n">' + n + '</span>') : ""}</button>`;
-    }).join(""))}</div>`;
+      var cls = "gate" + (d.d === state.day ? " on" : "") + (isToday ? " today" : "");
+      return h`<button class="${cls}" data-day="${d.d}" role="tab" aria-selected="${d.d === state.day}" type="button">
+        <span>${state.lang === "sk" ? d.sk : d.en}</span><b>${d.num.split(".")[0]}.</b><span class="n">${n != null ? n : ""}</span></button>`;
+    }).join(""))}</div></div>`;
   }
   function sportChips(sports, counts) {
     var all = h`<button class="chip${state.sport === "all" ? " on" : ""}" data-sport="all" type="button">${state.lang === "sk" ? "Všetko" : "All"}</button>`;
     return h`<div class="chips">${raw(all)}${raw(sports.map(function (s) {
       var c = SPORTS[s] ? SPORTS[s].c : "#888";
       var n = counts && counts[s] ? h`<span class="cnt">${counts[s]}</span>` : "";
-      return h`<button class="chip${state.sport === s ? " on" : ""}" data-sport="${s}" type="button" style="--c:${c}"><span class="dot"></span>${sportName(s)}${raw(n)}</button>`;
+      return h`<button class="chip${state.sport === s ? " on" : ""}" data-sport="${s}" type="button" style="--z:${c}"><span class="dot"></span>${sportName(s)}${raw(n)}</button>`;
     }).join(""))}</div>`;
   }
   // one delegated handler for day tabs and sport chips (registered once at boot)
@@ -367,14 +413,13 @@
     var st = statusOf(ev);
     if (markNext && !st) st = "next";
     var A = sideLabel(ev.a, sid, ev), B = sideLabel(ev.b, sid, ev);
-    var c = SPORTS[ev.sport] ? SPORTS[ev.sport].c : "#888";
+    var sp = SPORTS[ev.sport] || { c: "#888" };
     var badge = st === "live" ? h`<span class="badge live">${t("live")}</span>` :
                 st === "next" ? h`<span class="badge next">${t("next")}</span>` : "";
     var cat = catLabel(ev.cat);
     var meta = [];
     var v = VENUES[ev.venue];
-    if (v) meta.push(h`<a href="${mapsUrl(ev.venue)}" target="_blank" rel="noopener">📍 ${v.name}</a>`);
-    var cl = courtLabel(ev); if (cl) meta.push(esc(cl));
+    if (v) meta.push(h`<a href="${mapsUrl(ev.venue)}" target="_blank" rel="noopener">${raw(icon("pin"))}${v.name}</a>`);
     if (ev.pool && !ev.extra) meta.push(esc(t("group") + " " + ev.pool));
     if (ev.stage && !ev.extra) meta.push(esc(ev.stage));
     var match;
@@ -386,20 +431,25 @@
     } else {
       function side(S) {
         var s = h`<span class="${S.me ? "me" : ""}">${S.name || "?"}</span>`;
-        if (S.extra) s += h` <span class="player">(${S.extra})</span>`;
+        if (S.extra) s += h` <span class="player squad">(${S.extra})</span>`;
         if (S.player) s += h` <span class="player">${S.player}</span>`;
         return s;
       }
       var res = (ev.resA !== "" && ev.resB !== "") ? h`<span class="res">${ev.resA}:${ev.resB}</span>` : "";
-      match = h`<div class="match">${raw(side(A))}<span class="vs">vs</span>${raw(side(B))}${raw(res)}</div>`;
+      match = h`<div class="match">${raw(side(A))} <span class="vs">vs</span> ${raw(side(B))}${raw(res)}</div>`;
     }
-    return h`<li class="ev ${st}" style="--c:${c}">
+    var plate = ev.court
+      ? h`<a class="plate" href="${mapsUrl(ev.venue)}" target="_blank" rel="noopener" aria-label="${unitWord(ev)} ${ev.court}, ${t("map")}">${ev.court}<small>${unitWord(ev)}</small></a>`
+      : h`<a class="plate" href="${mapsUrl(ev.venue)}" target="_blank" rel="noopener" aria-label="${t("map")}">${raw(icon("arrow"))}<small>${t("map").toUpperCase()}</small></a>`;
+    return h`<li class="ev ${st}" style="--z:${sp.c};--zt:${sp.t || sp.c}">
       <div class="time">${ev.time}<small>${cat}</small></div>
+      <div class="zone" style="background:${sp.c}"></div>
       <div class="main">
-        <div class="sport">${sportName(ev.sport)} ${raw(badge)}</div>
+        <div class="sport">${raw(icon(ev.sport))}${sportName(ev.sport)} ${raw(badge)}</div>
         ${raw(match)}
         <div class="meta">${raw(meta.join(" · "))}</div>
-      </div></li>`;
+      </div>
+      ${raw(plate)}</li>`;
   }
 
   function eventList(list, sid) {
@@ -411,12 +461,18 @@
     return h`<ul class="events">${raw(list.map(function (e, i) { return eventCard(e, sid, i === nextIdx); }).join(""))}</ul>`;
   }
 
+  function destPanel(title, lead, backHref, backLabel) {
+    return h`<div class="dest"><div class="dest-inner">
+      <div><h1>${title}</h1><p class="lead">${lead}</p></div>
+      <a class="btn" href="${backHref}">${backLabel}</a>
+    </div></div>`;
+  }
+
   // ---- school view
   function renderSchool(sid) {
     var s = SCHOOLS[sid];
     var sports = schoolSports(sid);
     var mine = EVENTS.filter(function (e) { return involves(e, sid) || e.all; });
-    // knockout placeholder events: no school on either side, in a sport+cat the school plays
     var myCats = {};
     mine.forEach(function (e) { myCats[e.sport + "/" + e.cat] = true; });
     var playoff = EVENTS.filter(function (e) {
@@ -445,27 +501,27 @@
         poList.forEach(function (e) { var k = e.sport + "/" + e.cat; (groups[k] = groups[k] || []).push(e); });
         body += Object.keys(groups).map(function (k) {
           var g = groups[k], first = g[0], v = VENUES[first.venue];
-          return h`<details class="playoff"><summary>${t("playoff")}: ${sportName(first.sport)} ${catLabel(first.cat)} · ${nMatches(g.length)}, ${v ? v.name : ""} ${state.lang === "sk" ? "od" : "from"} ${first.time}</summary>
+          return h`<details class="playoff"><summary>${raw(icon("chev"))}${t("playoff")}: ${sportName(first.sport)} ${catLabel(first.cat)} · ${nMatches(g.length)}, ${v ? v.name : ""} ${state.lang === "sk" ? "od" : "from"} ${first.time}</summary>
             <p class="day-note">${t("playoffNote")}</p>${raw(eventList(g, sid))}</details>`;
         }).join("");
       }
     }
 
-    var pdfs = PDFS;
-
+    var todayN = mine.filter(function (e) { return e.day === state.day; }).length;
+    var lead = s.country + " · " + nSports(sports.length) + " · " + nMatches(todayN);
     app.innerHTML = h`
-      <div class="school-head">
-        <div><h1>${s.name}</h1><div class="country">${s.country} · ${t("sportsOf")}: ${sports.map(sportName).join(", ")}</div></div>
-        <a class="btn" href="#/pick">${t("change")}</a>
-      </div>
+      ${raw(destPanel(s.name, lead, "#/pick", t("change")))}
       ${raw(dayTabs(dayCount))}
+      <div class="wrap">
       ${raw(sportChips(sports, sportCounts))}
       <div id="list">${raw(body)}</div>
-      ${pdfs.length ? raw(h`<h2>${t("pdfTitle")}</h2><p class="day-note">${t("pdfLead")}</p><ul class="pdf-list">${raw(pdfs.map(function (p) {
-        return h`<li><a href="${p.url}" target="_blank" rel="noopener">${state.lang === "sk" ? p.sk : p.en}</a></li>`; }).join(""))}</ul>`) : ""}
+      <h2>${t("pdfTitle")}</h2><p class="day-note">${t("pdfLead")}</p>
+      <ul class="pdf-list">${raw(PDFS.map(function (p) {
+        return h`<li><a href="${p.url}" target="_blank" rel="noopener">${raw(icon("doc"))}${state.lang === "sk" ? p.sk : p.en}</a></li>`; }).join(""))}</ul>
+      </div>
       <div class="sticky-bar">
-        <a class="btn" href="#/venues">📍 ${t("venues")}</a>
-        <a class="btn" href="#/all">${t("allMatches")}</a>
+        <a class="btn" href="#/venues">${raw(icon("pin"))} ${t("venues")}</a>
+        <a class="btn primary" href="#/all">${t("allMatches")}</a>
       </div>`;
   }
 
@@ -476,19 +532,17 @@
     var counts = {};
     dayEvents.forEach(function (e) { counts[e.sport] = (counts[e.sport] || 0) + 1; });
     var list = dayEvents.filter(function (e) { return state.sport === "all" || e.sport === state.sport; });
-    // group by venue for readability
     var byVenue = {};
     list.forEach(function (e) { var k = e.venue || "?"; (byVenue[k] = byVenue[k] || []).push(e); });
     var body = Object.keys(byVenue).map(function (k) {
       var v = VENUES[k];
-      return h`<h2>${v ? v.name : "?"} <small>(${byVenue[k].length})</small></h2>${raw(eventList(byVenue[k], state.school))}`;
+      return h`<h2>${v ? v.name : "?"} <small>(${nMatches(byVenue[k].length)})</small></h2>${raw(eventList(byVenue[k], state.school))}`;
     }).join("");
     app.innerHTML = h`
-      <div class="school-head"><div><h1>${t("allMatches")}</h1><div class="country">${t("allLead")}</div></div>
-        <a class="btn" href="#/${state.school ? "s/" + state.school : "pick"}">${state.school ? t("mine") : t("back")}</a></div>
+      ${raw(destPanel(t("allMatches"), t("allLead"), "#/" + (state.school ? "s/" + state.school : "pick"), state.school ? t("mine") : t("back")))}
       ${raw(dayTabs(function (d) { return EVENTS.filter(function (e) { return e.day === d && !e.extra; }).length; }))}
-      ${raw(sportChips(sports, counts))}
-      ${raw(body || h`<p class="empty">${t("noEvents")}</p>`)}`;
+      <div class="wrap">${raw(sportChips(sports, counts))}
+      ${raw(body || h`<p class="empty">${t("noEvents")}</p>`)}</div>`;
   }
 
   // ---- venues
@@ -499,16 +553,17 @@
       EVENTS.forEach(function (e) { if (e.venue === k) sports[e.sport] = true; });
       var todayN = EVENTS.filter(function (e) { return e.venue === k && e.day === state.day; }).length;
       return h`<div class="venue">
-        <div class="vname">${v.name}</div>
-        <div class="addr">${v.addr}, Bratislava</div>
-        <div class="vsports">${t("playsHere")}: ${Object.keys(sports).map(sportName).join(", ")}${todayN ? " · " + dayName(state.day) + ": " + nMatches(todayN) : ""}</div>
-        <div class="vlinks"><a class="btn" href="${mapsUrl(k)}" target="_blank" rel="noopener">📍 ${t("map")}</a></div>
+        <div class="vbody">
+          <div class="vname">${v.name}</div>
+          <div class="addr">${v.addr}, Bratislava</div>
+          <div class="vsports">${Object.keys(sports).map(sportName).join(", ")}${todayN ? " · " + dayName(state.day) + ": " + nMatches(todayN) : ""}</div>
+        </div>
+        <a class="plate" href="${mapsUrl(k)}" target="_blank" rel="noopener" aria-label="${v.name}, ${t("map")}">${raw(icon("pin"))}${t("map").toUpperCase()}</a>
       </div>`;
     }).join("");
     app.innerHTML = h`
-      <div class="school-head"><div><h1>${t("venues")}</h1><div class="country">${t("venuesLead")}</div></div>
-        <a class="btn" href="#/${state.school ? "s/" + state.school : "pick"}">${state.school ? t("mine") : t("back")}</a></div>
-      ${raw(body)}`;
+      ${raw(destPanel(t("venues"), t("venuesLead"), "#/" + (state.school ? "s/" + state.school : "pick"), state.school ? t("mine") : t("back")))}
+      <div class="wrap" style="padding-top:12px">${raw(body)}</div>`;
   }
 
   // ------------------------------------------------------------ boot
