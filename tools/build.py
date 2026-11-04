@@ -287,13 +287,26 @@ def parse_team(path, sport, sch, events):
             if re.match(r"^\d+$", a_cell):      # only a game number, no team
                 game, a_cell = a_cell, ""
             after = [v for i, v in nonempty[pos + 1:]]
+            raw_after = [row[i] for i, _ in nonempty[pos + 1:]]
             b_cell = after[0] if after else ""
-            pool, res = "", []
-            for v in after[1:]:
+            pool, res, sets, res_was_date = "", [], [], False
+            for v, rv in zip(after[1:], raw_after[1:]):
+                if isinstance(rv, datetime.datetime):      # "2-1" typed into the sheet became a date
+                    v = f"{rv.month}-{rv.day}"
+                    res_was_date = res_was_date or not res
                 if re.match(r"^(men|women|mixed)\b", v.lower()):
                     pool = v
                 elif re.match(r"^\d+$", v):
                     res.append(v)
+                elif re.match(r"^\d+\s*[-:]\s*\d+$", v):  # volleyball: match result first, then set scores
+                    a_s, b_s = re.split(r"\s*[-:]\s*", v)
+                    if not res:
+                        res = [a_s, b_s]
+                    else:
+                        sets.append(f"{a_s}-{b_s}")
+            if sets and (res_was_date or not res):   # a result cell turned into a date is ambiguous (d-m or m-d): count the sets
+                won = [int(x.split("-")[0]) > int(x.split("-")[1]) for x in sets]
+                res = [str(sum(won)), str(len(won) - sum(won))]
             if b_cell.lower().startswith(("men", "women")):
                 pool, b_cell = b_cell, ""
             pl = pool.lower()
@@ -315,6 +328,7 @@ def parse_team(path, sport, sch, events):
                 "game": game,
                 "resA": res[0] if len(res) > 0 else "",
                 "resB": res[1] if len(res) > 1 else "",
+                **({"sets": sets} if sets else {}),
             })
 
 

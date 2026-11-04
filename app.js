@@ -231,6 +231,16 @@
       navVenues: "Miesta",
       navPick: "Univerzity",
       navRules: "Pravidlá",
+      navTables: "Tabuľky",
+      tablesTitle: "Tabuľky skupín",
+      tablesLead: "Poradie v skupinách počítané z výsledkov v rozpise. Je orientačné, záväzné je u organizátora.",
+      tablesRules: "Body: futbal, futsal, hádzaná, florbal a rugby 3 za výhru, 1 za remízu; basketbal 2 za výhru, 1 za prehru; volejbal 3 za 2:0, 2 za 2:1, 1 za 1:2.",
+      thTeam: "Univerzita", thP: "Z", thW: "V", thD: "R", thL: "P", thScore: "Skóre", thPts: "Body",
+      thTitle: "Z = zápasy, V = výhry, R = remízy, P = prehry",
+      noTables: "Pre tento šport zatiaľ nie sú skupiny.",
+      group: "Skupina",
+      cal: "Pridať do kalendára",
+      calHint: "Stiahne zápasy vašej univerzity (vybraný šport, všetky dni) s pripomienkou 30 minút vopred.",
       allDaysShort: "Všetky dni",
       navGame: "Hra",
       result: "Výsledok",
@@ -292,6 +302,16 @@
       navVenues: "Venues",
       navPick: "Universities",
       navRules: "Rules",
+      navTables: "Tables",
+      tablesTitle: "Group tables",
+      tablesLead: "Pool standings calculated from the results in the schedule. Indicative only; the organisers' standings are binding.",
+      tablesRules: "Points: football, futsal, handball, floorball and rugby 3 for a win, 1 for a draw; basketball 2 for a win, 1 for a loss; volleyball 3 for 2:0, 2 for 2:1, 1 for 1:2.",
+      thTeam: "University", thP: "P", thW: "W", thD: "D", thL: "L", thScore: "Score", thPts: "Pts",
+      thTitle: "P = played, W = won, D = drawn, L = lost",
+      noTables: "No groups for this sport yet.",
+      group: "Pool",
+      cal: "Add to calendar",
+      calHint: "Downloads your university's matches (selected sport, all days) with a reminder 30 minutes before.",
       allDaysShort: "All days",
       navGame: "Game",
       result: "Result",
@@ -452,6 +472,7 @@
     if (parts[0] === "all") return { view: "all" };
     if (parts[0] === "venues") return { view: "venues" };
     if (parts[0] === "rules") return { view: "rules" };
+    if (parts[0] === "tables") return { view: "tables" };
     if (parts[0] === "party") return { view: "party" };
     if (parts[0] === "pick") return { view: "pick" };
     if (state.school && SCHOOLS[state.school]) return { view: "school", school: state.school };
@@ -473,6 +494,7 @@
     else if (r.view === "all") renderAll();
     else if (r.view === "venues") renderVenues();
     else if (r.view === "rules") renderRules();
+    else if (r.view === "tables") renderTables();
     else if (r.view === "party") renderParty();
     else renderSchool(r.school);
     renderFoot();
@@ -483,7 +505,7 @@
   function renderMenu(view) {
     var items = [];
     if (state.school && SCHOOLS[state.school]) items.push(["school", "#/s/" + state.school, t("navMine")]);
-    items.push(["all", "#/all", t("navAll")], ["venues", "#/venues", t("navVenues")], ["rules", "#/rules", t("navRules")], ["party", "#/party", t("navParty")], ["game", "hra/", t("navGame")], ["pick", "#/pick", t("navPick")]);
+    items.push(["all", "#/all", t("navAll")], ["tables", "#/tables", t("navTables")], ["venues", "#/venues", t("navVenues")], ["rules", "#/rules", t("navRules")], ["party", "#/party", t("navParty")], ["game", "hra/", t("navGame")], ["pick", "#/pick", t("navPick")]);
     var menu = document.getElementById("menu");
     if (!menu) return;
     var head = h`<p class="menu-head"><button class="menu-close" type="button" aria-label="${state.lang === "sk" ? "Zavrieť menu" : "Close menu"}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>WIUC 2026 Bratislava<small>${state.lang === "sk" ? "Neoficiálny pomocník · 4. až 8. 11." : "Unofficial helper · 4 to 8 Nov"}</small></p>`;
@@ -510,6 +532,7 @@
     doc: '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 13h6M9 17h6"/>',
     back: '<path d="M15 6l-6 6 6 6"/>',
     dir: '<path d="M7 17L17 7M9 7h8v8"/>',
+    cal: '<rect x="4" y="5" width="16" height="15"/><path d="M4 10h16M9 3v4M15 3v4"/>',
     chev: '<path d="M9 6l6 6-6 6"/>',
     flag: '<path d="M5 21V4M5 4h12l-2 4 2 4H5"/>',
     football: '<circle cx="12" cy="12" r="9"/><path d="M12 7.5l4.3 3.1-1.6 5h-5.4l-1.6-5z"/>',
@@ -599,6 +622,8 @@
   // one delegated handler for day tabs and sport chips (registered once at boot)
   app.addEventListener("click", function (e) {
     var tb = e.target.closest("[data-day]");
+    var cal = e.target.closest("[data-cal]");
+    if (cal) { downloadCalendar(cal.getAttribute("data-cal")); return; }
     var ch = e.target.closest("[data-sport]");
     if (!tb && !ch) return;
     if (tb) state.day = tb.getAttribute("data-day");
@@ -620,7 +645,7 @@
     if (result) st = "done";
     var A = sideLabel(ev.a, sid, ev), B = sideLabel(ev.b, sid, ev);
     var sp = SPORTS[ev.sport] || { c: "#888" };
-    var badge = result ? h`<span class="badge score">${t("result")} ${result}</span>` :
+    var badge = result ? h`<span class="badge score">${t("result")} ${result}</span>${raw(ev.sets && ev.sets.length ? h` <span class="sets">(${ev.sets.join(", ")})</span>` : "")}` :
                 st === "live" ? h`<span class="badge live">${t("live")}</span>` :
                 st === "next" ? h`<span class="badge next">${t("next")}</span>` : "";
     var cat = catLabel(ev.cat);
@@ -723,6 +748,109 @@
         </div>
       </div>`;
   }
+  // ---- group tables, calculated from the results in the schedule
+  var TABLE_SPORTS = ["football", "futsal", "basketball", "volleyball", "handball", "floorball", "rugby"];
+  function teamKey(side) { return side.school ? side.school + "|" + (side.squad || "") : "?" + (side.label || ""); }
+  function pointsFor(sport, mine, theirs) {
+    if (sport === "volleyball") return mine === 2 ? (theirs === 0 ? 3 : 2) : (mine === 1 ? 1 : 0);
+    if (sport === "basketball") return mine > theirs ? 2 : 1;
+    return mine > theirs ? 3 : (mine === theirs ? 1 : 0);
+  }
+  function standings(sport) {
+    var pools = {};
+    EVENTS.forEach(function (e) {
+      if (e.sport !== sport || !e.pool || e.extra) return;
+      if (!e.a.school && !e.b.school) return;
+      var k = e.cat + "|" + e.pool;
+      var pool = pools[k] = pools[k] || { cat: e.cat, pool: e.pool, teams: {}, games: [] };
+      [e.a, e.b].forEach(function (sd) {
+        var key = teamKey(sd);
+        if (!pool.teams[key]) pool.teams[key] = { side: sd, p: 0, w: 0, d: 0, l: 0, f: 0, a: 0, pts: 0 };
+      });
+      pool.games.push(e);
+    });
+    Object.keys(pools).forEach(function (k) {
+      var pool = pools[k];
+      pool.games.forEach(function (e) {
+        if (e.resA === "" || e.resB === "" || isNaN(+e.resA) || isNaN(+e.resB)) return;
+        var A = pool.teams[teamKey(e.a)], B = pool.teams[teamKey(e.b)], ra = +e.resA, rb = +e.resB;
+        [[A, ra, rb], [B, rb, ra]].forEach(function (x) {
+          var T = x[0], m = x[1], o = x[2];
+          T.p++; T.f += m; T.a += o; T.pts += pointsFor(sport, m, o);
+          if (m > o) T.w++; else if (m < o) T.l++; else T.d++;
+        });
+      });
+      pool.rows = Object.keys(pool.teams).map(function (key) { return pool.teams[key]; }).sort(function (x, y) {
+        return y.pts - x.pts || (y.f - y.a) - (x.f - x.a) || y.f - x.f || x.l - y.l;
+      });
+    });
+    return Object.keys(pools).map(function (k) { return pools[k]; })
+      .sort(function (x, y) { return x.cat.localeCompare(y.cat) || x.pool.localeCompare(y.pool); });
+  }
+  function renderTables() {
+    var sport = TABLE_SPORTS.indexOf(state.sport) >= 0 ? state.sport : null;
+    if (!sport && state.school) sport = TABLE_SPORTS.filter(function (k) { return schoolSports(state.school).indexOf(k) >= 0; })[0];
+    sport = sport || "futsal";
+    var chips = h`<div class="chips">${raw(TABLE_SPORTS.map(function (k) {
+      var sp = SPORTS[k] || { c: "#888" };
+      return h`<button class="chip${k === sport ? " on" : ""}" data-sport="${k}" type="button" style="--z:${sp.c}"><span class="dot"></span>${sportName(k)}</button>`;
+    }).join(""))}</div>`;
+    var pools = standings(sport);
+    var mine = state.school;
+    var body = pools.length ? pools.map(function (pool) {
+      var hasDraw = sport !== "basketball" && sport !== "volleyball";
+      var rows = pool.rows.map(function (T, i) {
+        var L = sideLabel(T.side, mine, null);
+        var me = T.side.school && T.side.school === mine;
+        return h`<tr class="${me ? "me" : ""}"><td class="pos">${i + 1}.</td><td class="team">${L.name}${raw(L.extra ? h` <span class="squad">(${L.extra})</span>` : "")}</td>
+          <td>${T.p}</td><td>${T.w}</td>${raw(hasDraw ? h`<td>${T.d}</td>` : "")}<td>${T.l}</td><td class="score">${T.f}:${T.a}</td><td class="pts">${T.pts}</td></tr>`;
+      }).join("");
+      return h`<section class="table-card">
+        <h2>${sportName(sport)} · ${catLabel(pool.cat)} · ${t("group")} ${pool.pool}</h2>
+        <table class="standings"><thead><tr><th class="pos">#</th><th class="team">${t("thTeam")}</th>
+          <th title="${t("thTitle")}">${t("thP")}</th><th>${t("thW")}</th>${raw(hasDraw ? h`<th>${t("thD")}</th>` : "")}<th>${t("thL")}</th><th class="score">${t("thScore")}</th><th class="pts">${t("thPts")}</th></tr></thead>
+          <tbody>${raw(rows)}</tbody></table></section>`;
+    }).join("") : h`<div class="empty"><p>${t("noTables")}</p></div>`;
+    var back = "#/" + (state.school ? "s/" + state.school : "pick");
+    app.innerHTML = h`
+      ${raw(destPanel(t("tablesTitle"), t("tablesLead"), back, state.school ? t("mine") : t("back")))}
+      <div class="page page-plain">
+        ${raw(chips)}
+        <div class="tables-grid">${raw(body)}</div>
+        <p class="tables-note">${t("tablesRules")}</p>
+      </div>`;
+  }
+
+  // ---- calendar export (.ics) of your university's matches
+  function icsStamp(day, hm, addMinutes) {
+    // Bratislava is UTC+1 in November (no daylight saving during the championship)
+    var d = new Date(Date.UTC(+day.slice(0, 4), +day.slice(5, 7) - 1, +day.slice(8, 10), +hm.slice(0, 2) - 1, +hm.slice(3, 5) + (addMinutes || 0)));
+    return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  }
+  function icsText(x) { return String(x || "").replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n"); }
+  function downloadCalendar(sid) {
+    var list = EVENTS.filter(function (e) { return (involves(e, sid) || e.all) && (state.sport === "all" || e.sport === state.sport || e.all); });
+    var lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//WIUC 2026 helper//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH", "X-WR-CALNAME:WIUC 2026 " + icsText(shortName(SCHOOLS[sid].name))];
+    var now = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+    list.forEach(function (e) {
+      var v = VENUES[e.venue];
+      var A = sideLabel(e.a, sid, e), B = sideLabel(e.b, sid, e);
+      var title = sportName(e.sport) + (e.cat ? " " + catLabel(e.cat) : "") + ": " + (e.sport === "ceremony" ? t("ceremony") : A.name + (B.name ? " vs " + B.name : ""));
+      var place = v ? v.name + ", " + v.addr + ", Bratislava" : "";
+      var desc = [e.court ? unitWord(e) + " " + e.court : "", e.pool ? t("group") + " " + e.pool : "", e.stage || "", location.origin + location.pathname + "#/s/" + sid].filter(Boolean).join("\n");
+      lines.push("BEGIN:VEVENT", "UID:" + (e.id || (e.day + e.time + e.sport)) + "-" + sid + "@wiuc2026", "DTSTAMP:" + now,
+        "DTSTART:" + icsStamp(e.day, e.time), "DTEND:" + icsStamp(e.day, e.time, durationMin(e.sport)),
+        "SUMMARY:" + icsText(title), "LOCATION:" + icsText(place), "DESCRIPTION:" + icsText(desc),
+        "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:" + icsText(title), "TRIGGER:-PT30M", "END:VALARM", "END:VEVENT");
+    });
+    lines.push("END:VCALENDAR");
+    var blob = new Blob([lines.join("\r\n") + "\r\n"], { type: "text/calendar;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "wiuc-2026-" + sid + (state.sport !== "all" ? "-" + state.sport : "") + ".ics";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+  }
   function destPanel(title, lead, backHref, backLabel) {
     return h`<div class="dest"><div class="dest-inner">
       <div><h1>${title}</h1><p class="lead">${lead}</p></div>
@@ -794,7 +922,7 @@
     }
     var todayN = mine.filter(function (e) { return onDay(e) && !e.all; }).length;
     var lead = s.country + " · " + nSports(sports.length) + " · " + nMatches(todayN);
-    var links = "";
+    var links = h`<div class="side-links"><button class="btn primary" type="button" data-cal="${sid}">${raw(icon("cal"))} ${t("cal")}</button></div><p class="cal-hint">${t("calHint")}</p>`;
     app.innerHTML = h`
       <div class="page">
       <aside class="side"><div class="side-in">
