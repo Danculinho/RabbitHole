@@ -309,15 +309,17 @@ Sports outside the banner reuse brand colours (badminton takes Gate Blue, swimmi
 
 ## Layout
 
-A single column, 820px wide at most, centred, with a 16px gutter on both sides. There is no grid of columns; the structure is a stack of full-bleed navy bands (header, destination panel, gate strip) followed by content on the ground. The content wrap keeps its 16px gutter at every width; the bands run edge to edge and centre their inner 820px.
+Below 1024px the page is a single column with a 16px gutter: a stack of full-bleed navy bands (header, destination panel, gate strip) followed by content on the ground. The header, destination and gate bands centre their inner content at 1720px at most.
 
-The sign row is a fixed four-column grid: time column (72px), zone band (8px), flexible main column (`minmax(0, 1fr)`), hall plate (60px). From 640px the outer columns grow (90px, 8px, 1fr, 68px) and the type steps up one size; the row never changes shape. Rows are at least 76px tall, 8px apart, 10px inner padding; the first row starts 8px under the capsules. Row content has three lines: sport line, match line, meta line; a note line may follow.
+From 1024px the page becomes a two-column grid (`340px minmax(0, 1fr)`, 32px gap, 1720px max, 28px side padding): a sticky left panel (destination panel with 12px top corners, the gate strip as a vertical list with 12px bottom corners, the sport capsules wrapped, then the action buttons stacked) and the board on the right. The organiser PDF links sit under the panel in the left column. The sticky bottom action pair is hidden at this size.
+
+The sign rows form one continuous board: a single white 12px plate per list, rows separated by 1px Line rules, the first and last row carrying the corners. Each row is a fixed four-column grid: time column (72px), zone field (44px, the sport colour as a solid field with the sport pictogram in white at 26px), flexible main column (`minmax(0, 1fr)`), hall plate (60px). From 640px the columns grow (90px, 56px, 1fr, 68px; pictogram 30px) and the type steps up one size; from 1024px they grow again (104px, 60px, 1fr, 76px) and the main column splits into match line left and meta line right (320px). Rows are at least 76px tall (80px from 1024px), 10px inner padding. Row content has three lines on phones: sport line, match line, meta line; a note line may follow.
 
 The gate strip is a four-column grid of equal day gates, full width, with no gaps. The sport capsules scroll horizontally in one line with 6px gaps, snap to the start of a capsule, hide their scrollbar and fade out over the last 40px with a mask so the overflow is visible. Lists (schools, PDFs, venues) stack with 6 to 8px gaps. Section headlines sit 26px below the previous block and 8px above their list.
 
 The header is sticky at the top (z-index 10) and the action pair is fixed at the bottom (z-index 9) on a 90% ground tint with a 10px blur and a safe-area inset; the page keeps 92px of bottom padding so the last row clears it. Both bars are navy or ground, never white.
 
-Breakpoint: one, at 640px. Reduced-motion users get all transitions and the live pulse switched off.
+Breakpoints: 640px (type and row columns step up) and 1024px (two-column desktop layout). Reduced-motion users get all transitions and the live pulse switched off.
 
 ## Elevation & Depth
 
@@ -376,14 +378,14 @@ The university search. Style: Card surface, 1.5px Line stroke, plate radius, 16p
 - **Destination panel:** navy band under the header carrying the Display title and a Sign Muted lead ("Slovakia · 9 športov · 14 zápasov"), with the on-signboard button at the right.
 - **Gate strip:** four equal gates on navy, 1px 12% white rule above. Each gate stacks the weekday (12px / 600 uppercase 0.04em), the day number (Numeral, 24px, 28px from 640px) and a count (11px / 600). Idle gates are 62% white; hover 100% white on 6% white; the selected gate is Gate Blue with a 4px Stripe Yellow bottom bar; today's gate is white with a 7px yellow dot before its count. `role="tablist"` / `role="tab"`.
 - **Sticky action pair:** fixed bottom bar, two capsules side by side, each up to 260px: "Miesta" default with the pin icon, "Celý rozpis" primary.
-- **Mobile treatment:** identical; the layout is mobile-first and only grows at 640px.
+- **Mobile treatment:** the layout is mobile-first; at 1024px the gate strip turns into a vertical list inside the left panel (day number first, weekday, count at the right, 4px Stripe Yellow left bar on the selected day).
 
 ### Sign Row (signature)
-One match as a wayfinding sign. A white 12px plate, four fixed columns, minimum 76px tall:
+One match as a wayfinding sign, one row of a continuous board (white 12px plate per list, 1px Line rules between rows), four fixed columns, minimum 76px tall:
 - **Time column:** Numeral time, with the category (muži / ženy / mix) as an 11px Muted caption under it.
-- **Zone band:** an 8px full-height band in the sport's zone colour.
-- **Main column:** the sport line (Label in the zone label colour, authored sport icon, then the live or next badge), the match line (Title, own university at 800, "vs" muted, player names Ink 2, score at 800 in Live Ink), and the meta line (Muted 12.5px: venue as an Ink 2 link with a pin icon that turns Gate Blue on hover, then "Skupina X" or the stage, separated by middots).
-- **Hall plate:** a navy column at the right (60px, 68px from 640px) with the court number in Numeral (22px, 26px from 640px) over the unit word in Caption (HALA / KURT / IHRISKO); if no number, the arrow icon over MAPA. It is a link to the venue map; hover turns it Gate Blue.
+- **Zone field:** a 44px full-height field in the sport's zone colour (56px from 640px, 60px from 1024px) carrying the authored sport pictogram in white (26px, 30px from 640px).
+- **Main column:** the sport line (Label in the zone label colour, then the live or next badge), the match line (Title, own university at 800, "vs" muted, player names Ink 2, score at 800 in Live Ink), and the meta line (Muted 12.5px: venue as an Ink 2 link with a pin icon that turns Gate Blue on hover, then "Skupina X" or the stage, separated by middots).
+- **Hall plate:** a navy column at the right (60px, 68px from 640px) with the court number in Numeral (22px, 26px from 640px) over the unit word in Caption (HALA / KURT / IHRISKO) followed by a 12px Stripe Yellow north-east arrow as the direction cue; if no number, the arrow icon over MAPA. It is a link to the venue map; hover turns it Gate Blue.
 - **States:** live adds the live badge, Live Ink time, the Live ring, the Lift shadow, a 2px rise and the pulse; next adds the next badge and the Next ring; past dims the whole row to 50% opacity. Transitions 180ms ease-out.
 
 ### Status Badges

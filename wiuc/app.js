@@ -314,6 +314,7 @@
     search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
     doc: '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 13h6M9 17h6"/>',
     back: '<path d="M15 6l-6 6 6 6"/>',
+    dir: '<path d="M7 17L17 7M9 7h8v8"/>',
     chev: '<path d="M9 6l6 6-6 6"/>',
     flag: '<path d="M5 21V4M5 4h12l-2 4 2 4H5"/>',
     football: '<circle cx="12" cy="12" r="9"/><path d="M12 7.5l4.3 3.1-1.6 5h-5.4l-1.6-5z"/>',
@@ -345,8 +346,8 @@
   function renderPick() {
     var q = "";
     app.innerHTML = h`
-      <div class="pick-head"><div class="wrap"><h1>${t("pickTitle")}</h1><p class="lead">${t("pickLead")}</p></div></div>
-      <div class="wrap">
+      <div class="pick-head"><div class="page page-plain"><h1>${t("pickTitle")}</h1><p class="lead">${t("pickLead")}</p></div></div>
+      <div class="page page-plain">
       <div class="search-wrap">${raw(icon("search"))}<input class="search" id="q" type="search" placeholder="${t("search")}" autocomplete="off" aria-label="${t("search")}"></div>
       <div id="schoolList"></div>
       <div class="quick-links">
@@ -439,13 +440,13 @@
       match = h`<div class="match">${raw(side(A))} <span class="vs">vs</span> ${raw(side(B))}${raw(res)}</div>`;
     }
     var plate = ev.court
-      ? h`<a class="plate" href="${mapsUrl(ev.venue)}" target="_blank" rel="noopener" aria-label="${unitWord(ev)} ${ev.court}, ${t("map")}">${ev.court}<small>${unitWord(ev)}</small></a>`
+      ? h`<a class="plate" href="${mapsUrl(ev.venue)}" target="_blank" rel="noopener" aria-label="${unitWord(ev)} ${ev.court}, ${t("map")}">${ev.court}<small>${unitWord(ev)}${raw(icon("dir"))}</small></a>`
       : h`<a class="plate" href="${mapsUrl(ev.venue)}" target="_blank" rel="noopener" aria-label="${t("map")}">${raw(icon("arrow"))}<small>${t("map").toUpperCase()}</small></a>`;
     return h`<li class="ev ${st}" style="--z:${sp.c};--zt:${sp.t || sp.c}">
       <div class="time">${ev.time}<small>${cat}</small></div>
-      <div class="zone" style="background:${sp.c}"></div>
+      <div class="zone" style="background:${sp.c}">${raw(icon(ev.sport))}</div>
       <div class="main">
-        <div class="sport">${raw(icon(ev.sport))}${sportName(ev.sport)} ${raw(badge)}</div>
+        <div class="sport">${sportName(ev.sport)} ${raw(badge)}</div>
         ${raw(match)}
         <div class="meta">${raw(meta.join(" · "))}</div>
       </div>
@@ -509,15 +510,24 @@
 
     var todayN = mine.filter(function (e) { return e.day === state.day; }).length;
     var lead = s.country + " · " + nSports(sports.length) + " · " + nMatches(todayN);
+    var links = h`<div class="side-links">
+        <a class="btn primary" href="#/all">${t("allMatches")}</a>
+        <a class="btn" href="#/venues">${raw(icon("pin"))} ${t("venues")}</a>
+      </div>`;
     app.innerHTML = h`
+      <div class="page">
+      <aside class="side">
       ${raw(destPanel(s.name, lead, "#/pick", t("change")))}
       ${raw(dayTabs(dayCount))}
-      <div class="wrap">
       ${raw(sportChips(sports, sportCounts))}
-      <div id="list">${raw(body)}</div>
+      ${raw(links)}
+      </aside>
+      <div id="list" class="board">${raw(body)}</div>
+      <div class="pdf-block">
       <h2>${t("pdfTitle")}</h2><p class="day-note">${t("pdfLead")}</p>
       <ul class="pdf-list">${raw(PDFS.map(function (p) {
         return h`<li><a href="${p.url}" target="_blank" rel="noopener">${raw(icon("doc"))}${state.lang === "sk" ? p.sk : p.en}</a></li>`; }).join(""))}</ul>
+      </div>
       </div>
       <div class="sticky-bar">
         <a class="btn" href="#/venues">${raw(icon("pin"))} ${t("venues")}</a>
@@ -538,11 +548,17 @@
       var v = VENUES[k];
       return h`<h2>${v ? v.name : "?"} <small>(${nMatches(byVenue[k].length)})</small></h2>${raw(eventList(byVenue[k], state.school))}`;
     }).join("");
+    var backHref = "#/" + (state.school ? "s/" + state.school : "pick");
     app.innerHTML = h`
-      ${raw(destPanel(t("allMatches"), t("allLead"), "#/" + (state.school ? "s/" + state.school : "pick"), state.school ? t("mine") : t("back")))}
+      <div class="page">
+      <aside class="side">
+      ${raw(destPanel(t("allMatches"), t("allLead"), backHref, state.school ? t("mine") : t("back")))}
       ${raw(dayTabs(function (d) { return EVENTS.filter(function (e) { return e.day === d && !e.extra; }).length; }))}
-      <div class="wrap">${raw(sportChips(sports, counts))}
-      ${raw(body || h`<p class="empty">${t("noEvents")}</p>`)}</div>`;
+      ${raw(sportChips(sports, counts))}
+      <div class="side-links"><a class="btn primary" href="${backHref}">${state.school ? t("mine") : t("back")}</a><a class="btn" href="#/venues">${raw(icon("pin"))} ${t("venues")}</a></div>
+      </aside>
+      <div class="board">${raw(body || h`<p class="empty">${t("noEvents")}</p>`)}</div>
+      </div>`;
   }
 
   // ---- venues
@@ -563,7 +579,7 @@
     }).join("");
     app.innerHTML = h`
       ${raw(destPanel(t("venues"), t("venuesLead"), "#/" + (state.school ? "s/" + state.school : "pick"), state.school ? t("mine") : t("back")))}
-      <div class="wrap" style="padding-top:12px">${raw(body)}</div>`;
+      <div class="page page-plain"><div class="venue-grid">${raw(body)}</div></div>`;
   }
 
   // ------------------------------------------------------------ boot
