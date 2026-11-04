@@ -98,6 +98,10 @@
       results: "Výsledky a prípadné zmeny časov sú v rozpisoch organizátora.",
       back: "Späť na výber",
       mine: "Moja univerzita",
+      navMine: "Moje zápasy",
+      navAll: "Celý rozpis",
+      navVenues: "Miesta",
+      navPick: "Univerzity",
       ceremony: "Otvárací ceremoniál a spoločná fotografia",
       allSchools: "všetky univerzity",
       count: "zápasov"
@@ -137,6 +141,10 @@
       results: "Results and time changes are in the organiser's schedules.",
       back: "Back to the list",
       mine: "My university",
+      navMine: "My matches",
+      navAll: "Full schedule",
+      navVenues: "Venues",
+      navPick: "Universities",
       ceremony: "Opening ceremony and group photo",
       allSchools: "all universities",
       count: "matches"
@@ -294,12 +302,24 @@
     document.documentElement.lang = state.lang;
     document.getElementById("langBtn").textContent = state.lang === "sk" ? "EN" : "SK";
     document.getElementById("brandSub").textContent = state.lang === "sk" ? "Neoficiálny pomocník · 4. až 8. 11." : "Unofficial helper · 4 to 8 Nov";
+    renderMenu(r.view);
     if (r.view === "pick") renderPick();
     else if (r.view === "all") renderAll();
     else if (r.view === "venues") renderVenues();
     else renderSchool(r.school);
     renderFoot();
     if (keepScroll !== true) window.scrollTo(0, 0);
+  }
+
+  // header menu: always one tap back to your matches, the full schedule, venues or the list
+  function renderMenu(view) {
+    var items = [];
+    if (state.school && SCHOOLS[state.school]) items.push(["school", "#/s/" + state.school, t("navMine")]);
+    items.push(["all", "#/all", t("navAll")], ["venues", "#/venues", t("navVenues")], ["pick", "#/pick", t("navPick")]);
+    document.getElementById("menu").innerHTML = items.map(function (it) {
+      var on = it[0] === view;
+      return h`<a href="${it[1]}"${raw(on ? ' class="on" aria-current="page"' : "")}>${it[2]}</a>`;
+    }).join("");
   }
 
   function renderFoot() {
@@ -356,10 +376,7 @@
       <div class="page page-plain">
       <div class="search-wrap">${raw(icon("search"))}<input class="search" id="q" type="search" placeholder="${t("search")}" autocomplete="off" aria-label="${t("search")}"></div>
       <div id="schoolList"></div>
-      <div class="quick-links">
-        <a class="btn" href="#/all">${t("allMatches")}</a>
-        <a class="btn" href="#/venues">${raw(icon("pin"))} ${t("venues")}</a>
-      </div></div>`;
+      </div>`;
     var input = document.getElementById("q");
     function draw() {
       var ql = q.trim().toLowerCase();
@@ -516,10 +533,7 @@
 
     var todayN = mine.filter(function (e) { return e.day === state.day; }).length;
     var lead = s.country + " · " + nSports(sports.length) + " · " + nMatches(todayN);
-    var links = h`<div class="side-links">
-        <a class="btn primary" href="#/all">${t("allMatches")}</a>
-        <a class="btn" href="#/venues">${raw(icon("pin"))} ${t("venues")}</a>
-      </div>`;
+    var links = "";
     app.innerHTML = h`
       <div class="page">
       <aside class="side"><div class="side-in">
@@ -557,7 +571,6 @@
       ${raw(destPanel(t("allMatches"), t("allLead"), backHref, state.school ? t("mine") : t("back")))}
       ${raw(dayTabs(function (d) { return EVENTS.filter(function (e) { return e.day === d && !e.extra; }).length; }))}
       ${raw(sportChips(sports, counts))}
-      <div class="side-links"><a class="btn primary" href="${backHref}">${state.school ? t("mine") : t("back")}</a><a class="btn" href="#/venues">${raw(icon("pin"))} ${t("venues")}</a></div>
       </div></aside>
       <div class="board">${raw(body || h`<p class="empty">${t("noEvents")}</p>`)}</div>
       </div>`;

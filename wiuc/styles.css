@@ -57,6 +57,13 @@ svg.ic { width: 1em; height: 1em; display: inline-block; vertical-align: -0.15em
 .brand-sub { font-size: 15px; color: var(--sign-muted); }
 .lang { background: rgba(255,255,255,.14); color: var(--sign-ink); border: 0; padding: 7px 14px; font-weight: 700; font-size: 15px; min-width: 48px; transition: background .18s var(--ease); }
 .lang:hover { background: rgba(255,255,255,.24); }
+.top-inner { flex-wrap: wrap; row-gap: 8px; }
+.top-inner .brand { flex: 1 1 0; }
+.menu { order: 3; flex: 1 0 100%; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; margin: 0 -16px -10px; }
+.menu a { color: var(--sign-muted); text-decoration: none; font-weight: 700; font-size: 15px; line-height: 1.15; text-align: center; padding: 10px 4px 12px; border-bottom: 4px solid transparent; transition: background .18s var(--ease), color .18s var(--ease); }
+.menu a:hover { color: #fff; background: rgba(255,255,255,.08); }
+.menu a.on { color: #fff; border-bottom-color: var(--y); background: rgba(255,255,255,.08); }
+.menu a:focus-visible { outline: 3px solid var(--y); outline-offset: -3px; }
 .stripe { display: flex; height: 8px; }
 .stripe span { flex: 1; }
 .stripe span:nth-child(1) { background: var(--y); } .stripe span:nth-child(2) { background: var(--o); } .stripe span:nth-child(3) { background: var(--r); }
@@ -280,6 +287,10 @@ h2 small { font-weight: 600; color: var(--muted); font-size: 15px; }
   .school-list, .page-plain .search-wrap, .page-plain .quick-links, .page-plain .empty { padding-left: 0; padding-right: 0; margin-left: 0; margin-right: 0; }
   .page-plain h2 { margin-left: 0; margin-right: 0; }
   .pick-head .page { padding: 0 28px 28px; }
+  .top-inner { flex-wrap: nowrap; padding: 0 28px; }
+  .top-inner .brand { padding: 10px 0; flex: 0 1 auto; }
+  .menu { order: 0; flex: 0 1 auto; margin: 0 0 0 auto; display: flex; gap: 2px; align-self: stretch; }
+  .menu a { padding: 18px 18px 14px; display: flex; align-items: center; }
   .pick-head img { height: 460px; }
   .pick-head h1 { font-size: 64px; }
   .foot-mark { font-size: 64px; }
