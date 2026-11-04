@@ -818,5 +818,33 @@
       "Don't introduce a second typeface, italics, a display face, icon fonts or glyph icons, or photography and the organiser's logo.",
       "Don't add entrance animations, parallax or scroll effects; the page must work on older phones and read instantly."
     ]
+  },
+  "revision": {
+    "at": "2026-11-04",
+    "summary": "Tasteskill pass. Supersedes shadows, radii, borders and the type sizes listed elsewhere in this file; see DESIGN.md 'Revision 2'.",
+    "shadows": "none",
+    "radii": "0 everywhere",
+    "borders": "none; separation by field colour and a 6px gap",
+    "typeRamp": [
+      "15px",
+      "16px",
+      "20px",
+      "24px",
+      "28px",
+      "32px",
+      "64px"
+    ],
+    "stateFields": {
+      "live": "#fff3c4",
+      "next": "#dcf3e5"
+    },
+    "boardColumns": {
+      "base": "80px 48px 1fr 64px",
+      "640": "96px 56px 1fr 72px",
+      "1024": "116px 64px 1fr 84px"
+    },
+    "photography": "picker hero only: assets/panoramic-view-from-bratislava-castle.jpg, CC BY-SA 4.0, credited in footer",
+    "motion": "staggered row entrance, hero drift, live badge pulse; off under prefers-reduced-motion",
+    "footer": "sticky curtain footer under the app layer"
   }
 }

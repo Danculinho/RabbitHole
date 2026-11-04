@@ -230,7 +230,21 @@ Every screen is a wayfinding sign on the way to a hall. The page is read while w
 
 The voice is fast, legible while walking, tournament-coloured, and never official-looking. It is an unofficial helper and must not read as the organiser's site: it uses the organiser's colour language and stripe motif, not their logo or photography. Density is high but every row has the same anatomy, so the eye learns the column positions once and then scans top to bottom like a departure board. The one moving thing on the page is the live row, which lifts and glows yellow; everything else is still.
 
-Confirmed rejections: no same-size white cards with a coloured left border and a small time label (the category default the build refuses); no entrance choreography; no glyph or icon-font icons; no photography.
+Confirmed rejections: no same-size white cards with a coloured left border and a small time label (the category default the build refuses); no glyph or icon-font icons. (Entrance motion and the one hero photograph were added in Revision 2.)
+
+## Revision 2 (2026-11-04, tasteskill pass)
+
+This section supersedes any rule below that contradicts it. The signboard idea, palette, Work Sans and the four-column row anatomy stay; the surface treatment changed.
+
+- **Flat fields, square corners.** No shadows at rest or on state, no rounded plates or pills, no hairline rules or borders. Separation comes from field colour and a 6px gap between bars. Chips are flat card fields with a square zone dot.
+- **The board** is a stack of bars, not one plate: columns 80 / 48 / 1fr / 64px, 96 / 56 / 1fr / 72px from 640px, 116 / 64 / 1fr / 84px from 1024px. The zone column is the solid sport colour with the white pictogram.
+- **States are fields, not rings.** Live row: `live-field` #fff3c4 (night: deep amber) with a pulsing yellow badge; next row: `next-field` #dcf3e5 (night: deep green). Past rows fade to 50%.
+- **Type ramp:** 15 / 16 / 20 / 24 / 28 / 32 / 64px. Body text is never under 15px (16px for running text). Page h1 24px, 28px from 640px, 32px on the picker; the picker hero h1 is 64px from 1024px. Hall and time numerals 24px, 28px from 640px. The footer mark is 32px.
+- **Sentence case.** No uppercase labels; the unit word under the hall number (hala, kurt, ihrisko, mapa) is sentence case at 15px. The category sits on the sport line ("Volejbal · ženy").
+- **One photograph.** The picker hero carries the Bratislava panorama (`wiuc/assets/panoramic-view-from-bratislava-castle.jpg`, Lukáš Perný, CC BY-SA 4.0, credited in the footer) under a navy scrim, with a slow drift. No other photography; the schedule views stay type and colour only.
+- **Motion.** Rows and picker blocks enter with a short staggered rise; the hero photo drifts; the live badge pulses. `prefers-reduced-motion` switches all of it off.
+- **Curtain footer.** The navy footer is sticky at the bottom under the app layer, so it is uncovered as the page ends. It holds the 32px "WIUC 2026 Bratislava" mark, the data source and the photo credit.
+- **No fixed bottom bar.** "Celý rozpis" and "Miesta" sit under the sport chips on every size.
 
 **Key Characteristics:**
 - Navy signboard surfaces carry white type only; the light grey ground carries lifted white rows.

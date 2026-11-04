@@ -305,6 +305,8 @@
   function renderFoot() {
     document.getElementById("footSource").innerHTML =
       h`${t("source")} ${DATA.generated || ""}. <a href="${SOURCE_URL}" target="_blank" rel="noopener">Google Drive</a> · <a href="${OFFICIAL_URL}" target="_blank" rel="noopener">${t("official")}</a>. ${t("results")}`;
+    document.getElementById("footCredit").innerHTML =
+      h`${state.lang === "sk" ? "Fotografia" : "Photograph"}: <a href="https://commons.wikimedia.org/w/index.php?curid=119460999" target="_blank" rel="noopener">Panoramic view from Bratislava castle</a>, Lukáš Perný, CC BY-SA 4.0, Wikimedia Commons.`;
   }
 
   // ------------------------------------------------------------ icons (authored SVG, one stroke weight)
@@ -339,14 +341,18 @@
     if (!ev.court) return "";
     var w = (ev.sport === "tennis" || ev.sport === "padel") ? t("court") :
             (ev.sport === "football" || ev.sport === "rugby") ? t("pitch") : t("hall");
-    return w.toUpperCase();
+    return w;
   }
 
   // ---- school picker
   function renderPick() {
     var q = "";
     app.innerHTML = h`
-      <div class="pick-head"><div class="page page-plain"><h1>${t("pickTitle")}</h1><p class="lead">${t("pickLead")}</p></div></div>
+      <div class="pick-head">
+        <img src="assets/panoramic-view-from-bratislava-castle.jpg" width="1920" height="864" alt="${state.lang === "sk" ? "Bratislava od hradu: Most SNP, Dunaj a Petržalka" : "Bratislava from the castle: the SNP bridge, the Danube and Petržalka"}" decoding="async">
+        <div class="scrim" aria-hidden="true"></div>
+        <div class="page page-plain"><h1>${t("pickTitle")}</h1><p class="lead">${t("pickLead")}</p></div>
+      </div>
       <div class="page page-plain">
       <div class="search-wrap">${raw(icon("search"))}<input class="search" id="q" type="search" placeholder="${t("search")}" autocomplete="off" aria-label="${t("search")}"></div>
       <div id="schoolList"></div>
@@ -441,12 +447,12 @@
     }
     var plate = ev.court
       ? h`<a class="plate" href="${mapsUrl(ev.venue)}" target="_blank" rel="noopener" aria-label="${unitWord(ev)} ${ev.court}, ${t("map")}">${ev.court}<small>${unitWord(ev)}${raw(icon("dir"))}</small></a>`
-      : h`<a class="plate" href="${mapsUrl(ev.venue)}" target="_blank" rel="noopener" aria-label="${t("map")}">${raw(icon("arrow"))}<small>${t("map").toUpperCase()}</small></a>`;
+      : h`<a class="plate" href="${mapsUrl(ev.venue)}" target="_blank" rel="noopener" aria-label="${t("map")}">${raw(icon("arrow"))}<small>${t("map")}</small></a>`;
     return h`<li class="ev ${st}" style="--z:${sp.c};--zt:${sp.t || sp.c}">
-      <div class="time">${ev.time}<small>${cat}</small></div>
+      <div class="time">${ev.time}</div>
       <div class="zone" style="background:${sp.c}">${raw(icon(ev.sport))}</div>
       <div class="main">
-        <div class="sport">${sportName(ev.sport)} ${raw(badge)}</div>
+        <div class="sport">${sportName(ev.sport)}${cat ? raw(' <span class="cat">· ' + esc(cat) + '</span>') : ""} ${raw(badge)}</div>
         ${raw(match)}
         <div class="meta">${raw(meta.join(" · "))}</div>
       </div>
@@ -517,7 +523,7 @@
     app.innerHTML = h`
       <div class="page">
       <aside class="side">
-      ${raw(destPanel(s.name, lead, "#/pick", t("change")))}
+      ${raw(destPanel(shortName(s.name), shortName(s.name) === s.name ? lead : s.name + " · " + lead, "#/pick", t("change")))}
       ${raw(dayTabs(dayCount))}
       ${raw(sportChips(sports, sportCounts))}
       ${raw(links)}
@@ -526,12 +532,8 @@
       <div class="pdf-block">
       <h2>${t("pdfTitle")}</h2><p class="day-note">${t("pdfLead")}</p>
       <ul class="pdf-list">${raw(PDFS.map(function (p) {
-        return h`<li><a href="${p.url}" target="_blank" rel="noopener">${raw(icon("doc"))}${state.lang === "sk" ? p.sk : p.en}</a></li>`; }).join(""))}</ul>
+        return h`<li><a href="${p.url}" target="_blank" rel="noopener">${state.lang === "sk" ? p.sk : p.en}</a></li>`; }).join(""))}</ul>
       </div>
-      </div>
-      <div class="sticky-bar">
-        <a class="btn" href="#/venues">${raw(icon("pin"))} ${t("venues")}</a>
-        <a class="btn primary" href="#/all">${t("allMatches")}</a>
       </div>`;
   }
 
@@ -574,7 +576,7 @@
           <div class="addr">${v.addr}, Bratislava</div>
           <div class="vsports">${Object.keys(sports).map(sportName).join(", ")}${todayN ? " · " + dayName(state.day) + ": " + nMatches(todayN) : ""}</div>
         </div>
-        <a class="plate" href="${mapsUrl(k)}" target="_blank" rel="noopener" aria-label="${v.name}, ${t("map")}">${raw(icon("pin"))}${t("map").toUpperCase()}</a>
+        <a class="plate" href="${mapsUrl(k)}" target="_blank" rel="noopener" aria-label="${v.name}, ${t("map")}">${raw(icon("pin"))}${t("map")}</a>
       </div>`;
     }).join("");
     app.innerHTML = h`
