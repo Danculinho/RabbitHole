@@ -59,6 +59,50 @@
   var SOURCE_URL = "https://drive.google.com/drive/folders/1g98fxlj3ZIp15Tsytcrvea8Z9117FwRZ";
   var OFFICIAL_URL = "https://www.wiusc.com/11th-wiuc-bratislava-2026/";
   // ------------------------------------------------------------ rules (from the organiser's General Rules PDF) and parties
+  var VENUE_PHOTOS = {
+    "gopass": {
+      "title": "Slovakia bratislava Gopass Aréna",
+      "author": "Arne Müseler",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Slovakia_bratislava_Gopass_Ar%C3%A9na.jpg"
+    },
+    "pasienky": {
+      "title": "Slovakia bratislava Štadión Pasienky",
+      "author": "Arne Müseler / www.arne-mueseler.com",
+      "license": "CC BY-SA 3.0 DE",
+      "source": "https://commons.wikimedia.org/wiki/File:Slovakia_bratislava_%C5%A0tadi%C3%B3n_Pasienky.jpg"
+    },
+    "peugeot": {
+      "title": "Sibamac arena",
+      "author": "Jakub Homoľa",
+      "license": "CC BY 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Sibamac_arena.JPG"
+    },
+    "plavaren": {
+      "title": "PLAVÁREŇ PASIENKY - panoramio",
+      "author": "Andrej Neuherz",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:PLAV%C3%81RE%C5%87_PASIENKY_-_panoramio.jpg"
+    },
+    "kalinciakova": {
+      "title": "Kalinčiakova 12 04",
+      "author": "Wizzard",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Kalin%C4%8Diakova_12_04.jpg"
+    },
+    "stu-cas": {
+      "title": "Študentský domov Mladá garda",
+      "author": "Midnight Runner",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:%C5%A0tudentsk%C3%BD_domov_Mlad%C3%A1_garda.jpg"
+    },
+    "rovny": {
+      "title": "VSJZ Bratislava 12",
+      "author": "Jozef Kotulič",
+      "license": "CC BY 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:VSJZ_Bratislava_12.JPG"
+    }
+  };
   var RULES_PDF = "assets/General_Rules_WIUC_2026.pdf";
   var RULES_KEY = {
     sk: [
@@ -780,12 +824,16 @@
 
   // ---- venues
   function renderVenues() {
-    var body = Object.keys(VENUES).map(function (k) {
+    var order = Object.keys(VENUES).filter(function (k) { return VENUE_PHOTOS[k]; })
+      .concat(Object.keys(VENUES).filter(function (k) { return !VENUE_PHOTOS[k]; }));
+    var body = order.map(function (k) {
       var v = VENUES[k];
       var sports = {};
       EVENTS.forEach(function (e) { if (e.venue === k) sports[e.sport] = true; });
       var todayN = EVENTS.filter(function (e) { return e.venue === k && (state.day === "all" || e.day === state.day); }).length;
-      return h`<div class="venue">
+      var ph = VENUE_PHOTOS[k];
+      return h`<div class="venue${ph ? " has-photo" : ""}">
+        ${raw(ph ? h`<img class="vphoto" src="assets/venues/${k}.jpg" alt="${v.name}" loading="lazy" decoding="async">` : "")}
         <div class="vbody">
           <div class="vname">${v.name}</div>
           <div class="addr">${v.addr}, Bratislava</div>
@@ -796,7 +844,11 @@
     }).join("");
     app.innerHTML = h`
       ${raw(destPanel(t("venues"), t("venuesLead"), "#/" + (state.school ? "s/" + state.school : "pick"), state.school ? t("mine") : t("back")))}
-      <div class="page page-plain"><div class="venue-grid">${raw(body)}</div></div>`;
+      <div class="page page-plain"><div class="venue-grid">${raw(body)}</div>
+      <p class="photo-credits">${state.lang === "sk" ? "Fotografie" : "Photographs"}: ${raw(Object.keys(VENUE_PHOTOS).map(function (k) {
+        var c = VENUE_PHOTOS[k];
+        return h`<a href="${c.source}" target="_blank" rel="noopener">${VENUES[k] ? VENUES[k].name : k}</a> (${c.author}, ${c.license})`;
+      }).join(" · "))}, Wikimedia Commons.</p></div>`;
   }
 
   // ------------------------------------------------------------ boot

@@ -240,6 +240,12 @@ h2 small { font-weight: 600; color: var(--muted); font-size: 15px; }
 .venue .plate { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; background: var(--sign); color: #fff; text-decoration: none; font-size: 15px; font-weight: 600; transition: background .18s var(--ease); }
 .venue .plate .ic { width: 24px; height: 24px; }
 .venue .plate:hover { background: var(--blue); }
+.venue.has-photo { grid-template-rows: auto 1fr; }
+.venue-grid { align-items: start; }
+.venue .vphoto { grid-column: 1 / -1; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; background: var(--field); }
+.photo-credits { margin: 20px 16px 0; font-size: 15px; color: var(--muted); max-width: 90ch; }
+.photo-credits a { color: var(--ink-2); }
+@media (min-width: 1024px) { .photo-credits { margin-left: 0; margin-right: 0; } }
 
 .pdf-block { margin-top: 8px; }
 .pdf-list { list-style: none; padding: 0 16px; margin: 0; display: grid; gap: 8px; }
