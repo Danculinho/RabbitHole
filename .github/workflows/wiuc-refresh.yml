@@ -27,6 +27,8 @@ jobs:
       - run: pip install openpyxl
       - name: Rebuild data.js from the sheets
         run: python tools/build.py
+      - name: Check the parsed schedule before publishing
+        run: python tools/test_build.py
       - name: Commit if changed
         run: |
           if git diff --quiet -- data.js; then

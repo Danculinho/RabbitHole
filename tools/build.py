@@ -375,7 +375,9 @@ def parse_grid(path, sport, sheet_name, sch, events):
             i += 2
             continue
         if day and venues and i + 2 < len(rows):
-            times = {j: as_time(v) for j, v in enumerate(r) if as_time(v)}
+            # only real clock cells count as times: a set score typed as "6-1" became a date (shown as 00:00)
+            times = {j: as_time(v) for j, v in enumerate(r)
+                     if as_time(v) and not isinstance(raw_rows[i][j] if j < len(raw_rows[i]) else None, datetime.datetime)}
             vs_row = rows[i + 1]
             if times and any(v.lower() == "vs" for v in vs_row):
                 opp = rows[i + 2]
