@@ -442,7 +442,8 @@
     items.push(["all", "#/all", t("navAll")], ["venues", "#/venues", t("navVenues")], ["rules", "#/rules", t("navRules")], ["party", "#/party", t("navParty")], ["game", "hra/", t("navGame")], ["pick", "#/pick", t("navPick")]);
     var menu = document.getElementById("menu");
     if (!menu) return;
-    menu.innerHTML = items.map(function (it) {
+    var head = h`<p class="menu-head"><button class="menu-close" type="button" aria-label="${state.lang === "sk" ? "Zavrieť menu" : "Close menu"}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>WIUC 2026 Bratislava<small>${state.lang === "sk" ? "Neoficiálny pomocník · 4. až 8. 11." : "Unofficial helper · 4 to 8 Nov"}</small></p>`;
+    menu.innerHTML = head + items.map(function (it) {
       var on = it[0] === view;
       return h`<a href="${it[1]}" class="m-${it[0]}${on ? " on" : ""}"${raw(on ? ' aria-current="page"' : "")}>${it[2]}</a>`;
     }).join("");
@@ -607,6 +608,7 @@
       <div class="zone" style="background:${sp.c}">${raw(icon(ev.sport))}</div>
       <div class="main">
         <div class="sport">${sportName(ev.sport)}${cat ? raw(' <span class="cat">· ' + esc(cat) + '</span>') : ""} ${raw(badge)}</div>
+        ${raw(badge ? '<div class="badge-row">' + badge + "</div>" : "")}
         ${raw(match)}
         <div class="meta">${raw(meta.join(" · "))}</div>
       </div>
@@ -803,7 +805,17 @@
     store.set("wiuc.lang", state.lang);
     render();
   });
-  window.addEventListener("hashchange", function () { render(); });
+  window.addEventListener("hashchange", function () { setMenu(false); render(); });
+
+  // side menu on phones and tablets
+  function setMenu(open) {
+    document.body.classList.toggle("menu-open", open);
+    document.getElementById("menuBtn").setAttribute("aria-expanded", open ? "true" : "false");
+  }
+  document.getElementById("menuBtn").addEventListener("click", function () { setMenu(!document.body.classList.contains("menu-open")); });
+  document.getElementById("menuScrim").addEventListener("click", function () { setMenu(false); });
+  document.getElementById("menu").addEventListener("click", function (e) { if (e.target.closest("a, .menu-close")) setMenu(false); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") setMenu(false); });
   render();
   function checkForUpdate() {
     if (document.hidden || !window.fetch || location.protocol === "file:") return;
