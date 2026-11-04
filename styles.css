@@ -102,6 +102,11 @@ h2 small { font-weight: 600; color: var(--muted); font-size: 15px; }
 /* ---------- gate strip (days) ---------- */
 .gates { background: var(--sign-2); }
 .gates-inner { display: grid; grid-template-columns: repeat(4, 1fr); max-width: 1720px; margin: 0 auto; gap: 0; }
+.gates-inner.with-all { grid-template-columns: repeat(5, 1fr); }
+.gate-all b { letter-spacing: -.04em; white-space: nowrap; }
+@media (min-width: 1024px) { .side .gate.gate-all b { font-size: 20px; } }
+.board .day-head { margin: 28px 0 10px; }
+.board .day-head:first-child { margin-top: 0; }
 .gate {
   border: 0; background: transparent; color: rgba(255,255,255,.7); padding: 12px 4px 12px; display: flex; flex-direction: column; align-items: center; line-height: 1;
   font-weight: 600; font-size: 15px; transition: background .18s var(--ease), color .18s var(--ease);
@@ -263,7 +268,7 @@ h2 small { font-weight: 600; color: var(--muted); font-size: 15px; }
   .side .dest-inner { flex-direction: column; }
   .side .dest h1 { font-size: 32px; }
   .side .dest .btn { align-self: flex-start; margin-top: 14px; }
-  .side .gates-inner { grid-template-columns: 1fr; }
+  .side .gates-inner, .side .gates-inner.with-all { grid-template-columns: 1fr; }
   .side .gate { flex-direction: row; align-items: center; justify-content: space-between; padding: 12px 18px; text-align: left; }
   .side .gate b { font-size: 24px; margin: 0; order: -1; width: 40px; }
   .side .gate > span:first-of-type { flex: 1; }

@@ -187,6 +187,7 @@
       navVenues: "Miesta",
       navPick: "Univerzity",
       navRules: "Pravidlá",
+      allDaysShort: "Všetky dni",
       navGame: "Hra",
       result: "Výsledok",
       updated: "Rozpis sa zmenil.",
@@ -247,6 +248,7 @@
       navVenues: "Venues",
       navPick: "Universities",
       navRules: "Rules",
+      allDaysShort: "All days",
       navGame: "Game",
       result: "Result",
       updated: "The schedule has changed.",
@@ -530,8 +532,10 @@
   }
 
   // ---- shared: gate strip (days) + capsule filters (sports) + sign rows
-  function dayTabs(countFn) {
-    return h`<div class="gates"><div class="gates-inner" role="tablist">${raw(DAYS.map(function (d) {
+  function dayTabs(countFn, allCount) {
+    var allGate = allCount == null ? "" : h`<button class="gate gate-all${state.day === "all" ? " on" : ""}" data-day="all" role="tab" aria-selected="${state.day === "all"}" type="button">
+        <span>${t("allDaysShort")}</span><b>4–7</b><span class="n">${allCount}</span></button>`;
+    return h`<div class="gates"><div class="gates-inner${allGate ? " with-all" : ""}" role="tablist">${raw(allGate)}${raw(DAYS.map(function (d) {
       var n = countFn ? countFn(d.d) : null;
       var isToday = d.d === todayISO();
       var cls = "gate" + (d.d === state.day ? " on" : "") + (isToday ? " today" : "");
@@ -612,7 +616,7 @@
   function eventList(list, sid) {
     if (!list.length) return "";
     var nextIdx = -1;
-    if (state.day === todayISO()) {
+    if (list[0].day === todayISO()) {
       for (var i = 0; i < list.length; i++) { if (!statusOf(list[i]) && !resultOf(list[i])) { nextIdx = i; break; } }
     }
     return h`<ul class="events">${raw(list.map(function (e, i) { return eventCard(e, sid, i === nextIdx); }).join(""))}</ul>`;
@@ -697,36 +701,43 @@
       if (!n && playoff.some(function (e) { return e.day === d; })) return "play-off";
       return n;
     }
+    var allDays = state.day === "all";
+    function onDay(e) { return allDays || e.day === state.day; }
     var sportCounts = {};
-    mine.forEach(function (e) { if (e.day === state.day) sportCounts[e.sport] = (sportCounts[e.sport] || 0) + 1; });
+    mine.forEach(function (e) { if (onDay(e) && !e.all) sportCounts[e.sport] = (sportCounts[e.sport] || 0) + 1; });
 
-    var dayList = mine.filter(function (e) { return e.day === state.day && (state.sport === "all" || e.sport === state.sport || e.all); });
-    var poList = playoff.filter(function (e) { return e.day === state.day && (state.sport === "all" || e.sport === state.sport); });
-
-    var body;
-    if (!dayList.length && !poList.length) {
-      body = h`<p class="empty">${state.sport === "all" ? t("noEvents") : t("noEventsSport")}</p>`;
-    } else {
-      body = eventList(dayList, sid);
+    function dayBody(day, withHead) {
+      var dayList = mine.filter(function (e) { return e.day === day && (state.sport === "all" || e.sport === state.sport || e.all); });
+      var poList = playoff.filter(function (e) { return e.day === day && (state.sport === "all" || e.sport === state.sport); });
+      if (!dayList.length && !poList.length) return "";
+      if (withHead && !dayList.some(function (e) { return !e.all; }) && !poList.length) return "";
+      var d = DAYS.filter(function (q) { return q.d === day; })[0];
+      var out = withHead ? h`<h2 class="day-head">${state.lang === "sk" ? d.sk : d.en} ${d.num} <small>(${(function (n) { return n ? nMatches(n) : t("playoff"); })(dayList.filter(function (e) { return !e.all; }).length)})</small></h2>` : "";
+      out += eventList(dayList, sid);
       if (poList.length) {
         var groups = {};
         poList.forEach(function (e) { var k = e.sport + "/" + e.cat; (groups[k] = groups[k] || []).push(e); });
-        body += Object.keys(groups).map(function (k) {
+        out += Object.keys(groups).map(function (k) {
           var g = groups[k], first = g[0], v = VENUES[first.venue];
           return h`<details class="playoff"><summary>${raw(icon("chev"))}${t("playoff")}: ${sportName(first.sport)} ${catLabel(first.cat)} · ${nMatches(g.length)}, ${v ? v.name : ""} ${state.lang === "sk" ? "od" : "from"} ${first.time}</summary>
             <p class="day-note">${t("playoffNote")}</p>${raw(eventList(g, sid))}</details>`;
         }).join("");
       }
+      return out;
     }
 
-    var todayN = mine.filter(function (e) { return e.day === state.day; }).length;
+    var body = allDays ? DAYS.map(function (d) { return dayBody(d.d, true); }).join("") : dayBody(state.day, false);
+    if (!body) {
+      body = h`<p class="empty">${state.sport === "all" ? t("noEvents") : t("noEventsSport")}</p>`;
+    }
+    var todayN = mine.filter(function (e) { return onDay(e) && !e.all; }).length;
     var lead = s.country + " · " + nSports(sports.length) + " · " + nMatches(todayN);
     var links = "";
     app.innerHTML = h`
       <div class="page">
       <aside class="side"><div class="side-in">
       ${raw(destPanel(shortName(s.name), shortName(s.name) === s.name ? lead : s.name + " · " + lead, "#/pick", t("change")))}
-      ${raw(dayTabs(dayCount))}
+      ${raw(dayTabs(dayCount, mine.filter(function (e) { return !e.all; }).length))}
       ${raw(sportChips(sports, sportCounts))}
       ${raw(links)}
       </div></aside>
@@ -742,6 +753,7 @@
   // ---- all matches
   function renderAll() {
     var sports = Object.keys(SPORTS).filter(function (k) { return EVENTS.some(function (e) { return e.sport === k && !e.extra; }); });
+    if (state.day === "all") state.day = defaultDay();
     var dayEvents = EVENTS.filter(function (e) { return e.day === state.day && !e.extra; });
     var counts = {};
     dayEvents.forEach(function (e) { counts[e.sport] = (counts[e.sport] || 0) + 1; });
@@ -770,12 +782,12 @@
       var v = VENUES[k];
       var sports = {};
       EVENTS.forEach(function (e) { if (e.venue === k) sports[e.sport] = true; });
-      var todayN = EVENTS.filter(function (e) { return e.venue === k && e.day === state.day; }).length;
+      var todayN = EVENTS.filter(function (e) { return e.venue === k && (state.day === "all" || e.day === state.day); }).length;
       return h`<div class="venue">
         <div class="vbody">
           <div class="vname">${v.name}</div>
           <div class="addr">${v.addr}, Bratislava</div>
-          <div class="vsports">${Object.keys(sports).map(sportName).join(", ")}${todayN ? " · " + dayName(state.day) + ": " + nMatches(todayN) : ""}</div>
+          <div class="vsports">${Object.keys(sports).map(sportName).join(", ")}${todayN ? " · " + (state.day === "all" ? t("allDaysShort") : dayName(state.day)) + ": " + nMatches(todayN) : ""}</div>
         </div>
         <a class="plate" href="${mapsUrl(k)}" target="_blank" rel="noopener" aria-label="${v.name}, ${t("map")}">${raw(icon("pin"))}${t("map")}</a>
       </div>`;
