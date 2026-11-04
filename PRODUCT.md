@@ -30,9 +30,9 @@ across all sports at once, with venues resolved to addresses and map links.
 
 ## Operating Context
 
-- Static site in `wiuc/` (index.html, app.js, styles.css, data.js, extra.js), hosted on
-  GitHub Pages at https://danculinho.github.io/RabbitHole/wiuc/ and as a claude.ai Artifact.
-- `wiuc/tools/build.py` regenerates `data.js` from the organiser's public Google Sheets;
+- Static site at the repo root (index.html, app.js, styles.css, data.js, extra.js), hosted on
+  GitHub Pages at https://danculinho.github.io/WIUC/ and as a claude.ai Artifact.
+- `tools/build.py` regenerates `data.js` from the organiser's public Google Sheets;
   rerun during the tournament for results, time changes and filled-in play-off brackets.
 - Days: Wed 4.11 to Sat 7.11 (Sun 8.11 departures). Opening ceremony Thu 5.11 19:00, GOPASS Aréna.
 - 14 venues across Bratislava; several have numbered halls, courts or pitches.

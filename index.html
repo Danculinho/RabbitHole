@@ -2,11 +2,42 @@
 <html lang="sk">
 <head>
 <meta charset="utf-8">
-<title>WIUC 2026 Bratislava</title>
-<meta http-equiv="refresh" content="0; url=wiuc/">
-<script>location.replace("wiuc/" + location.hash);</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WIUC 2026 rozpis zápasov</title>
+<meta name="description" content="Rýchla orientácia v rozpise WIUC 2026 v Bratislave: vyberte svoju univerzitu a uvidíte všetky jej zápasy, športy a miesta.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#051c2c">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23051c2c'/%3E%3Crect x='10' y='22' width='8' height='20' fill='%23ffc315'/%3E%3Crect x='19' y='22' width='8' height='20' fill='%23ee792c'/%3E%3Crect x='28' y='22' width='8' height='20' fill='%23e93a3f'/%3E%3Crect x='37' y='22' width='8' height='20' fill='%2324a75b'/%3E%3Crect x='46' y='22' width='8' height='20' fill='%230e5ea5'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=10">
 </head>
 <body>
-<p><a href="wiuc/">WIUC 2026 Bratislava</a> · <a href="hra/">Futbalová nora</a></p>
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="#/pick" aria-label="WIUC 2026 Bratislava">
+      <span class="brand-title">WIUC 2026 Bratislava</span><span class="brand-sub" id="brandSub">Neoficiálny pomocník · 4. až 8. 11.</span>
+    </a>
+    <nav class="menu" id="menu" aria-label="Menu"></nav>
+    <button class="lang" id="langBtn" type="button" aria-label="Language">EN</button>
+  </div>
+  <div class="stripe" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+</header>
+
+<main id="app" class="app"></main>
+
+<footer class="foot">
+  <div class="foot-inner">
+    <p class="foot-mark">WIUC 2026 Bratislava</p>
+    <p id="footSource"></p>
+    <p id="footCredit"></p>
+    <p class="foot-author" id="footAuthor"></p>
+  </div>
+</footer>
+
+<script>document.write('<script src="data.js?t=' + Math.floor(Date.now() / 120000) + '"><\/script>');</script>
+<script src="extra.js"></script>
+<script src="app.js?v=10"></script>
 </body>
 </html>

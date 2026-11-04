@@ -1,7 +1,7 @@
 // Layout regression test: the sticky side panel must never overlap other content,
 // and every side-panel control must be reachable on screen at some scroll position.
 // Needs the local server (python -m http.server 8765 in the repo root) and Node 22+.
-// Usage: node wiuc/tools/test_layout.mjs [baseUrl]
+// Usage: node tools/test_layout.mjs [baseUrl]
 import { pathToFileURL } from 'node:url';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
@@ -9,7 +9,7 @@ import { join } from 'node:path';
 const CDP = process.env.CDP_LIB || join(homedir(), '.claude/skills/design-taste-frontend/scripts/lib/cdp.mjs');
 const { Browser, sleep } = await import(pathToFileURL(CDP).href);
 
-const base = process.argv[2] || 'http://127.0.0.1:8765/wiuc/';
+const base = process.argv[2] || 'http://127.0.0.1:8765/';
 const routes = ['#/s/slovak-university-of-technology-in-bratislava', '#/s/comenius-university-bratislava'];
 const sizes = [[2000, 1000], [1440, 900], [1280, 720], [1024, 700]];
 

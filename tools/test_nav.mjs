@@ -1,7 +1,7 @@
 // Navigation test: clicking the "WIUC 2026 Bratislava" logo opens the home page
 // (the picker with the Bratislava photo) from every view.
 // Needs the local server (python -m http.server 8765 in the repo root) and Node 22+.
-// Usage: node wiuc/tools/test_nav.mjs [baseUrl]
+// Usage: node tools/test_nav.mjs [baseUrl]
 import { pathToFileURL } from 'node:url';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
@@ -9,7 +9,7 @@ import { join } from 'node:path';
 const CDP = process.env.CDP_LIB || join(homedir(), '.claude/skills/design-taste-frontend/scripts/lib/cdp.mjs');
 const { Browser, sleep } = await import(pathToFileURL(CDP).href);
 
-const base = process.argv[2] || 'http://127.0.0.1:8765/wiuc/';
+const base = process.argv[2] || 'http://127.0.0.1:8765/';
 const from = ['#/s/slovak-university-of-technology-in-bratislava', '#/all', '#/venues', '#/rules', '#/party'];
 
 const browser = await Browser.launch();

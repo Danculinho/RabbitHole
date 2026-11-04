@@ -15,7 +15,7 @@ na akýkoľvek statický hosting.
 ## Aktualizácia rozpisu (výsledky, zmeny časov, doplnené play-off)
 
 ```bash
-python wiuc/tools/build.py
+python tools/build.py
 ```
 
 Potrebuje Python 3 a `openpyxl` (`pip install openpyxl`). Skript vypíše

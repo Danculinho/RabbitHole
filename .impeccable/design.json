@@ -3,9 +3,9 @@
   "generatedAt": "2026-11-04T09:46:33Z",
   "title": "Design System: WIUC 2026 Bratislava schedule helper",
   "source": {
-    "stylesheet": "wiuc/styles.css",
-    "markup": "wiuc/index.html",
-    "components": "wiuc/app.js",
+    "stylesheet": "styles.css",
+    "markup": "index.html",
+    "components": "app.js",
     "surface": ".impeccable/surfaces/wiuc-index-html.md"
   },
   "extensions": {

@@ -241,7 +241,7 @@ This section supersedes any rule below that contradicts it. The signboard idea, 
 - **States are fields, not rings.** Live row: `live-field` #fff3c4 (night: deep amber) with a pulsing yellow badge; next row: `next-field` #dcf3e5 (night: deep green). Past rows fade to 50%.
 - **Type ramp:** 15 / 16 / 20 / 24 / 28 / 32 / 64px. Body text is never under 15px (16px for running text). Page h1 24px, 28px from 640px, 32px on the picker; the picker hero h1 is 64px from 1024px. Hall and time numerals 24px, 28px from 640px. The footer mark is 32px.
 - **Sentence case.** No uppercase labels; the unit word under the hall number (hala, kurt, ihrisko, mapa) is sentence case at 15px. The category sits on the sport line ("Volejbal · ženy").
-- **One photograph.** The picker hero carries the Bratislava panorama (`wiuc/assets/panoramic-view-from-bratislava-castle.jpg`, Lukáš Perný, CC BY-SA 4.0, credited in the footer) under a navy scrim, with a slow drift. No other photography; the schedule views stay type and colour only.
+- **One photograph.** The picker hero carries the Bratislava panorama (`assets/panoramic-view-from-bratislava-castle.jpg`, Lukáš Perný, CC BY-SA 4.0, credited in the footer) under a navy scrim, with a slow drift. No other photography; the schedule views stay type and colour only.
 - **Motion.** Rows and picker blocks enter with a short staggered rise; the hero photo drifts; the live badge pulses. `prefers-reduced-motion` switches all of it off.
 - **Curtain footer.** The navy footer is sticky at the bottom under the app layer, so it is uncovered as the page ends. It holds the 32px "WIUC 2026 Bratislava" mark, the data source and the photo credit.
 - **No fixed bottom bar.** "Celý rozpis" and "Miesta" sit under the sport chips on every size.

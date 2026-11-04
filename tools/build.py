@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Build wiuc/data.js from the organiser's public Google Sheets.
+Build data.js from the organiser's public Google Sheets.
 
     python build.py            # download fresh sheets + rebuild
     python build.py --offline  # reuse cached xlsx in tools/cache/

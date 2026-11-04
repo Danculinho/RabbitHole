@@ -437,7 +437,7 @@
   function renderMenu(view) {
     var items = [];
     if (state.school && SCHOOLS[state.school]) items.push(["school", "#/s/" + state.school, t("navMine")]);
-    items.push(["all", "#/all", t("navAll")], ["venues", "#/venues", t("navVenues")], ["rules", "#/rules", t("navRules")], ["party", "#/party", t("navParty")], ["game", "../hra/", t("navGame")], ["pick", "#/pick", t("navPick")]);
+    items.push(["all", "#/all", t("navAll")], ["venues", "#/venues", t("navVenues")], ["rules", "#/rules", t("navRules")], ["party", "#/party", t("navParty")], ["game", "hra/", t("navGame")], ["pick", "#/pick", t("navPick")]);
     var menu = document.getElementById("menu");
     if (!menu) return;
     menu.innerHTML = items.map(function (it) {
