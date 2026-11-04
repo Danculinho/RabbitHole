@@ -243,6 +243,17 @@ class Schools:
 PLACEHOLDER_RE = re.compile(r"^(\(\d+\)|\d[A-Z]\**|\d+(st|nd|rd|th|dn)|best(\s|$)|W\d+$|L\d+$|winner(\s|$)|loser(\s|$))", re.I)
 
 
+def short_name(name):
+    """Player names are published as initials plus the last word ("Cara O'Flynn" -> "C. O'Flynn")
+    so the page does not republish full names. Anything with digits is a squad label, not a name."""
+    words = name.split()
+    if len(words) < 2 or re.search(r"\d", name):
+        return name
+    def initial(w):
+        return "-".join(p[0].upper() + "." for p in w.split("-") if p)
+    return " ".join([initial(w) for w in words[:-1]] + [words[-1]])
+
+
 def parse_team(path, sport, sch, events):
     wb = openpyxl.load_workbook(path, data_only=True)
     for ws in wb.worksheets:
@@ -408,6 +419,9 @@ def parse_grid(path, sport, sheet_name, sch, events):
                         sid, squad = sch.resolve(team, f"{sport}/{sheet_name}")
                         if re.match(r"^\d$", player):
                             squad, player = player, ""
+                        short = short_name(player)
+                        if short != player:          # keep the full name out of the published data
+                            txt, player = f"{team} - {short}", short
                         return {"label": txt, "school": sid, "squad": squad, "player": player}
 
                     events.append({
