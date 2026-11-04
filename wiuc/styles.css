@@ -240,6 +240,7 @@ h2 small { font-weight: 600; color: var(--muted); font-size: 15px; }
 .foot-inner { max-width: 1720px; margin: 0 auto; }
 .foot-mark { font-size: 32px; font-weight: 800; letter-spacing: -.03em; color: #fff; line-height: 1; margin: 0 0 14px; }
 .foot p { margin: 0 0 8px; font-size: 15px; max-width: 70ch; }
+.foot .foot-author { margin-top: 16px; color: #fff; font-weight: 700; font-size: 16px; }
 .foot a { color: #fff; }
 
 @media (min-width: 640px) {

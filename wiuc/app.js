@@ -449,6 +449,8 @@
   function renderFoot() {
     document.getElementById("footSource").innerHTML =
       h`${t("source")} ${DATA.generated || ""}. <a href="${SOURCE_URL}" target="_blank" rel="noopener">Google Drive</a> · <a href="${OFFICIAL_URL}" target="_blank" rel="noopener">${t("official")}</a>. ${t("results")}`;
+    var author = document.getElementById("footAuthor");
+    if (author) author.textContent = state.lang === "sk" ? "Vytvoril Daniel Floris." : "Made by Daniel Floris.";
     document.getElementById("footCredit").innerHTML =
       h`${state.lang === "sk" ? "Fotografia" : "Photograph"}: <a href="https://commons.wikimedia.org/w/index.php?curid=119460999" target="_blank" rel="noopener">Panoramic view from Bratislava castle</a>, Lukáš Perný, CC BY-SA 4.0, Wikimedia Commons.`;
   }
