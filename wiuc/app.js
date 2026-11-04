@@ -58,6 +58,90 @@
   ];
   var SOURCE_URL = "https://drive.google.com/drive/folders/1g98fxlj3ZIp15Tsytcrvea8Z9117FwRZ";
   var OFFICIAL_URL = "https://www.wiusc.com/11th-wiuc-bratislava-2026/";
+  // ------------------------------------------------------------ rules (from the organiser's General Rules PDF) and parties
+  var RULES_PDF = "assets/General_Rules_WIUC_2026.pdf";
+  var RULES_KEY = {
+    sk: [
+      "Na športovisko príďte aspoň 30 minút pred začiatkom a nahláste sa u oficiála súťaže.",
+      "Uvedené časy sú časy začiatku. Pri meškaní môže byť zápas automaticky kontumovaný.",
+      "Akreditačnú kartu noste viditeľne. Bez nej vás na športovisko nepustia.",
+      "Poistenie si zabezpečte sami, organizátor ho neposkytuje.",
+      "Na športoviskách je zakázaný alkohol aj fajčenie.",
+      "Noste si fľašu z uvítacieho balíčka. Plastové fľaše sa nerozdávajú, voda z kohútika je pitná."
+    ],
+    en: [
+      "Arrive at the venue at least 30 minutes before the start and report to the competition official.",
+      "Published times are starting times. Late arrival may mean automatic forfeit.",
+      "Wear your accreditation card visibly. Without it you cannot enter the sports centres.",
+      "Arrange your own insurance; the organisers do not provide it.",
+      "Alcohol and smoking are prohibited at sports venues.",
+      "Bring the bottle from your welcome pack. No plastic bottles are handed out; tap water is safe to drink."
+    ]
+  };
+  var RULES = [
+    { sk: { t: "Pravidlá súťaže", li: [
+        "Hráč nesmie v tej istej súťaži reprezentovať viac ako jeden tím. Porušenie znamená kontumáciu oboch zápasov, v ktorých hral.",
+        "Tímy musia prísť na určené športovisko aspoň 30 minút pred plánovaným začiatkom a nahlásiť sa príslušnému oficiálovi súťaže.",
+        "Zverejnené časy sú časy začiatku. Meškanie môže znamenať automatickú kontumáciu zápasu.",
+        "Pre nabitý program sa zápasy môžu hrať na hrubý čas (hodiny sa nezastavujú).",
+        "Neúctivé správanie k rozhodcom, zapisovateľom alebo súperom môže viesť ku kontumácii zápasu.",
+        "Organizačný výbor môže za porušenie pravidiel diskvalifikovať hráčov, trénerov, funkcionárov, fanúšikov alebo aj celú univerzitu.",
+        "Politické vyhlásenia a demonštrácie sú počas podujatia zakázané.",
+        "Obťažovanie a diskriminácia na základe pohlavia, rodovej identity, sexuálnej orientácie, fyzických vlastností, zdravotného postihnutia, etnického či národného pôvodu alebo politických názorov sa netolerujú."] },
+      en: { t: "Competition rules", li: [
+        "Players may not represent more than one team in the same competition. A breach results in forfeiture of both matches in which the player took part.",
+        "Teams must arrive at their assigned venue at least 30 minutes before the scheduled start and report to the relevant competition official.",
+        "Published match times are starting times. Late arrival may result in automatic forfeiture of the match.",
+        "Matches may be played with a running clock due to the tight schedule.",
+        "Disrespectful behaviour towards referees, table officials or opponents may result in forfeiture of the match.",
+        "The Organising Committee may disqualify players, coaches, officials, supporters or, where appropriate, an entire university for breaches of the rules.",
+        "Political statements or demonstrations are prohibited during the event.",
+        "Harassment or discrimination based on sex, gender identity, sexual orientation, physical characteristics, disability, ethnicity, national origin or political views will not be tolerated."] } },
+    { sk: { t: "Akreditačné karty", p: ["Akreditačnú kartu vydáva IUSF po akreditácii. Potvrdzuje vašu totožnosť a to, kam máte prístup."], li: [
+        "Kartu noste viditeľne, aby ju ochranka a personál vedeli rýchlo skontrolovať.",
+        "Na športoviská sa dostanú len držitelia oficiálnej akreditačnej karty WIUC 2026.",
+        "Karta je osobná a neprenosná."] },
+      en: { t: "Accreditation cards", p: ["An accreditation card is an official document issued by IUSF after accreditation. It confirms your identity and access entitlements."], li: [
+        "Wear your card visibly so security and event staff can check access quickly.",
+        "Only holders of an official WIUC 2026 accreditation card may enter sports centres.",
+        "Cards are personal and non-transferable."] } },
+    { sk: { t: "Vstup na športoviská", p: ["Z bezpečnostných a kapacitných dôvodov môže byť vstup do niektorých športovísk obmedzený. Prednosť majú športovci, ktorí práve hrajú. Keď je športovisko plné, ďalších ľudí už nemusia pustiť dnu. Po zápase prosím uvoľnite hraciu plochu aj športovisko pre ďalšie tímy. Vstup na vonkajšie športoviská môže byť z bezpečnostných dôvodov obmedzený."] },
+      en: { t: "Access to sports venues", p: ["For safety and capacity reasons, admission to some sports centres may be limited. Priority goes to athletes scheduled to compete. Once a venue is full, further admission may be refused. After your match, please leave the playing area or venue to make room for the next teams. Access to outdoor venues may also be restricted for safety reasons."] } },
+    { sk: { t: "Poistenie a zdravotná pomoc", p: ["IUSF ani organizátori WIUC neposkytujú zdravotné poistenie. Každý účastník musí mať poistenie sám alebo cez svoju univerzitu či tím. Počas zápasov je na športoviskách prítomná záchranka, zdravotníci alebo prvá pomoc."] },
+      en: { t: "Insurance and medical assistance", p: ["IUSF and the WIUC organisers do not provide medical insurance. Every participant must be insured, individually or through their university or team. Ambulance, medical or first-aid staff are present at venues during matches."] } },
+    { sk: { t: "Rešpekt, fair play a spoločné priestory", li: [
+        "Správajte sa slušne k súperom, rozhodcom, dobrovoľníkom, personálu hotelov aj ostatným hosťom.",
+        "Hrajte férovo, myslite na bezpečnosť a rešpektujte rozhodnutia rozhodcov a pravidlá jednotlivých športov.",
+        "Pri návrate do ubytovania buďte potichu. Šetrite izby, vybavenie a spoločné priestory.",
+        "Na športoviskách je zakázané piť alkohol a fajčiť. Dodržiavajte pravidlá každého športoviska."] },
+      en: { t: "Respect, sportsmanship and shared spaces", li: [
+        "Treat opponents, referees, volunteers, hotel staff and other guests with courtesy.",
+        "Play fairly, put safety first and follow referees' decisions and sport-specific regulations.",
+        "Keep noise down when returning to your accommodation. Respect rooms, equipment and shared facilities.",
+        "Alcohol and smoking are prohibited at sports venues. Follow all venue rules."] } },
+    { sk: { t: "Rešpekt k personálu", p: ["Všetky tímy sa musia k rozhodcom, zapisovateľom, dobrovoľníkom a organizátorom správať s rešpektom. Rovnaký rešpekt očakávame od personálu voči všetkým účastníkom. O sankciách za porušenie pravidiel rozhoduje organizačný výbor."] },
+      en: { t: "Respect for staff", p: ["All teams must treat referees, table officials, volunteers and organising staff with respect. Staff are expected to show the same respect to all participants. The Organising Committee decides sanctions for rule violations."] } },
+    { sk: { t: "Udržujte športoviská čisté", p: ["Čistota je zodpovednosť každého. Nechajte športoviská, šatne, toalety a všetky priestory WIUC čisté a upratané. Používajte koše, odneste si fľaše aj obaly od jedla a šatňu nechajte pripravenú pre ďalší tím."] },
+      en: { t: "Keep our sports centres clean", p: ["Keeping the facilities clean is everyone's job. Leave sports centres, changing rooms, toilets and all WIUC areas clean and tidy. Use the bins, take away bottles and food packaging, and leave changing rooms ready for the next teams."] } },
+    { sk: { t: "Najprv voda", p: ["Voda z kohútika je na Slovensku veľmi kvalitná a bezpečne pitná. Kvôli udržateľnosti organizátori nerozdávajú plastové fľaše. Každý účastník dostane v uvítacom balíčku znovupoužiteľnú fľašu. Noste si ju so sebou a naplňte ju pred zápasom."] },
+      en: { t: "Water first", p: ["Tap water in Slovakia is of very high quality and safe to drink. With sustainability in mind, the organisers do not hand out plastic bottles. Everyone gets a reusable bottle in the welcome pack. Bring it along and fill it before your matches."] } },
+    { sk: { t: "Osobné veci", p: ["Cennosti si dobre strážte a každú udalosť nahláste personálu podujatia."] },
+      en: { t: "Personal belongings", p: ["Keep your valuables secure and report any incident to event staff."] } },
+    { sk: { t: "Informácie a kontakty", p: ["Každá delegácia vyplní súbor „Entry List Accreditation“ s telefónnym číslom s WhatsAppom pre vedúceho delegácie a pre zodpovednú osobu za každý šport. Informácie počas turnaja chodia na tieto kontakty. IUSF nezodpovedá za nesprávne alebo chýbajúce čísla."] },
+      en: { t: "Information and contacts", p: ["Each delegation completes the \u201cEntry List Accreditation\u201d file with a WhatsApp number for the head of delegation and for the person responsible for each sport. Tournament messages go to these contacts. IUSF is not responsible for wrong or missing numbers."] } },
+    { sk: { t: "Priateľstvo a flexibilita", p: ["WIUC má spájať univerzity, budovať priateľstvá a vzájomné porozumenie. Prichádzajte načas a buďte trpezliví, ak sa program alebo organizácia nečakane zmení.", "Organizátori môžu vylúčiť účastníka, ktorý tieto pravidlá vážne poruší, aby podujatie zostalo bezpečné a príjemné pre všetkých."] },
+      en: { t: "Friendship and flexibility", p: ["WIUC aims to foster friendship and understanding among universities. Arrive on time and stay patient and flexible if the schedule or organisation changes unexpectedly.", "The organisers may exclude anyone who seriously breaks these rules, to keep the event safe, respectful and welcoming for everyone."] } },
+    { sk: { t: "Reklama a organizácia", p: ["Propagovať športové či iné podujatia univerzity, klubu alebo tretej strany na športoviskách WIUC 2026 sa dá len s predchádzajúcim súhlasom IUSF.", "Za organizáciu zodpovedá IUSC Committee a WIUSF Federation SSD a r.l. Registráciou súhlasíte s týmito pravidlami. Rozhodcov určujú organizátori."] },
+      en: { t: "Advertising and organisation", p: ["Promoting sporting or other events of a university, club or third party at WIUC 2026 venues requires prior consent from IUSF.", "The IUSC Committee and WIUSF Federation SSD a r.l. are responsible for the Championships. Registration means acceptance of these rules. Referees are appointed by the organising staff."] } }
+  ];
+
+  var PARTY_URL = "https://site.fourvenues.com/en/wiuc-official-party-2026";
+  var PARTIES = [
+    { d: "2026-11-05", club: "Neptune Club Bratislava", addr: "Kolárska 473/3, Bratislava" },
+    { d: "2026-11-06", club: "Neptune Club Bratislava", addr: "Kolárska 473/3, Bratislava" },
+    { d: "2026-11-07", club: "A4 Studio Bratislava", addr: "Trnavská cesta 39, Bratislava", final: true }
+  ];
+
 
   var CEREMONY = { sport: "ceremony", cat: "X", day: "2026-11-05", time: "19:00", venue: "gopass", court: null,
     a: { label: "", school: null }, b: { label: "", school: null }, pool: "", stage: "", game: "", resA: "", resB: "", all: true };
@@ -102,6 +186,19 @@
       navAll: "Celý rozpis",
       navVenues: "Miesta",
       navPick: "Univerzity",
+      navRules: "Pravidlá",
+      navParty: "Párty",
+      rulesTitle: "Pravidlá WIUC 2026",
+      rulesLead: "Všeobecné pravidlá organizátora v skratke a celé. Záväzné je anglické znenie v PDF.",
+      rulesKey: "Najdôležitejšie",
+      rulesAll: "Všetky pravidlá",
+      rulesPdf: "Pôvodné pravidlá v angličtine (PDF)",
+      partyTitle: "Oficiálne párty WIUC",
+      partyLead: "Vstup do klubov treba rezervovať a zaplatiť vopred. Počet miest je obmedzený.",
+      partyBook: "Rezervovať vstupenky",
+      partyBring: "Na vstup si prineste",
+      partyBringList: ["doklad totožnosti", "akreditačnú kartu WIUC", "QR kód rezervácie"],
+      partyFinal: "Veľká záverečná párty",
       ceremony: "Otvárací ceremoniál a spoločná fotografia",
       allSchools: "všetky univerzity",
       count: "zápasov"
@@ -145,6 +242,19 @@
       navAll: "Full schedule",
       navVenues: "Venues",
       navPick: "Universities",
+      navRules: "Rules",
+      navParty: "Parties",
+      rulesTitle: "WIUC 2026 rules",
+      rulesLead: "The organiser's general rules, in short and in full. The PDF is the binding version.",
+      rulesKey: "Most important",
+      rulesAll: "All rules",
+      rulesPdf: "Original rules (PDF)",
+      partyTitle: "Official WIUC parties",
+      partyLead: "Club entry has to be booked and paid in advance. Places are limited.",
+      partyBook: "Book tickets",
+      partyBring: "Bring to the door",
+      partyBringList: ["your ID", "your WIUC badge", "the reservation QR code"],
+      partyFinal: "The big final party",
       ceremony: "Opening ceremony and group photo",
       allSchools: "all universities",
       count: "matches"
@@ -287,6 +397,8 @@
     }
     if (parts[0] === "all") return { view: "all" };
     if (parts[0] === "venues") return { view: "venues" };
+    if (parts[0] === "rules") return { view: "rules" };
+    if (parts[0] === "party") return { view: "party" };
     if (parts[0] === "pick") return { view: "pick" };
     if (state.school && SCHOOLS[state.school]) return { view: "school", school: state.school };
     return { view: "pick" };
@@ -306,6 +418,8 @@
     if (r.view === "pick") renderPick();
     else if (r.view === "all") renderAll();
     else if (r.view === "venues") renderVenues();
+    else if (r.view === "rules") renderRules();
+    else if (r.view === "party") renderParty();
     else renderSchool(r.school);
     renderFoot();
     if (keepScroll !== true) window.scrollTo(0, 0);
@@ -315,10 +429,12 @@
   function renderMenu(view) {
     var items = [];
     if (state.school && SCHOOLS[state.school]) items.push(["school", "#/s/" + state.school, t("navMine")]);
-    items.push(["all", "#/all", t("navAll")], ["venues", "#/venues", t("navVenues")], ["pick", "#/pick", t("navPick")]);
-    document.getElementById("menu").innerHTML = items.map(function (it) {
+    items.push(["all", "#/all", t("navAll")], ["venues", "#/venues", t("navVenues")], ["rules", "#/rules", t("navRules")], ["party", "#/party", t("navParty")], ["pick", "#/pick", t("navPick")]);
+    var menu = document.getElementById("menu");
+    if (!menu) return;
+    menu.innerHTML = items.map(function (it) {
       var on = it[0] === view;
-      return h`<a href="${it[1]}"${raw(on ? ' class="on" aria-current="page"' : "")}>${it[2]}</a>`;
+      return h`<a href="${it[1]}" class="m-${it[0]}${on ? " on" : ""}"${raw(on ? ' aria-current="page"' : "")}>${it[2]}</a>`;
     }).join("");
   }
 
@@ -485,6 +601,61 @@
     return h`<ul class="events">${raw(list.map(function (e, i) { return eventCard(e, sid, i === nextIdx); }).join(""))}</ul>`;
   }
 
+  // ---- rules
+  function renderRules() {
+    var L = state.lang;
+    var keys = RULES_KEY[L].map(function (k) { return h`<li>${k}</li>`; }).join("");
+    var secs = RULES.map(function (r) {
+      var x = r[L];
+      return h`<section class="rule">
+        <h2>${x.t}</h2>
+        ${raw((x.p || []).map(function (q) { return h`<p>${q}</p>`; }).join(""))}
+        ${raw(x.li ? "<ul>" + x.li.map(function (q) { return h`<li>${q}</li>`; }).join("") + "</ul>" : "")}
+      </section>`;
+    }).join("");
+    var back = "#/" + (state.school ? "s/" + state.school : "pick");
+    app.innerHTML = h`
+      ${raw(destPanel(t("rulesTitle"), t("rulesLead"), back, state.school ? t("mine") : t("back")))}
+      <div class="page page-plain">
+        <h2 class="sec-title">${t("rulesKey")}</h2>
+        <ul class="keys">${raw(keys)}</ul>
+        <h2 class="sec-title">${t("rulesAll")}</h2>
+        <div class="rules">${raw(secs)}</div>
+        <p class="rules-pdf"><a href="${RULES_PDF}" target="_blank" rel="noopener">${t("rulesPdf")}</a></p>
+      </div>`;
+  }
+
+  // ---- parties
+  function renderParty() {
+    var L = state.lang;
+    var nights = PARTIES.map(function (n) {
+      var day = DAYS.filter(function (q) { return q.d === n.d; })[0];
+      var num = n.d.slice(8).replace(/^0/, "");
+      var map = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(n.club + ", " + n.addr);
+      return h`<div class="night${n.final ? " final" : ""}">
+        <div class="ndate"><b>${num}.</b><span>${day ? (L === "sk" ? day.sk : day.en) : ""}</span></div>
+        <div class="nbody">
+          ${raw(n.final ? h`<div class="nfinal">${t("partyFinal")}</div>` : "")}
+          <div class="vname">${n.club}</div>
+          <div class="addr">${n.addr}</div>
+        </div>
+        <a class="plate" href="${map}" target="_blank" rel="noopener" aria-label="${n.club}, ${t("map")}">${raw(icon("pin"))}${t("map")}</a>
+      </div>`;
+    }).join("");
+    var back = "#/" + (state.school ? "s/" + state.school : "pick");
+    app.innerHTML = h`
+      ${raw(destPanel(t("partyTitle"), t("partyLead"), back, state.school ? t("mine") : t("back")))}
+      <div class="page page-plain">
+        <div class="party">
+          <div class="nights">${raw(nights)}</div>
+          <div class="party-side">
+            <a class="btn primary big" href="${PARTY_URL}" target="_blank" rel="noopener">${t("partyBook")} ${raw(icon("arrow"))}</a>
+            <h2 class="sec-title">${t("partyBring")}</h2>
+            <ul class="bring">${raw(t("partyBringList").map(function (q) { return h`<li>${q}</li>`; }).join(""))}</ul>
+          </div>
+        </div>
+      </div>`;
+  }
   function destPanel(title, lead, backHref, backLabel) {
     return h`<div class="dest"><div class="dest-inner">
       <div><h1>${title}</h1><p class="lead">${lead}</p></div>
