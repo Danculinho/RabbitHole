@@ -369,11 +369,13 @@ h2 small { font-weight: 600; color: var(--muted); font-size: 15px; }
 /* ---------- group tables and calendar ---------- */
 .ev .sets { font-size: 14px; font-weight: 600; color: var(--muted); }
 .tables-grid { margin: 16px 16px 0; display: grid; gap: 14px; }
-.table-card { background: var(--card); padding: 16px 0 6px; }
+.table-card { background: var(--card); padding: 16px 0 6px; height: 100%; }
 .table-card h2 { margin: 0 18px 10px; font-size: 18px; }
 .standings { width: 100%; border-collapse: collapse; font-size: 16px; font-variant-numeric: tabular-nums; }
 .standings th { font-size: 14px; font-weight: 700; color: var(--muted); text-align: center; padding: 6px 6px; }
-.standings td { text-align: center; padding: 10px 6px; border-top: 6px solid var(--card); background: var(--field); }
+.standings td { text-align: center; padding: 0 6px; height: 60px; border-top: 6px solid var(--card); background: var(--field); }
+.standings .tname { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; line-height: 1.25; }
+.table-card h2 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .standings th.team, .standings td.team { text-align: left; }
 .standings td.team { font-weight: 700; overflow-wrap: anywhere; }
 .standings td.team .squad { font-weight: 500; color: var(--ink-2); }
@@ -388,7 +390,7 @@ h2 small { font-weight: 600; color: var(--muted); font-size: 15px; }
   .standings th.score, .standings td.score { display: none; }
 }
 @media (min-width: 1024px) {
-  .tables-grid { margin: 20px 0 0; grid-template-columns: repeat(auto-fill, minmax(480px, 1fr)); gap: 24px; align-items: start; }
+  .tables-grid { margin: 20px 0 0; grid-template-columns: repeat(auto-fill, minmax(480px, 1fr)); gap: 24px; align-items: stretch; }
   .tables-note, .cal-hint { margin-left: 0; margin-right: 0; }
   .page-plain > .chips { padding-left: 0; padding-right: 0; }
 }

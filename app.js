@@ -802,7 +802,7 @@
       var rows = pool.rows.map(function (T, i) {
         var L = sideLabel(T.side, mine, null);
         var me = T.side.school && T.side.school === mine;
-        return h`<tr class="${me ? "me" : ""}"><td class="pos">${i + 1}.</td><td class="team">${L.name}${raw(L.extra ? h` <span class="squad">(${L.extra})</span>` : "")}</td>
+        return h`<tr class="${me ? "me" : ""}"><td class="pos">${i + 1}.</td><td class="team" title="${L.name}${L.extra ? " (" + L.extra + ")" : ""}"><span class="tname">${L.name}${raw(L.extra ? h` <span class="squad">(${L.extra})</span>` : "")}</span></td>
           <td>${T.p}</td><td>${T.w}</td>${raw(hasDraw ? h`<td>${T.d}</td>` : "")}<td>${T.l}</td><td class="score">${T.f}:${T.a}</td><td class="pts">${T.pts}</td></tr>`;
       }).join("");
       return h`<section class="table-card">
