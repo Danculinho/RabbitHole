@@ -5,6 +5,9 @@ Build wiuc/data.js from the organiser's public Google Sheets.
     python build.py            # download fresh sheets + rebuild
     python build.py --offline  # reuse cached xlsx in tools/cache/
 
+data.js is rewritten only when matches, times or results changed, so the
+scheduled GitHub Action (.github/workflows/wiuc-refresh.yml) commits only real changes.
+
 The organiser publishes the schedules as public Google Sheets
 (https://www.wiusc.com/11th-wiuc-bratislava-2026/ -> SCHEDULES -> Google Drive).
 """
@@ -315,12 +318,23 @@ def parse_team(path, sport, sch, events):
             })
 
 
+def score_cell(raw, j):
+    """Set scores typed as 6-1 often turn into dates (1 June) in the sheet; read them back."""
+    v = raw[j] if j < len(raw) else None
+    if isinstance(v, datetime.datetime):
+        return f"{v.month}-{v.day}"
+    if isinstance(v, datetime.time):
+        return ""
+    return cell(v)
+
+
 # ------------------------------------------------------------- grid sports
 def parse_grid(path, sport, sheet_name, sch, events):
     """tennis / padel: venues side by side, per venue courts as (Court|Pool|Score) triples,
     a match = row with time+name(+pool), next row 'VS', next row opponent."""
     ws = openpyxl.load_workbook(path, data_only=True)[sheet_name]
-    rows = [[cell(v) for v in r] for r in ws.iter_rows(values_only=True)]
+    raw_rows = [list(r) for r in ws.iter_rows(values_only=True)]
+    rows = [[cell(v) for v in r] for r in raw_rows]
     day = None
     venues = []   # list of (court_col, venue_id, court_no)
     i = 0
@@ -355,6 +369,8 @@ def parse_grid(path, sport, sheet_name, sch, events):
                     a = r[c] if c < len(r) else ""
                     b = opp[c] if c < len(opp) else ""
                     pool = r[c + 1] if c + 1 < len(r) else ""
+                    score_a = score_cell(raw_rows[i], c + 2)
+                    score_b = score_cell(raw_rows[i + 2], c + 2)
                     if not a or not b or a.lower() == "stop":
                         continue
                     t = None
@@ -383,11 +399,33 @@ def parse_grid(path, sport, sheet_name, sch, events):
                         "venue": vid, "court": str(court),
                         "a": side(a), "b": side(b),
                         "pool": pool, "stage": "", "game": "",
-                        "resA": "", "resB": "",
+                        "resA": score_a, "resB": score_b,
                     })
                 i += 3
                 continue
         i += 1
+
+
+def now_local():
+    try:
+        from zoneinfo import ZoneInfo
+        return datetime.datetime.now(ZoneInfo("Europe/Bratislava"))
+    except Exception:
+        return datetime.datetime.now()
+
+
+def read_existing():
+    try:
+        txt = open(OUT, encoding="utf-8").read()
+    except OSError:
+        return None
+    m = re.search(r"window\.WIUC_DATA = (.*);\s*$", txt, re.S)
+    if not m:
+        return None
+    try:
+        return json.loads(m.group(1))
+    except ValueError:
+        return None
 
 
 # -------------------------------------------------------------------- main
@@ -423,8 +461,18 @@ def main():
     for n, e in enumerate(events, 1):
         e["id"] = f"{e['sport'][:3]}-{n}"
 
+    old = read_existing()
+    if old is not None:
+        if old.get("schools") == schools and old.get("events") == events:
+            log(f"unchanged ({len(events)} events), data.js left as is")
+            return
+        old_n = len(old.get("events") or [])
+        if old_n and len(events) < old_n * 0.7 and "--force" not in sys.argv:
+            log(f"REFUSING: {len(events)} events now vs {old_n} before; the sheets may have changed shape. Use --force.")
+            sys.exit(2)
+
     data = {
-        "generated": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "generated": now_local().strftime("%Y-%m-%d %H:%M"),
         "schools": schools,
         "events": events,
     }

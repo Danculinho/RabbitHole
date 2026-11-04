@@ -187,6 +187,9 @@
       navVenues: "Miesta",
       navPick: "Univerzity",
       navRules: "Pravidlá",
+      result: "Výsledok",
+      updated: "Rozpis sa zmenil.",
+      reload: "Načítať nový",
       navParty: "Párty",
       rulesTitle: "Pravidlá WIUC 2026",
       rulesLead: "Všeobecné pravidlá organizátora v skratke a celé. Záväzné je anglické znenie v PDF.",
@@ -243,6 +246,9 @@
       navVenues: "Venues",
       navPick: "Universities",
       navRules: "Rules",
+      result: "Result",
+      updated: "The schedule has changed.",
+      reload: "Load the new one",
       navParty: "Parties",
       rulesTitle: "WIUC 2026 rules",
       rulesLead: "The organiser's general rules, in short and in full. The PDF is the binding version.",
@@ -549,12 +555,20 @@
     window.scrollTo(0, y);
   });
 
+  function resultOf(ev) {
+    var a = ev.resA || "", b = ev.resB || "";
+    if (a && b) return a + " : " + b;
+    return a || b;
+  }
   function eventCard(ev, sid, markNext) {
     var st = statusOf(ev);
     if (markNext && !st) st = "next";
+    var result = resultOf(ev);
+    if (result) st = "done";
     var A = sideLabel(ev.a, sid, ev), B = sideLabel(ev.b, sid, ev);
     var sp = SPORTS[ev.sport] || { c: "#888" };
-    var badge = st === "live" ? h`<span class="badge live">${t("live")}</span>` :
+    var badge = result ? h`<span class="badge score">${t("result")} ${result}</span>` :
+                st === "live" ? h`<span class="badge live">${t("live")}</span>` :
                 st === "next" ? h`<span class="badge next">${t("next")}</span>` : "";
     var cat = catLabel(ev.cat);
     var meta = [];
@@ -575,8 +589,7 @@
         if (S.player) s += h` <span class="player">${S.player}</span>`;
         return s;
       }
-      var res = (ev.resA !== "" && ev.resB !== "") ? h`<span class="res">${ev.resA}:${ev.resB}</span>` : "";
-      match = h`<div class="match">${raw(side(A))} <span class="vs">vs</span> ${raw(side(B))}${raw(res)}</div>`;
+      match = h`<div class="match">${raw(side(A))} <span class="vs">vs</span> ${raw(side(B))}</div>`;
     }
     var plate = ev.court
       ? h`<a class="plate" href="${mapsUrl(ev.venue)}" target="_blank" rel="noopener" aria-label="${unitWord(ev)} ${ev.court}, ${t("map")}">${ev.court}<small>${unitWord(ev)}${raw(icon("dir"))}</small></a>`
@@ -596,7 +609,7 @@
     if (!list.length) return "";
     var nextIdx = -1;
     if (state.day === todayISO()) {
-      for (var i = 0; i < list.length; i++) { if (!statusOf(list[i])) { nextIdx = i; break; } }
+      for (var i = 0; i < list.length; i++) { if (!statusOf(list[i]) && !resultOf(list[i])) { nextIdx = i; break; } }
     }
     return h`<ul class="events">${raw(list.map(function (e, i) { return eventCard(e, sid, i === nextIdx); }).join(""))}</ul>`;
   }
@@ -776,5 +789,21 @@
   });
   window.addEventListener("hashchange", function () { render(); });
   render();
+  function checkForUpdate() {
+    if (document.hidden || !window.fetch || location.protocol === "file:") return;
+    fetch("data.js?t=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.ok ? r.text() : ""; }).then(function (txt) {
+      var m = /"generated":"([^"]+)"/.exec(txt || "");
+      if (!m || m[1] === DATA.generated || document.getElementById("updateBar")) return;
+      var bar = document.createElement("div");
+      bar.id = "updateBar";
+      bar.className = "update-bar";
+      bar.innerHTML = h`<span>${t("updated")}</span><button class="btn primary" type="button">${t("reload")}</button>`;
+      bar.querySelector("button").addEventListener("click", function () { location.reload(); });
+      document.body.appendChild(bar);
+    }).catch(function () {});
+  }
+  setInterval(checkForUpdate, 5 * 60000);
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) checkForUpdate(); });
+
   setInterval(function () { if (route().view !== "pick") { var y = window.scrollY; render(true); window.scrollTo(0, y); } }, 60000);
 })();

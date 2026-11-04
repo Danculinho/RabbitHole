@@ -1,0 +1,41 @@
+# Re-reads the organiser's Google Sheets every 10 minutes during WIUC 2026 and
+# commits wiuc/data.js only when matches, times or results changed.
+# GitHub Pages redeploys on that commit. Delete this file after the tournament.
+name: WIUC schedule refresh
+
+on:
+  schedule:
+    - cron: "*/10 6-22 4-8 11 *"   # 4.-8. 11., 07:00-23:59 Bratislava time (UTC+1)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: wiuc-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install openpyxl
+      - name: Rebuild data.js from the sheets
+        run: python wiuc/tools/build.py
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- wiuc/data.js; then
+            echo "No change"
+            exit 0
+          fi
+          git config user.name "wiuc-refresh"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add wiuc/data.js
+          git commit -m "Refresh WIUC schedule from the organiser's sheets"
+          git pull --rebase origin master
+          git push origin HEAD:master

@@ -152,7 +152,9 @@ h2 small { font-weight: 600; color: var(--muted); font-size: 15px; }
 .ev .match { font-weight: 600; font-size: 16px; margin: 4px 0 3px; line-height: 1.3; overflow-wrap: break-word; }
 .ev .match .me { font-weight: 800; white-space: nowrap; }
 .ev .match .vs { color: var(--muted); font-weight: 500; font-size: 15px; margin: 0 1px; }
-.ev .match .res { font-weight: 800; margin-left: 8px; color: var(--live-ink); }
+.ev .badge.score { background: var(--sign); color: #fff; font-size: 15px; padding: 2px 10px; }
+.update-bar { position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 20; background: var(--sign); color: #fff; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 12px 12px 18px; font-weight: 700; font-size: 16px; animation: enter .4s var(--ease) both; }
+@media (min-width: 640px) { .update-bar { left: auto; max-width: 460px; } }
 .ev .meta { font-size: 16px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: center; }
 .ev .meta a { color: var(--ink-2); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
 .ev .meta a:hover { color: var(--blue); }
