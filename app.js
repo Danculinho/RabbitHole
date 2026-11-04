@@ -209,7 +209,13 @@
       men: "muži", women: "ženy", mixed: "mix",
       court: "kurt", pitch: "ihrisko", hall: "hala",
       group: "Skupina",
-      map: "Mapa",
+      map: "Trasa",
+      nextTitle: "Najbližší zápas",
+      nowOn: "Prebieha",
+      inMin: "o {m} min",
+      inHours: "o {h} h {m} min",
+      tomorrow: "zajtra",
+      route: "Trasa MHD",
       noEvents: "V tento deň nemá vaša univerzita žiadny zápas v rozpise.",
       noEventsSport: "V tento deň nemá vaša univerzita zápas v tomto športe.",
       playoff: "Play-off podľa postupu",
@@ -218,7 +224,7 @@
       sportsOf: "Športy",
       pdfTitle: "Individuálne športy (len PDF organizátora)",
       pdfLead: "Bedminton, stolný tenis, plávanie a atletiku organizátor zverejnil len ako PDF. Pre STU sú tieto riadky doplnené ručne.",
-      venuesLead: "Všetky športoviská turnaja. Kliknutím na Mapa otvoríte navigáciu.",
+      venuesLead: "Všetky športoviská turnaja. Trasa otvorí cestu MHD z miesta, kde ste.",
       playsHere: "Hrá sa tu",
       allLead: "Všetky zápasy turnaja. Filtrujte podľa dňa a športu.",
       source: "Zdroj: verejné rozpisy organizátora (Google Sheets). Vygenerované",
@@ -280,7 +286,13 @@
       men: "men", women: "women", mixed: "mixed",
       court: "court", pitch: "pitch", hall: "hall",
       group: "Pool",
-      map: "Map",
+      map: "Route",
+      nextTitle: "Next match",
+      nowOn: "Live now",
+      inMin: "in {m} min",
+      inHours: "in {h} h {m} min",
+      tomorrow: "tomorrow",
+      route: "Public transport",
       noEvents: "Your university has no scheduled match on this day.",
       noEventsSport: "Your university has no match in this sport on this day.",
       playoff: "Play-off, depending on progression",
@@ -289,7 +301,7 @@
       sportsOf: "Sports",
       pdfTitle: "Individual sports (organiser PDFs only)",
       pdfLead: "Badminton, table tennis, swimming and athletics were published only as PDFs. For STU the rows are entered by hand.",
-      venuesLead: "All venues of the championship. Tap Map to open navigation.",
+      venuesLead: "All venues of the championship. Route opens public transport directions from where you are.",
       playsHere: "Played here",
       allLead: "All matches of the championship. Filter by day and sport.",
       source: "Source: organiser's public schedules (Google Sheets). Generated",
@@ -402,7 +414,7 @@
   function mapsUrl(vid) {
     var v = VENUES[vid];
     if (!v) return "#";
-    return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(v.addr + ", Bratislava");
+    return "https://www.google.com/maps/dir/?api=1&travelmode=transit&destination=" + encodeURIComponent(v.name.replace(/\s*\(.*\)$/, "") + ", " + v.addr + ", Bratislava");
   }
   function involves(ev, sid) {
     return !!sid && ((ev.a && ev.a.school === sid) || (ev.b && ev.b.school === sid));
@@ -856,6 +868,57 @@
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
   }
+  // ---- "next match" card at the top of the university view
+  function minutesOf(hm) { return (+hm.slice(0, 2)) * 60 + (+hm.slice(3, 5)); }
+  function nextMatch(sid) {
+    var today = todayISO(), now = minutesOf(nowHM());
+    var last = DAYS[DAYS.length - 1].d;
+    if (today > last) return null;
+    var list = EVENTS.filter(function (e) { return involves(e, sid) && !resultOf(e); })
+      .sort(function (a, b) { return (a.day + a.time).localeCompare(b.day + b.time); });
+    for (var i = 0; i < list.length; i++) {
+      var e = list[i];
+      if (e.day < today) continue;
+      if (e.day === today && now >= minutesOf(e.time) + durationMin(e.sport)) continue;
+      return e;
+    }
+    return null;
+  }
+  function nextCard(sid, where) {
+    var e = nextMatch(sid);
+    if (!e) return "";
+    var today = todayISO(), now = minutesOf(nowHM()), start = minutesOf(e.time);
+    var when;
+    if (e.day === today && now >= start) when = t("nowOn");
+    else if (e.day === today) {
+      var d = start - now, hh = Math.floor(d / 60), mm = d % 60;
+      when = hh ? t("inHours").replace("{h}", hh).replace("{m}", mm) : t("inMin").replace("{m}", mm);
+    } else {
+      var tomorrow = new Date(Date.UTC(+today.slice(0, 4), +today.slice(5, 7) - 1, +today.slice(8, 10) + 1)).toISOString().slice(0, 10);
+      when = e.day === tomorrow ? t("tomorrow") : dayName(e.day);
+    }
+    when = when.charAt(0).toUpperCase() + when.slice(1);
+    var sp = SPORTS[e.sport] || { c: "#888" };
+    var v = VENUES[e.venue];
+    var A = sideLabel(e.a, sid, e), B = sideLabel(e.b, sid, e);
+    var who = B.name ? (A.me ? B.name : A.name) : "";
+    var live = e.day === today && now >= start;
+    return h`<section class="next-card ${where}${live ? " is-live" : ""}" style="--z:${sp.c}">
+      <div class="next-when"><span>${t("nextTitle")}</span><b>${when}</b></div>
+      <div class="next-body">
+        <div class="next-time">${e.time}</div>
+        <div class="next-what">
+          <div class="next-sport">${sportName(e.sport)}${raw(e.cat ? h` <span class="cat">· ${catLabel(e.cat)}</span>` : "")}</div>
+          ${raw(who ? h`<div class="next-vs">vs ${who}</div>` : "")}
+          <div class="next-where">${v ? v.name : ""}${raw(e.court ? h` · ${unitWord(e)} ${e.court}` : "")}</div>
+        </div>
+      </div>
+      <div class="next-actions">
+        <a class="btn primary route" href="${mapsUrl(e.venue)}" target="_blank" rel="noopener">${raw(icon("pin"))} ${t("route")}</a>
+        <button class="btn cal" type="button" data-cal="${e.idx}" aria-label="${t("cal")}">${raw(icon("cal"))}<span class="lbl"> ${t("cal")}</span></button>
+      </div>
+    </section>`;
+  }
   function destPanel(title, lead, backHref, backLabel) {
     return h`<div class="dest"><div class="dest-inner">
       <div><h1>${title}</h1><p class="lead">${lead}</p></div>
@@ -932,11 +995,12 @@
       <div class="page">
       <aside class="side"><div class="side-in">
       ${raw(destPanel(shortName(s.name), shortName(s.name) === s.name ? lead : s.name + " · " + lead, "#/pick", t("change")))}
+      ${raw(nextCard(sid, "in-side"))}
       ${raw(dayTabs(dayCount, mine.filter(function (e) { return !e.all; }).length))}
       ${raw(sportChips(sports, sportCounts))}
       ${raw(links)}
       </div></aside>
-      <div id="list" class="board">${raw(body)}</div>
+      <div id="list" class="board">${raw(nextCard(sid, "in-board"))}${raw(body)}</div>
       <div class="pdf-block">
       <h2>${t("pdfTitle")}</h2><p class="day-note">${t("pdfLead")}</p>
       <ul class="pdf-list">${raw(PDFS.map(function (p) {

@@ -401,6 +401,33 @@ h2 small { font-weight: 600; color: var(--muted); font-size: 15px; }
   .brand-sub { display: none; }
   .menu a { padding-left: 12px; padding-right: 12px; }
 }
+/* ---------- next match card ---------- */
+.next-card { margin: 12px 16px 14px; background: var(--sign); color: #fff; display: grid; gap: 14px; padding: 18px 18px 18px 22px; border-left: 8px solid var(--z, var(--y)); animation: enter .5s var(--ease) both; }
+.next-card.is-live { background: color-mix(in srgb, var(--live) 22%, var(--sign)); }
+.next-when { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.next-when span { font-size: 15px; font-weight: 700; color: var(--sign-muted); }
+.next-when b { font-size: 24px; font-weight: 800; color: var(--y); letter-spacing: -.01em; }
+.next-body { display: flex; gap: 16px; align-items: center; }
+.next-time { font-size: 40px; font-weight: 800; letter-spacing: -.03em; line-height: 1; }
+.next-what { min-width: 0; }
+.next-sport { font-size: 17px; font-weight: 800; color: color-mix(in srgb, var(--z) 55%, #fff); }
+.next-sport .cat { color: var(--sign-muted); font-weight: 600; }
+.next-vs { font-size: 17px; font-weight: 700; margin-top: 2px; overflow-wrap: break-word; }
+.next-where { font-size: 16px; color: var(--sign-muted); margin-top: 2px; }
+.next-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.next-actions .btn { flex: 1 1 auto; }
+.next-actions .btn:not(.primary) { background: rgba(255,255,255,.14); color: #fff; }
+.next-actions .btn .ic { width: 18px; height: 18px; }
+.next-card.in-board { display: none; }
+@media (max-width: 1023px) { .next-card.in-side { margin: 12px 16px 0; } }
+@media (max-width: 639px) { .next-actions { flex-wrap: nowrap; } .next-actions .btn.cal { flex: 0 0 52px; padding: 12px 0; } .next-actions .btn.cal .lbl { display: none; } .next-time { font-size: 34px; } .next-card { gap: 12px; padding: 16px 16px 16px 18px; } }
+@media (min-width: 1024px) {
+  .next-card.in-side { display: none; }
+  .next-card.in-board { display: grid; }
+  .next-card { margin: 0 0 18px; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 28px; padding: 20px 24px 20px 28px; }
+  .next-when { flex-direction: column; gap: 2px; }
+  .next-actions .btn { flex: 0 0 auto; }
+}
 /* ---------- phones and tablets: side menu and compact rows ---------- */
 @media (max-width: 1023px) {
   .top-inner { flex-wrap: nowrap; padding: 8px 12px 8px 16px; gap: 8px; }
