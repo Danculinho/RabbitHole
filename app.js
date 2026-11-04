@@ -840,9 +840,7 @@
 
   // ---- venues
   function renderVenues() {
-    var order = Object.keys(VENUES).filter(function (k) { return VENUE_PHOTOS[k]; })
-      .concat(Object.keys(VENUES).filter(function (k) { return !VENUE_PHOTOS[k]; }));
-    var body = order.map(function (k) {
+    function card(k) {
       var v = VENUES[k];
       var sports = {};
       EVENTS.forEach(function (e) { if (e.venue === k) sports[e.sport] = true; });
@@ -857,10 +855,12 @@
         </div>
         <a class="plate" href="${mapsUrl(k)}" target="_blank" rel="noopener" aria-label="${v.name}, ${t("map")}">${raw(icon("pin"))}${t("map")}</a>
       </div>`;
-    }).join("");
+    }
+    var withPhoto = Object.keys(VENUES).filter(function (k) { return VENUE_PHOTOS[k]; }).map(card).join("");
+    var noPhoto = Object.keys(VENUES).filter(function (k) { return !VENUE_PHOTOS[k]; }).map(card).join("");
     app.innerHTML = h`
       ${raw(destPanel(t("venues"), t("venuesLead"), "#/" + (state.school ? "s/" + state.school : "pick"), state.school ? t("mine") : t("back")))}
-      <div class="page page-plain"><div class="venue-grid">${raw(body)}</div>
+      <div class="page page-plain"><div class="venue-grid">${raw(withPhoto)}</div><div class="venue-grid venue-grid-plain">${raw(noPhoto)}</div>
       <p class="photo-credits">${state.lang === "sk" ? "Fotografie" : "Photographs"}: ${raw(Object.keys(VENUE_PHOTOS).map(function (k) {
         var c = VENUE_PHOTOS[k];
         return h`<a href="${c.source}" target="_blank" rel="noopener">${VENUES[k] ? VENUES[k].name : k}</a> (${c.author}, ${c.license})`;

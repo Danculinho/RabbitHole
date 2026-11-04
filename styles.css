@@ -235,6 +235,8 @@ h2 small { font-weight: 600; color: var(--muted); font-size: 15px; }
 /* ---------- venues ---------- */
 .venue-grid { padding: 12px 16px 0; display: grid; gap: 14px; }
 @media (min-width: 1024px) { .venue-grid { gap: 24px; } }
+.venue-grid-plain { margin-top: 14px; }
+@media (min-width: 1024px) { .venue-grid-plain { margin-top: 24px; } }
 .venue { margin: 0; background: var(--card); display: grid; grid-template-columns: minmax(0, 1fr) 72px; overflow: hidden; }
 .venue .vbody { padding: 14px 16px; min-width: 0; }
 .venue .vname { font-weight: 800; font-size: 20px; letter-spacing: -.01em; line-height: 1.2; }
