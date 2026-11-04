@@ -5,6 +5,7 @@ RH.i18n = (function () {
   var strings = {
     sk: {
       appName: 'Futbalová nora',
+      backToWiuc: '← Späť na WIUC',
       tagline: 'Sedem otázok. Každá odpoveď otvára ďalšiu.',
       howToTitle: 'Ako sa to hrá',
       howTo1: 'Odpoveď na otázku sa stáva témou tej ďalšej. Čím hlbšie, tým ťažšie.',
@@ -108,6 +109,7 @@ RH.i18n = (function () {
     },
     en: {
       appName: 'The Football Hole',
+      backToWiuc: '← Back to WIUC',
       tagline: 'Seven questions. Every answer opens the next.',
       howToTitle: 'How it works',
       howTo1: 'Each answer becomes the topic of the next question. The deeper you go, the harder it gets.',

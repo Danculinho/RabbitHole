@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Futbalová nora</title>
+<meta name="description" content="Seven football trivia questions. Every answer opens the next.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="tunnel" aria-hidden="true">
+  <div class="tunnel__rings"></div>
+  <div class="tunnel__grain"></div>
+</div>
+
+<header class="topbar">
+  <a class="linkbtn topbar__back" href="../wiuc/" data-i18n="backToWiuc">← Späť na WIUC</a>
+  <div class="topbar__brand">
+    <span class="topbar__ball">⚽</span>
+    <span class="topbar__name" data-i18n="appName">Futbalová nora</span>
+  </div>
+  <button type="button" class="linkbtn" id="lang-toggle" data-i18n="langLabel">English</button>
+</header>
+
+<main id="app">
+
+  <!-- INTRO -->
+  <section class="screen screen--intro" id="screen-intro">
+    <p class="eyebrow" id="intro-number">Nora č. 1</p>
+    <h1 class="title" data-i18n="appName">Futbalová nora</h1>
+    <p class="tagline" data-i18n="tagline">Sedem otázok. Každá odpoveď otvára ďalšiu.</p>
+
+    <div class="rules">
+      <h2 class="rules__title" data-i18n="howToTitle">Ako sa to hrá</h2>
+      <ol class="rules__list">
+        <li data-i18n="howTo1"></li>
+        <li data-i18n="howTo2"></li>
+        <li data-i18n="howTo3"></li>
+      </ol>
+    </div>
+
+    <p class="notice hidden" id="intro-notice" data-i18n="alreadyPlayed"></p>
+    <button type="button" class="btn btn--primary" id="btn-play" data-i18n="play">Padáme dolu</button>
+
+    <div class="introlinks">
+      <button type="button" class="linkbtn" id="btn-cabinet-intro" data-i18n="cabinet">Vitrína</button>
+      <button type="button" class="linkbtn" id="btn-archive-intro" data-i18n="archive">Archív nôr</button>
+    </div>
+
+    <div class="rankstrip hidden" id="intro-rank">
+      <span class="rankstrip__badge" id="intro-rank-name"></span>
+      <span class="rankstrip__streak" id="intro-streak"></span>
+    </div>
+  </section>
+
+  <!-- QUESTION -->
+  <section class="screen screen--question hidden" id="screen-question">
+    <div class="depth" id="depth" aria-hidden="true"></div>
+    <p class="depth__label"><span data-i18n="depth">Hĺbka</span> <span id="depth-count">1/7</span></p>
+
+    <div class="card" id="question-card">
+      <p class="topic"><span class="topic__label" data-i18n="topicLabel">Téma</span><span class="topic__value" id="topic-value"></span></p>
+      <h2 class="question" id="question-text"></h2>
+
+      <p class="hintbox hidden" id="hint-box"><span class="hintbox__label" data-i18n="hintLabel">Nápoveda:</span> <span id="hint-text"></span></p>
+
+      <form class="answerform" id="answer-form" autocomplete="off">
+        <input type="text" class="answerform__input" id="answer-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        <button type="submit" class="btn btn--primary" id="btn-submit" data-i18n="submit">Potvrdiť</button>
+      </form>
+
+      <div class="choices hidden" id="choices"></div>
+
+      <p class="verdict hidden" id="verdict"></p>
+
+      <button type="button" class="linkbtn hidden" id="btn-hint">
+        <span data-i18n="hint">Nápoveda</span> <span class="cost" data-i18n="hintCost">−1 bod</span>
+      </button>
+      <button type="button" class="btn btn--ghost hidden" id="btn-next" data-i18n="next">Ďalej</button>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="screen screen--results hidden" id="screen-results">
+    <p class="eyebrow" id="results-number"></p>
+    <h1 class="title title--sm" data-i18n="resultsTitle">Vynoril si sa</h1>
+
+    <p class="score"><span id="score-value">0</span><span class="score__max">/<span id="score-max">21</span></span></p>
+    <p class="praise" id="praise"></p>
+    <p class="grid" id="result-grid"></p>
+
+    <div class="unlocks hidden" id="unlocks">
+      <p class="unlocks__title" id="unlocks-title"></p>
+      <ul class="unlocks__list" id="unlocks-list"></ul>
+    </div>
+
+    <div class="rankcard hidden" id="rankcard">
+      <div class="rankcard__head">
+        <span class="rankcard__label" data-i18n="rankLabel">Hodnosť</span>
+        <span class="rankcard__name" id="rank-name"></span>
+      </div>
+      <div class="rankbar"><span class="rankbar__fill" id="rank-fill"></span></div>
+      <p class="rankcard__foot" id="rank-foot"></p>
+    </div>
+
+    <p class="countdown hidden" id="countdown">
+      <span class="countdown__label" data-i18n="nextHole">Ďalšia nora o</span>
+      <span class="countdown__clock" id="countdown-clock">00:00:00</span>
+    </p>
+
+    <button type="button" class="btn btn--primary" id="btn-share" data-i18n="share">Zdieľať výsledok</button>
+
+    <div class="stats hidden" id="stats">
+      <h2 class="section-title" data-i18n="statsTitle">Štatistiky</h2>
+      <dl class="stats__grid">
+        <div class="stats__item"><dt data-i18n="statPlayed"></dt><dd id="stat-played">0</dd></div>
+        <div class="stats__item"><dt data-i18n="statAverage"></dt><dd id="stat-average">0</dd></div>
+        <div class="stats__item"><dt data-i18n="statStreak"></dt><dd id="stat-streak">0</dd></div>
+        <div class="stats__item"><dt data-i18n="statPerfect"></dt><dd id="stat-perfect">0</dd></div>
+      </dl>
+    </div>
+
+    <h2 class="section-title" data-i18n="recap">Prehľad odpovedí</h2>
+    <ol class="recap" id="recap"></ol>
+
+    <div class="introlinks">
+      <button type="button" class="linkbtn" id="btn-cabinet-results" data-i18n="cabinet">Vitrína</button>
+      <button type="button" class="linkbtn" id="btn-archive-results" data-i18n="playAnother">Zahrať si inú</button>
+    </div>
+  </section>
+
+  <!-- TROPHY CABINET -->
+  <section class="screen screen--cabinet hidden" id="screen-cabinet">
+    <h1 class="title title--sm" data-i18n="cabinetTitle">Tvoja vitrína</h1>
+
+    <div class="rankcard rankcard--big" id="cabinet-rankcard">
+      <div class="rankcard__head">
+        <span class="rankcard__label" data-i18n="careerTitle">Kariéra</span>
+        <span class="rankcard__name" id="cabinet-rank-name"></span>
+      </div>
+      <div class="rankbar"><span class="rankbar__fill" id="cabinet-rank-fill"></span></div>
+      <p class="rankcard__foot" id="cabinet-rank-foot"></p>
+    </div>
+
+    <h2 class="section-title"><span data-i18n="trophies">Trofeje</span> <span id="trophy-count"></span></h2>
+    <ul class="trophies" id="trophies"></ul>
+
+    <button type="button" class="linkbtn linkbtn--block" id="btn-cabinet-back" data-i18n="back">Späť</button>
+  </section>
+
+  <!-- ARCHIVE -->
+  <section class="screen screen--archive hidden" id="screen-archive">
+    <h1 class="title title--sm" data-i18n="archiveTitle">Vyber si noru</h1>
+    <p class="tagline" data-i18n="archiveNote"></p>
+    <ul class="archive" id="archive-list"></ul>
+    <button type="button" class="linkbtn linkbtn--block" id="btn-archive-back" data-i18n="back">Späť</button>
+  </section>
+
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="data/puzzles.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/answers.js"></script>
+<script src="js/daily.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/share.js"></script>
+<script src="js/game.js"></script>
+<script src="js/awards.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
