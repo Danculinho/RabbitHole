@@ -240,7 +240,7 @@
       noTables: "Pre tento šport zatiaľ nie sú skupiny.",
       group: "Skupina",
       cal: "Pridať do kalendára",
-      calHint: "Stiahne zápasy vašej univerzity (vybraný šport, všetky dni) s pripomienkou 30 minút vopred.",
+
       allDaysShort: "Všetky dni",
       navGame: "Hra",
       result: "Výsledok",
@@ -311,7 +311,7 @@
       noTables: "No groups for this sport yet.",
       group: "Pool",
       cal: "Add to calendar",
-      calHint: "Downloads your university's matches (selected sport, all days) with a reminder 30 minutes before.",
+
       allDaysShort: "All days",
       navGame: "Game",
       result: "Result",
@@ -359,6 +359,7 @@
   function dayName(d) { var x = DAYS.filter(function (q) { return q.d === d; })[0]; return x ? (state.lang === "sk" ? x.sk : x.en) : d; }
 
   var EVENTS = DATA.events.concat(EXTRA).concat([CEREMONY]);
+  EVENTS.forEach(function (e, i) { e.idx = i; });
   EVENTS.sort(function (a, b) { return (a.day + a.time).localeCompare(b.day + b.time) || a.sport.localeCompare(b.sport); });
   var SCHOOLS = {};
   DATA.schools.forEach(function (s) { SCHOOLS[s.id] = s; });
@@ -623,7 +624,12 @@
   app.addEventListener("click", function (e) {
     var tb = e.target.closest("[data-day]");
     var cal = e.target.closest("[data-cal]");
-    if (cal) { downloadCalendar(cal.getAttribute("data-cal")); return; }
+    if (cal) {
+      var n = +cal.getAttribute("data-cal");
+      var ev = EVENTS.filter(function (x) { return x.idx === n; })[0];
+      if (ev) downloadCalendar([ev], state.school, "wiuc-2026-" + ev.sport + "-" + ev.day.slice(8) + "-" + ev.time.replace(":", "") + ".ics");
+      return;
+    }
     var ch = e.target.closest("[data-sport]");
     if (!tb && !ch) return;
     if (tb) state.day = tb.getAttribute("data-day");
@@ -679,7 +685,7 @@
         <div class="sport">${sportName(ev.sport)}${cat ? raw(' <span class="cat">· ' + esc(cat) + '</span>') : ""} ${raw(badge)}</div>
         ${raw(badge ? '<div class="badge-row">' + badge + "</div>" : "")}
         ${raw(match)}
-        <div class="meta">${raw(meta.join(" · "))}</div>
+        <div class="meta">${raw(meta.join(" · "))}${raw(ev.sport === "ceremony" || st === "past" || st === "done" ? "" : h`<button class="cal-btn" type="button" data-cal="${ev.idx}" aria-label="${t("cal")}: ${sportName(ev.sport)} ${ev.time}" title="${t("cal")}">${raw(icon("cal"))}</button>`)}</div>
       </div>
       ${raw(plate)}</li>`;
   }
@@ -828,17 +834,16 @@
     return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
   }
   function icsText(x) { return String(x || "").replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n"); }
-  function downloadCalendar(sid) {
-    var list = EVENTS.filter(function (e) { return (involves(e, sid) || e.all) && (state.sport === "all" || e.sport === state.sport || e.all); });
-    var lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//WIUC 2026 helper//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH", "X-WR-CALNAME:WIUC 2026 " + icsText(shortName(SCHOOLS[sid].name))];
+  function downloadCalendar(list, sid, fileName) {
+    var lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//WIUC 2026 helper//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH", "X-WR-CALNAME:WIUC 2026"];
     var now = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
     list.forEach(function (e) {
       var v = VENUES[e.venue];
       var A = sideLabel(e.a, sid, e), B = sideLabel(e.b, sid, e);
       var title = sportName(e.sport) + (e.cat ? " " + catLabel(e.cat) : "") + ": " + (e.sport === "ceremony" ? t("ceremony") : A.name + (B.name ? " vs " + B.name : ""));
       var place = v ? v.name + ", " + v.addr + ", Bratislava" : "";
-      var desc = [e.court ? unitWord(e) + " " + e.court : "", e.pool ? t("group") + " " + e.pool : "", e.stage || "", location.origin + location.pathname + "#/s/" + sid].filter(Boolean).join("\n");
-      lines.push("BEGIN:VEVENT", "UID:" + (e.id || (e.day + e.time + e.sport)) + "-" + sid + "@wiuc2026", "DTSTAMP:" + now,
+      var desc = [e.court ? unitWord(e) + " " + e.court : "", e.pool ? t("group") + " " + e.pool : "", e.stage || "", location.origin + location.pathname + (sid ? "#/s/" + sid : "")].filter(Boolean).join("\n");
+      lines.push("BEGIN:VEVENT", "UID:" + (e.id || (e.day + e.time + e.sport + e.idx)) + "@wiuc2026", "DTSTAMP:" + now,
         "DTSTART:" + icsStamp(e.day, e.time), "DTEND:" + icsStamp(e.day, e.time, durationMin(e.sport)),
         "SUMMARY:" + icsText(title), "LOCATION:" + icsText(place), "DESCRIPTION:" + icsText(desc),
         "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:" + icsText(title), "TRIGGER:-PT30M", "END:VALARM", "END:VEVENT");
@@ -847,7 +852,7 @@
     var blob = new Blob([lines.join("\r\n") + "\r\n"], { type: "text/calendar;charset=utf-8" });
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "wiuc-2026-" + sid + (state.sport !== "all" ? "-" + state.sport : "") + ".ics";
+    a.download = fileName;
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
   }
@@ -922,7 +927,7 @@
     }
     var todayN = mine.filter(function (e) { return onDay(e) && !e.all; }).length;
     var lead = s.country + " · " + nSports(sports.length) + " · " + nMatches(todayN);
-    var links = h`<div class="side-links"><button class="btn primary" type="button" data-cal="${sid}">${raw(icon("cal"))} ${t("cal")}</button></div><p class="cal-hint">${t("calHint")}</p>`;
+    var links = "";
     app.innerHTML = h`
       <div class="page">
       <aside class="side"><div class="side-in">

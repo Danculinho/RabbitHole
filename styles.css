@@ -385,13 +385,16 @@ h2 small { font-weight: 600; color: var(--muted); font-size: 15px; }
 .standings tr.me td { background: var(--live-field); }
 .standings td.score { white-space: nowrap; color: var(--ink-2); }
 .tables-note { margin: 18px 16px 0; font-size: 15px; color: var(--muted); max-width: 90ch; }
-.cal-hint { margin: 8px 16px 0; font-size: 15px; color: var(--muted); }
+.ev .cal-btn { margin-left: auto; width: 36px; height: 36px; border: 0; background: var(--card-2); color: var(--ink-2); display: inline-grid; place-items: center; padding: 0; transition: background .18s var(--ease), color .18s var(--ease); }
+.ev .cal-btn .ic { width: 18px; height: 18px; }
+.ev .cal-btn:hover { background: var(--blue); color: #fff; }
+.ev .cal-btn:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
 @media (max-width: 479px) {
   .standings th.score, .standings td.score { display: none; }
 }
 @media (min-width: 1024px) {
   .tables-grid { margin: 20px 0 0; grid-template-columns: repeat(auto-fill, minmax(480px, 1fr)); gap: 24px; align-items: stretch; }
-  .tables-note, .cal-hint { margin-left: 0; margin-right: 0; }
+  .tables-note { margin-left: 0; margin-right: 0; }
   .page-plain > .chips { padding-left: 0; padding-right: 0; }
 }
 @media (min-width: 1024px) and (max-width: 1439px) {
@@ -447,6 +450,8 @@ h2 small { font-weight: 600; color: var(--muted); font-size: 15px; }
   .ev .badge { font-size: 13px; }
   .ev .badge.score { font-size: 14px; padding: 2px 8px; }
   .ev .match .me { white-space: normal; }
+  .ev .cal-btn { position: absolute; top: 8px; right: 68px; width: 34px; height: 34px; }
+  .ev .sport { padding-right: 46px; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }

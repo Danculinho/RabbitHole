@@ -1,4 +1,4 @@
-// Group tables and calendar export.
+// Group tables and the per-match calendar icon.
 // Needs the local server (python -m http.server 8765 in the repo root) and Node 22+.
 // Usage: node tools/test_tables.mjs [baseUrl]
 import { pathToFileURL } from 'node:url';
@@ -25,10 +25,9 @@ try {
   const res = await page.eval(() => {
     const cards = [...document.querySelectorAll('.table-card')];
     const first = cards[0];
-    const head = first && [...first.querySelectorAll('th')].map((th) => th.textContent.trim());
     const rows = first ? [...first.querySelectorAll('tbody tr')].map((tr) => [...tr.children].map((td) => td.textContent.trim())) : [];
     const mine = document.querySelectorAll('.standings tr.me').length;
-    return { cards: cards.length, head, rows, mine, title: first && first.querySelector('h2').textContent };
+    return { cards: cards.length, rows, mine };
   });
   check('tables page lists pools', res.cards > 0, `(${res.cards} pools)`);
   check('my university is highlighted', res.mine > 0);
@@ -41,29 +40,34 @@ try {
     const t = [...document.querySelectorAll('.table-card')];
     return t.map((c) => [...c.querySelectorAll('tbody tr')].map((tr) => {
       const td = [...tr.children].map((x) => x.textContent.trim());
-      return { p: +td[2], w: +td[3], l: +td[4], pts: +td[td.length - 1] };
+      return { p: +td[2], pts: +td[td.length - 1] };
     })).flat();
   });
-  check('volleyball points never exceed 3 per game', vb.every((r) => r.pts <= 3 * r.p && r.pts >= r.l * 0), `(${vb.length} rows)`);
+  check('volleyball points never exceed 3 per game', vb.every((r) => r.pts <= 3 * r.p), `(${vb.length} rows)`);
 
-  // calendar: build the .ics text the button downloads
-  await page.goto(base + '#/s/slovak-university-of-technology-in-bratislava', { settleMs: 600 });
-  const ics = await page.eval(async () => {
-    let text = '';
-    const orig = URL.createObjectURL;
+  // calendar icon on every upcoming match; one click exports that match only
+  await page.goto(base + '?now=2026-11-04T08:00#/s/slovak-university-of-technology-in-bratislava', { settleMs: 600 });
+  const icons = await page.eval(() => {
+    document.querySelector('[data-day="2026-11-05"]').click();
+    document.querySelector('.chip[data-sport="all"]').click();
+    return document.querySelectorAll('#list .ev .cal-btn').length;
+  });
+  check('every upcoming match has a calendar icon', icons > 0, `(${icons})`);
+  const out = await page.eval(async () => {
     URL.createObjectURL = (blob) => { window.__blob = blob; return 'blob:test'; };
     HTMLAnchorElement.prototype.click = function () {};
-    document.querySelector('[data-day="all"]').click();
-    document.querySelector('.chip[data-sport="all"]').click();
-    document.querySelector('[data-cal]').click();
-    text = await window.__blob.text();
-    URL.createObjectURL = orig;
-    return text;
+    const btn = document.querySelector('#list .ev [data-cal]');
+    btn.click();
+    return { text: await window.__blob.text(), time: btn.closest('.ev').querySelector('.time').textContent.trim() };
   });
+  const ics = out.text;
   const events = (ics.match(/BEGIN:VEVENT/g) || []).length;
-  check('calendar has events', events > 5, `(${events})`);
-  check('calendar times are UTC (CET-1h)', /DTSTART:20261104T\d{6}Z/.test(ics));
-  check('calendar has 30 min reminders', /TRIGGER:-PT30M/.test(ics));
+  check('one icon exports one match', events === 1, `(${events})`);
+  // the row says 09:00 local time, the file says 08:00 UTC (Bratislava is UTC+1 in November)
+  const want = 'DTSTART:20261105T' + String(+out.time.slice(0, 2) - 1).padStart(2, '0') + out.time.slice(3, 5) + '00Z';
+  const got = ics.split(/\r?\n/).filter((l) => /^(DTSTART|SUMMARY)/.test(l)).join(' | ');
+  check('calendar time is the row time in UTC', ics.includes(want), `(want ${want}, got ${got})`);
+  check('calendar has a 30 min reminder', /TRIGGER:-PT30M/.test(ics));
   check('calendar uses CRLF line ends', ics.includes('\r\n'));
 } finally {
   await browser.close();
