@@ -65,7 +65,7 @@ svg.ic { width: 1em; height: 1em; display: inline-block; vertical-align: -0.15em
 /* ---------- layout: the sheet over the footer ---------- */
 .app { position: relative; z-index: 1; background: var(--bg); padding: 0 0 48px; min-height: 60vh; }
 .page { margin: 0 auto; }
-.side { display: contents; }
+.side, .side-in { display: contents; }
 h1 { font-size: 24px; margin: 0; font-weight: 800; letter-spacing: -.02em; line-height: 1.05; text-wrap: balance; }
 h2 { font-size: 20px; margin: 28px 16px 10px; font-weight: 800; color: var(--ink); letter-spacing: -.01em; line-height: 1.2; }
 h2 small { font-weight: 600; color: var(--muted); font-size: 15px; }
@@ -247,7 +247,8 @@ h2 small { font-weight: 600; color: var(--muted); font-size: 15px; }
 @media (min-width: 1024px) {
   .page { max-width: 1720px; padding: 24px 28px 0; display: grid; grid-template-columns: 340px minmax(0, 1fr); column-gap: 28px; align-items: start; }
   .page.page-plain { display: block; }
-  .side { display: block; position: sticky; top: 76px; }
+  .side { display: block; grid-column: 1; grid-row: 1 / span 2; align-self: stretch; }
+  .side-in { display: block; }
   .side .dest { padding: 22px 20px 20px; }
   .side .dest-inner { flex-direction: column; }
   .side .dest h1 { font-size: 32px; }
@@ -259,11 +260,11 @@ h2 small { font-weight: 600; color: var(--muted); font-size: 15px; }
   .side .gate .n { font-size: 14px; }
   .side .chips { padding: 14px 0 0; }
   .side .side-links { flex-direction: column; margin: 14px 0 0; }
-  .board { grid-column: 2; grid-row: 1 / span 2; min-width: 0; padding: 0; }
+  .board { grid-column: 2; grid-row: 1; min-width: 0; padding: 0; }
   .board .empty { margin: 0; }
   .board h2 { margin: 22px 0 10px; }
   .board h2:first-child { margin-top: 0; }
-  .pdf-block { grid-column: 1; }
+  .pdf-block { grid-column: 2; grid-row: 2; max-width: 70ch; }
   .pdf-block h2 { margin: 28px 0 10px; }
   .pdf-block .day-note { margin: 0 0 12px; }
   .pdf-list { padding: 0; }
@@ -285,4 +286,8 @@ h2 small { font-weight: 600; color: var(--muted); font-size: 15px; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
+}
+/* the side panel follows the scroll only where it fits on screen */
+@media (min-width: 1024px) and (min-height: 860px) {
+  .side-in { position: sticky; top: 76px; }
 }

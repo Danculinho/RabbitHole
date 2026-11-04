@@ -522,12 +522,12 @@
       </div>`;
     app.innerHTML = h`
       <div class="page">
-      <aside class="side">
+      <aside class="side"><div class="side-in">
       ${raw(destPanel(shortName(s.name), shortName(s.name) === s.name ? lead : s.name + " · " + lead, "#/pick", t("change")))}
       ${raw(dayTabs(dayCount))}
       ${raw(sportChips(sports, sportCounts))}
       ${raw(links)}
-      </aside>
+      </div></aside>
       <div id="list" class="board">${raw(body)}</div>
       <div class="pdf-block">
       <h2>${t("pdfTitle")}</h2><p class="day-note">${t("pdfLead")}</p>
@@ -553,12 +553,12 @@
     var backHref = "#/" + (state.school ? "s/" + state.school : "pick");
     app.innerHTML = h`
       <div class="page">
-      <aside class="side">
+      <aside class="side"><div class="side-in">
       ${raw(destPanel(t("allMatches"), t("allLead"), backHref, state.school ? t("mine") : t("back")))}
       ${raw(dayTabs(function (d) { return EVENTS.filter(function (e) { return e.day === d && !e.extra; }).length; }))}
       ${raw(sportChips(sports, counts))}
       <div class="side-links"><a class="btn primary" href="${backHref}">${state.school ? t("mine") : t("back")}</a><a class="btn" href="#/venues">${raw(icon("pin"))} ${t("venues")}</a></div>
-      </aside>
+      </div></aside>
       <div class="board">${raw(body || h`<p class="empty">${t("noEvents")}</p>`)}</div>
       </div>`;
   }
