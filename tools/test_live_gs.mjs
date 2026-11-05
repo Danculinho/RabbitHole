@@ -31,19 +31,24 @@ function sheetStub() {
       _data: data,
     };
   }
+  const book = {
+    getSheetByName: (n) => sheets[n] || null,
+    insertSheet: (n) => (sheets[n] = sheet(n)),
+    getId: () => 'sheet-1', getUrl: () => 'https://docs.google.com/spreadsheets/d/sheet-1',
+  };
   return {
-    getActiveSpreadsheet: () => ({
-      getSheetByName: (n) => sheets[n] || null,
-      insertSheet: (n) => (sheets[n] = sheet(n)),
-    }),
+    getActiveSpreadsheet: () => null,          // a standalone script has no Sheet of its own
+    create: () => book,
+    openById: (id) => (id === 'sheet-1' ? book : null),
     _sheets: sheets,
   };
 }
 
 const SS = sheetStub();
+const props = {};
 const ctx = {
   SpreadsheetApp: SS,
-  PropertiesService: { getScriptProperties: () => ({ getProperty: (k) => (k === 'PIN' ? '1234' : null) }) },
+  PropertiesService: { getScriptProperties: () => ({ getProperty: (k) => props[k] || null, setProperty: (k, v) => { props[k] = v; } }) },
   LockService: { getScriptLock: () => ({ waitLock: () => {}, releaseLock: () => {} }) },
   ContentService: {
     MimeType: { JSON: 'json' },
@@ -53,6 +58,18 @@ const ctx = {
 };
 vm.createContext(ctx);
 vm.runInContext(src, ctx);
+
+// setup(): creates the Sheet and a PIN, and keeps a PIN that was set by hand
+props.PIN = '1234';
+const url = ctx.setup();
+check('setup creates the Sheet', url === 'https://docs.google.com/spreadsheets/d/sheet-1' && props.SHEET_ID === 'sheet-1');
+check('setup keeps a chosen PIN', props.PIN === '1234');
+check('setup writes the PIN for the owner', SS._sheets.nastavenia._data[0][1] === '1234');
+ctx.setup();
+check('setup can run twice', SS._sheets.nastavenia._data.length === 2 && SS._sheets.log._data.length === 1);
+delete props.PIN; ctx.setup();
+check('setup makes a 6-digit PIN when none is set', /^\d{6}$/.test(props.PIN), `(${String(props.PIN).length} digits)`);
+props.PIN = '1234';
 
 const get = () => JSON.parse(ctx.doGet({ parameter: {} })._s);
 const post = (body) => JSON.parse(ctx.doPost({ postData: { contents: JSON.stringify(body) } })._s);
@@ -78,5 +95,19 @@ post({ pin: '1234', op: 'roster', roster: [{ n: '9', name: 'Drobný' }, { n: '10
 g = get();
 check('roster saved', Array.isArray(g.roster) && g.roster.length === 2 && g.roster[0].name === 'Drobný');
 check('bad JSON answered, not thrown', JSON.parse(ctx.doPost({ postData: { contents: '{nope' } })._s).ok === false);
+
+// attached to a Sheet: uses that Sheet, never creates or opens another
+const own = sheetStub();
+let created = 0;
+const ctx2 = Object.assign({}, ctx, {
+  SpreadsheetApp: { getActiveSpreadsheet: () => own.create(), create: () => { created++; return own.create(); }, openById: () => { throw new Error('openById needs full access'); } },
+  PropertiesService: { getScriptProperties: () => ({ getProperty: () => null, setProperty: () => {} }) },
+});
+vm.createContext(ctx2);
+vm.runInContext(src, ctx2);
+ctx2.setup();
+check('attached script: setup uses its own Sheet', created === 0 && !!own._sheets.log);
+check('attached script: reads its own Sheet', JSON.parse(ctx2.doGet({})._s).ok === true);
+check('access limited to the current Sheet', /@OnlyCurrentDoc/.test(src));
 
 process.exit(failed ? 1 : 0);

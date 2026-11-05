@@ -1,8 +1,12 @@
+/** @OnlyCurrentDoc */
 // Live match log for the WIUC 2026 helper (STU football): a Google Apps Script web app on a Sheet.
 //
-// Setup (once, by the Sheet's owner):
-//   1. Create a Google Sheet, then Extensions > Apps Script, and paste this whole file.
-//   2. Project Settings > Script properties > add PIN with the code the team will type to write.
+// Setup (once):
+//   1. In a new Google Sheet: Extensions > Apps Script, paste this whole file, save.
+//      (@OnlyCurrentDoc keeps the script's access to that one Sheet.)
+//   2. Run setup() once. It adds the tabs and a random 6-digit PIN, and writes the PIN into the
+//      "nastavenia" tab (only you see the Sheet). A standalone script creates its own Sheet instead.
+//      To choose your own PIN, add a script property PIN before running setup().
 //   3. Deploy > New deployment > Web app: Execute as "Me", Who has access "Anyone". Copy the /exec URL.
 //   4. Put that URL into LIVE_URL in app.js.
 // Anyone can read the log; only someone with the PIN can write. Rows are never removed, only marked deleted.
@@ -10,8 +14,37 @@
 var TYPES = ["lineup", "k1", "h1", "k2", "ft", "goal", "ogoal", "yellow", "red", "sub"];
 var COLS = ["id", "ts", "match", "type", "minute", "a", "b", "note", "deleted"];
 
-function sheet_(name, header) {
+// the Sheet made by setup(), or the one this script is attached to
+function book_() {
+  var own = SpreadsheetApp.getActiveSpreadsheet();
+  if (own) return own;
+  return SpreadsheetApp.openById(PropertiesService.getScriptProperties().getProperty("SHEET_ID"));
+}
+function setup() {
+  var props = PropertiesService.getScriptProperties();
   var ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (ss) { /* the Sheet this script belongs to */ }
+  else if (props.getProperty("SHEET_ID")) ss = SpreadsheetApp.openById(props.getProperty("SHEET_ID"));
+  else {
+    ss = SpreadsheetApp.create("WIUC 2026 - zapis STU futbal");
+    props.setProperty("SHEET_ID", ss.getId());
+  }
+  var pin = props.getProperty("PIN");
+  if (!pin) {
+    pin = String(100000 + Math.floor(Math.random() * 900000));
+    props.setProperty("PIN", pin);
+  }
+  var st = ss.getSheetByName("nastavenia") || ss.insertSheet("nastavenia");
+  st.clearContents();
+  st.appendRow(["PIN pre zápis", pin]);
+  st.appendRow(["Zmena PIN", "Apps Script > Nastavenia projektu > Vlastnosti skriptu > PIN"]);
+  sheet_("log", COLS);
+  sheet_("roster", ["n", "name"]);
+  return ss.getUrl();
+}
+
+function sheet_(name, header) {
+  var ss = book_();
   var sh = ss.getSheetByName(name) || ss.insertSheet(name);
   if (sh.getLastRow() === 0) sh.appendRow(header);
   return sh;
