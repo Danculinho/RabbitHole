@@ -1,43 +1,81 @@
 # Re-reads the organiser's Google Sheets every 10 minutes during WIUC 2026 and
 # commits data.js only when matches, times or results changed.
 # GitHub Pages redeploys on that commit. Delete this file after the tournament.
+#
+# GitHub's own schedule fires far less often than asked (twice a day on 5. 11.),
+# so each run loops for about 5.5 hours and then starts the next run itself.
+# The cron line only restarts the chain if it ever breaks.
 name: WIUC schedule refresh
 
 on:
   schedule:
-    - cron: "*/10 6-22 4-8 11 *"   # 4.-8. 11., 07:00-23:59 Bratislava time (UTC+1)
+    - cron: "*/30 * 4-8 11 *"
   workflow_dispatch:
+    inputs:
+      minutes:
+        description: "How long this run keeps refreshing (minutes)"
+        default: "330"
+      handover:
+        description: "Start the next run at the end (yes/no)"
+        default: "yes"
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: wiuc-refresh
   cancel-in-progress: false
 
+env:
+  LAST_DAY: "2026-11-08"
+
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 350
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: master
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: pip install openpyxl
-      - name: Rebuild data.js from the sheets
-        run: python tools/build.py
-      - name: Check the parsed schedule before publishing
-        run: python tools/test_build.py
-      - name: Commit if changed
+      - name: Refresh every 10 minutes
+        env:
+          MINUTES: ${{ github.event.inputs.minutes || '330' }}
         run: |
-          if git diff --quiet -- data.js; then
-            echo "No change"
-            exit 0
-          fi
           git config user.name "wiuc-refresh"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data.js
-          git commit -m "Refresh WIUC schedule from the organiser's sheets"
-          git pull --rebase origin master
-          git push origin HEAD:master
+          end=$(( $(date +%s) + MINUTES * 60 ))
+          while :; do
+            if [[ "$(TZ=Europe/Bratislava date +%F)" > "$LAST_DAY" ]]; then echo "Tournament over"; break; fi
+            git pull -q --rebase origin master || true
+            if python tools/build.py && python tools/test_build.py; then
+              if git diff --quiet -- data.js; then
+                echo "$(date -u +%H:%M) no change"
+              else
+                git add data.js
+                git commit -q -m "Refresh WIUC schedule from the organiser's sheets"
+                git pull -q --rebase origin master && git push -q origin HEAD:master && echo "$(date -u +%H:%M) pushed"
+              fi
+            else
+              echo "$(date -u +%H:%M) build or check failed, keeping the old data"
+              git checkout -- data.js
+            fi
+            [ $(( $(date +%s) + 600 )) -lt "$end" ] || break
+            sleep 600
+          done
+      - name: Start the next run
+        if: always() && github.event.inputs.handover != 'no'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ "$(TZ=Europe/Bratislava date +%F)" > "$LAST_DAY" ]]; then echo "Tournament over, not restarting"; exit 0; fi
+          # another run already queued or running (e.g. started by the cron line) carries on instead
+          others=$(gh run list -R "$GITHUB_REPOSITORY" --workflow wiuc-refresh.yml --limit 20 --json databaseId,status \
+            -q "[.[] | select(.status != \"completed\" and .databaseId != $GITHUB_RUN_ID)] | length")
+          if [ "$others" -gt 0 ]; then echo "$others other run(s) active, not starting another"; exit 0; fi
+          gh workflow run wiuc-refresh.yml -R "$GITHUB_REPOSITORY" --ref master
+          echo "Next run started"
