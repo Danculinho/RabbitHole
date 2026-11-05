@@ -480,6 +480,51 @@ h2 small { font-weight: 600; color: var(--muted); font-size: 15px; }
   .ev .cal-btn { position: absolute; top: 8px; right: 68px; width: 34px; height: 34px; }
   .ev .sport { padding-right: 46px; }
 }
+/* ---------- phones: bottom tab bar and a compact top ---------- */
+.tabbar { display: none; }
+.dest .lead.sub { margin-bottom: 0; }
+@media (max-width: 1023px) {
+  .menu-btn { display: none; }
+  body { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
+  .tabbar {
+    display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+    background: var(--sign); border-top: 4px solid var(--blue); padding: 0 0 env(safe-area-inset-bottom);
+  }
+  .tabbar a, .tabbar button {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 60px; padding: 6px 2px;
+    border: 0; background: transparent; color: var(--sign-muted); text-decoration: none; font: inherit; font-size: 13px; font-weight: 700; line-height: 1.1;
+  }
+  .tabbar .ic { width: 24px; height: 24px; }
+  .tabbar .on { color: #fff; background: rgba(255,255,255,.08); }
+  .tabbar .on .ic { color: var(--y); }
+  .tabbar a:focus-visible, .tabbar button:focus-visible { outline: 3px solid var(--y); outline-offset: -3px; }
+  body.menu-open .top { z-index: 40; }
+  .update-bar { bottom: calc(76px + env(safe-area-inset-bottom)); }
+
+  /* compact start: name, next match, days and sports before the first row */
+  .dest { padding: 12px 16px 12px; }
+  .dest h1 { font-size: 24px; }
+  .dest .lead { font-size: 15px; margin-top: 4px; }
+  .dest .lead.sub { display: none; }
+  .dest .btn { padding: 9px 14px; font-size: 15px; }
+  .gate { padding: 8px 2px; }
+  .gate b { font-size: 24px; margin: 3px 0 4px; }
+  .chips { flex-wrap: nowrap; overflow-x: auto; padding: 10px 16px 2px; scrollbar-width: none; scroll-snap-type: x proximity;
+    -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { flex: 0 0 auto; scroll-snap-align: start; white-space: nowrap; }
+  .chips:after { content: ""; flex: 0 0 16px; }
+  .next-card.in-side { margin: 10px 16px 0; }
+}
+@media (max-width: 639px) {
+  .next-card { gap: 10px; padding: 12px 14px 12px 16px; }
+  .next-body { gap: 12px; }
+  .next-time { font-size: 30px; }
+  .next-when b { font-size: 20px; }
+  .next-vs, .next-sport { font-size: 16px; }
+  .next-where { font-size: 15px; }
+  .next-actions .btn { padding: 10px 14px; }
+}
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }

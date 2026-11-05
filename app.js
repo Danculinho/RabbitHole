@@ -237,6 +237,7 @@
       navVenues: "Miesta",
       navPick: "Univerzity",
       navRules: "Pravidlá",
+      tabMine: "Moje", tabAll: "Rozpis", tabTables: "Tabuľky", tabVenues: "Miesta", tabMore: "Viac", tabPick: "Univerzity",
       navTables: "Tabuľky",
       tablesTitle: "Tabuľky skupín",
       tablesLead: "Poradie v skupinách počítané z výsledkov v rozpise. Je orientačné, záväzné je u organizátora.",
@@ -314,6 +315,7 @@
       navVenues: "Venues",
       navPick: "Universities",
       navRules: "Rules",
+      tabMine: "Mine", tabAll: "Schedule", tabTables: "Tables", tabVenues: "Venues", tabMore: "More", tabPick: "Universities",
       navTables: "Tables",
       tablesTitle: "Group tables",
       tablesLead: "Pool standings calculated from the results in the schedule. Indicative only; the organisers' standings are binding.",
@@ -515,10 +517,24 @@
   }
 
   // header menu: always one tap back to your matches, the full schedule, venues or the list
+  // bottom tab bar on phones: the four places people go most, the rest under "More"
+  function renderTabbar(view) {
+    var bar = document.getElementById("tabbar");
+    if (!bar) return;
+    var hasSchool = state.school && SCHOOLS[state.school];
+    var first = hasSchool ? ["school", "#/s/" + state.school, t("tabMine"), "star"] : ["pick", "#/pick", t("tabPick"), "star"];
+    var tabs = [first, ["all", "#/all", t("tabAll"), "list"], ["tables", "#/tables", t("tabTables"), "table"], ["venues", "#/venues", t("tabVenues"), "pin"]];
+    var inTabs = tabs.some(function (x) { return x[0] === view; });
+    bar.innerHTML = tabs.map(function (x) {
+      var on = x[0] === view;
+      return h`<a href="${x[1]}" class="${on ? "on" : ""}"${raw(on ? ' aria-current="page"' : "")}>${raw(icon(x[3]))}<span>${x[2]}</span></a>`;
+    }).join("") + h`<button type="button" data-more class="${inTabs ? "" : "on"}" aria-controls="menu">${raw(icon("more"))}<span>${t("tabMore")}</span></button>`;
+  }
   function renderMenu(view) {
     var items = [];
     if (state.school && SCHOOLS[state.school]) items.push(["school", "#/s/" + state.school, t("navMine")]);
     items.push(["all", "#/all", t("navAll")], ["tables", "#/tables", t("navTables")], ["venues", "#/venues", t("navVenues")], ["rules", "#/rules", t("navRules")], ["party", "#/party", t("navParty")], ["game", "hra/", t("navGame")], ["pick", "#/pick", t("navPick")]);
+    renderTabbar(view);
     var menu = document.getElementById("menu");
     if (!menu) return;
     var head = h`<p class="menu-head"><button class="menu-close" type="button" aria-label="${state.lang === "sk" ? "Zavrieť menu" : "Close menu"}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>WIUC 2026 Bratislava<small>${state.lang === "sk" ? "Neoficiálny pomocník · 4. až 8. 11." : "Unofficial helper · 4 to 8 Nov"}</small></p>`;
@@ -546,6 +562,10 @@
     back: '<path d="M15 6l-6 6 6 6"/>',
     dir: '<path d="M7 17L17 7M9 7h8v8"/>',
     cal: '<rect x="4" y="5" width="16" height="15"/><path d="M4 10h16M9 3v4M15 3v4"/>',
+    star: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
+    list: '<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>',
+    table: '<rect x="3" y="4" width="18" height="16"/><path d="M3 9h18M3 14.5h18M9 9v11"/>',
+    more: '<path d="M5 12h.01M12 12h.01M19 12h.01"/>',
     chev: '<path d="M9 6l6 6-6 6"/>',
     flag: '<path d="M5 21V4M5 4h12l-2 4 2 4H5"/>',
     football: '<circle cx="12" cy="12" r="9"/><path d="M12 7.5l4.3 3.1-1.6 5h-5.4l-1.6-5z"/>',
@@ -919,9 +939,9 @@
       </div>
     </section>`;
   }
-  function destPanel(title, lead, backHref, backLabel) {
+  function destPanel(title, lead, backHref, backLabel, sub) {
     return h`<div class="dest"><div class="dest-inner">
-      <div><h1>${title}</h1><p class="lead">${lead}</p></div>
+      <div><h1>${title}</h1>${raw(sub ? h`<p class="lead sub">${sub}</p>` : "")}<p class="lead">${lead}</p></div>
       <a class="btn" href="${backHref}">${backLabel}</a>
     </div></div>`;
   }
@@ -994,7 +1014,7 @@
     app.innerHTML = h`
       <div class="page">
       <aside class="side"><div class="side-in">
-      ${raw(destPanel(shortName(s.name), shortName(s.name) === s.name ? lead : s.name + " · " + lead, "#/pick", t("change")))}
+      ${raw(destPanel(shortName(s.name), lead, "#/pick", t("change"), shortName(s.name) === s.name ? "" : s.name))}
       ${raw(nextCard(sid, "in-side"))}
       ${raw(dayTabs(dayCount, mine.filter(function (e) { return !e.all; }).length))}
       ${raw(sportChips(sports, sportCounts))}
@@ -1087,6 +1107,7 @@
   }
   document.getElementById("menuBtn").addEventListener("click", function () { setMenu(!document.body.classList.contains("menu-open")); });
   document.getElementById("menuScrim").addEventListener("click", function () { setMenu(false); });
+  document.getElementById("tabbar").addEventListener("click", function (e) { if (e.target.closest("[data-more]")) setMenu(!document.body.classList.contains("menu-open")); });
   document.getElementById("menu").addEventListener("click", function (e) { if (e.target.closest("a, .menu-close")) setMenu(false); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") setMenu(false); });
   render();
