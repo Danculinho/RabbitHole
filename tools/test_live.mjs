@@ -177,6 +177,26 @@ try {
   check('reader sees the timeline', (await r.eval(`document.querySelectorAll('.live-timeline li').length`)) >= 6);
   check('reader has no writer controls', !(await r.eval(`!!document.querySelector('.live-write')`)));
   check('phone: nothing wider than the screen', !(await r.eval(`document.documentElement.scrollWidth > innerWidth`)));
+
+  // the next match: last result and the tournament totals per player
+  await r.eval(`location.hash = '#/zapas/2026-11-06/1200'`);
+  await sleep(900);
+  const last = await r.eval(txt('.live-last'));
+  check('next match shows the last result', /1\s*:\s*1/.test(last) && /Sciences Po Bordeaux/.test(last) && /Drobný/.test(last), `(${last})`);
+  const stats = await r.eval(`[...document.querySelectorAll('.live-stats tbody tr')].map(tr => tr.textContent.replace(/\\s+/g, ' ').trim())`);
+  const drob = stats.find((s) => /Drobný/.test(s)) || '';
+  check('player totals: Drobný 1 goal (the undone one does not count)', /Drobný 1\b/.test(drob), `(${drob})`);
+  check('player totals: Hájnik has an assist', stats.some((s) => /Hájnik 0 1/.test(s)), `(${stats.find((s) => /Hájnik/.test(s)) || ''})`);
+  check('player totals: Maťoška has a yellow card', stats.some((s) => /Maťoška 0 0 1/.test(s)), `(${stats.find((s) => /Maťoška/.test(s)) || ''})`);
+  check('player totals: matches played counted', /Volf/.test(stats.join('|')), `(${stats.length} rows)`);
+
+  // the schedule shows the logged score until the organiser enters the result
+  await r.eval(`location.hash = '#/s/${STU}'`);
+  await sleep(900);
+  const badge = await r.eval(`(() => { const a = document.querySelector('a[href="${MATCH}"]'); const li = a && a.closest('.ev'); const b = li && li.querySelector('.badge.logged'); return b ? b.textContent.replace(/\\s+/g, ' ').trim() : ''; })()`);
+  check('schedule card shows the logged score', /1\s*:\s*1/.test(badge), `(${badge})`);
+  const other = await r.eval(`(() => { const a = document.querySelector('a[href="#/zapas/2026-11-06/1200"]'); const li = a && a.closest('.ev'); return !!(li && li.querySelector('.badge.logged')); })()`);
+  check('no logged score on a match without entries', !other);
   await r.close();
 
   // --- writer opens the page again while the log is still loading: no second line-up prompt

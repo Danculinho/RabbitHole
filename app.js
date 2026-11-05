@@ -723,6 +723,8 @@
     var badge = result ? h`<span class="badge score">${t("result")} ${result}</span>${raw(ev.sets && ev.sets.length ? h` <span class="sets">(${ev.sets.join(", ")})</span>` : "")}` :
                 st === "live" ? h`<span class="badge live">${t("live")}</span>` :
                 st === "next" ? h`<span class="badge next">${t("next")}</span>` : "";
+    var logged = !result && liveOn(ev) ? loggedScore(ev) : "";
+    if (logged) badge = h`<span class="badge logged" title="${L("Skóre zo zápisu tímu", "Score from the team's log")}">${logged}</span>`;
     var cat = catLabel(ev.cat);
     var meta = [];
     var v = VENUES[ev.venue];
@@ -1178,11 +1180,93 @@
       .then(function (j) {
         if (!j || !j.ok) return;
         var first = !live.loaded;
+        var before = JSON.stringify(live.rows);
         live.offline = false;
         live.rows = (j.rows || []).map(function (r) { return Object.assign({}, r, { ts: +r.ts, deleted: +r.deleted ? 1 : 0, a: String(r.a || ""), b: String(r.b || ""), minute: String(r.minute || "") }); });
         live.roster = j.roster || null; live.loaded = true; live.at = nowHM();
+        if (!/^#\/zapas\//.test(location.hash)) {
+          if (JSON.stringify(live.rows) !== before) { var y = window.scrollY; render(true); window.scrollTo(0, y); }
+          return;
+        }
         if (first || (!live.picking && !live.unlocking && !live.editRoster && !live.lineupSel)) { if (first) live.lineupSel = null; liveRerender(); }
       }).catch(function () { if (!live.loaded && !live.offline) { live.offline = true; liveRerender(); } });
+  }
+  // schedule views ask for the log at most once a minute
+  function liveEnsure() {
+    if (!liveUrl() || (live.fetchedAt && Date.now() - live.fetchedAt < 60000)) return;
+    live.fetchedAt = Date.now();
+    liveFetch();
+  }
+  function rowsByMatch() {
+    var by = {};
+    allRows().forEach(function (r) { if (!r.deleted && r.match) (by[r.match] = by[r.match] || []).push(r); });
+    return by;
+  }
+  function eventOfKey(key) {
+    var p = key.split("|");
+    return p.length === 3 ? nearest(teamMatches(p[1]), p[2]) : null;
+  }
+  // "1 : 1 · prebieha" in schedule order (the organiser may list STU second)
+  function loggedScore(ev) {
+    liveEnsure();
+    if (!live.loaded) return "";
+    var rows = allRows(), key = liveKeyFor(ev, rows), d = deriveLive(rows, key);
+    if (!d.k1 && !d.score[0] && !d.score[1]) return "";
+    var mineFirst = ev.a && ev.a.school === LIVE_TEAM.school;
+    var x = mineFirst ? d.score[0] : d.score[1], y = mineFirst ? d.score[1] : d.score[0];
+    return x + " : " + y + " · " + (d.phase === "ft" ? L("zápis", "log") : L("prebieha", "live"));
+  }
+  // goals, assists, cards and matches played over every logged match
+  function playerTotals() {
+    var tot = {}, by = rowsByMatch();
+    function T(n) { return tot[n] = tot[n] || { g: 0, as: 0, y: 0, r: 0, m: 0 }; }
+    Object.keys(by).forEach(function (key) {
+      var played = {};
+      by[key].forEach(function (r) {
+        if (r.type === "lineup") (r.a || "").split(",").filter(Boolean).forEach(function (n) { played[n] = true; });
+        else if (r.type === "sub" && r.b) played[r.b] = true;
+        else if (r.type === "goal") { if (r.a) T(r.a).g++; if (r.b) T(r.b).as++; }
+        else if (r.type === "yellow" && r.a) T(r.a).y++;
+        else if (r.type === "red" && r.a) T(r.a).r++;
+      });
+      Object.keys(played).forEach(function (n) { T(n).m++; });
+    });
+    return Object.keys(tot).map(function (n) { return Object.assign({ n: n }, tot[n]); })
+      .sort(function (a, b) { return b.g - a.g || b.as - a.as || b.m - a.m || a.n - b.n; });
+  }
+  // the latest logged match scheduled before this one (by the schedule, not by device clocks)
+  function lastMatchCard(currentKey, cur) {
+    var by = rowsByMatch(), best = null, bestAt = "", curAt = cur.day + " " + cur.time;
+    Object.keys(by).forEach(function (k) {
+      var e = eventOfKey(k);
+      if (k === currentKey || !e || e === cur) return;
+      var at = e.day + " " + e.time;
+      if (at < curAt && at > bestAt) { best = k; bestAt = at; }
+    });
+    if (!best) return "";
+    var ev = eventOfKey(best), d = deriveLive(allRows(), best);
+    var us = LIVE_TEAM.school, A = sideLabel(ev.a, us, ev), B = sideLabel(ev.b, us, ev);
+    var them = A.me ? B.name : A.name;
+    var goals = d.list.filter(function (r) { return r.type === "goal"; })
+      .map(function (r) { return (r.minute ? r.minute + "' " : "") + (r.a ? pname(r.a).replace(/^\d+\s+/, "") : "?"); });
+    return h`<a class="live-last" href="${liveHref(ev)}">
+      <span class="ll-head">${L("Posledný zápas", "Last match")} · ${dayName(ev.day)} ${ev.time}${d.phase === "ft" ? "" : " · " + L("prebieha", "live")}</span>
+      <b class="ll-score">STU ${d.score[0]} : ${d.score[1]} ${them}</b>
+      ${raw(goals.length ? h`<span class="ll-goals">${L("Góly STU", "STU goals")}: ${goals.join(", ")}</span>` : "")}
+    </a>`;
+  }
+  function statsTable() {
+    var list = playerTotals();
+    if (!list.length) return "";
+    var rows = list.map(function (x) {
+      return h`<tr><td class="st-name">${pname(x.n)}</td> <td>${x.g}</td> <td>${x.as}</td> <td>${x.y}</td> <td>${x.r}</td> <td>${x.m}</td></tr>`;
+    }).join(" ");
+    return h`<section class="live-stats-wrap"><h2>${L("Turnaj spolu", "Tournament totals")}</h2>
+      <table class="live-stats"><thead><tr><th class="st-name">${L("Hráč", "Player")}</th>
+        <th title="${L("Góly", "Goals")}">${L("G", "G")}</th><th title="${L("Asistencie", "Assists")}">${L("A", "A")}</th>
+        <th title="${L("Žlté karty", "Yellow cards")}"><span class="card-y"></span></th><th title="${L("Červené karty", "Red cards")}"><span class="card-r"></span></th>
+        <th title="${L("Odohrané zápasy", "Matches played")}">${L("Z", "M")}</th></tr></thead>
+        <tbody>${raw(rows)}</tbody></table></section>`;
   }
   function livePost(body) {
     return fetch(liveUrl(), { method: "POST", body: JSON.stringify(body) }).then(function (r) { return r.json(); });
@@ -1340,9 +1424,10 @@
           <p class="live-upd">${live.loaded ? L("Aktualizované", "Updated") + " " + live.at + " · " + L("obnovuje sa samo", "refreshes by itself") : live.offline ? L("Bez spojenia, skúšam znova", "Offline, trying again") : L("Načítavam…", "Loading…")}</p>
         </section>
         ${raw(live.msg ? h`<p class="live-msg" role="alert">${live.msg}</p>` : "")}
+        ${raw(d.phase === "pre" ? lastMatchCard(live.key, ev) : "")}
         ${raw(write)}
         <div class="live-cols">
-          <section class="live-squad">${raw(squad)}</section>
+          <div class="live-side"><section class="live-squad">${raw(squad)}</section>${raw(statsTable())}</div>
           <section class="live-tl"><h2>${L("Priebeh", "Timeline")}</h2><ol class="live-timeline">${raw(timeline)}</ol></section>
         </div>
         ${raw(foot)}
