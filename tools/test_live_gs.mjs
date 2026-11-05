@@ -21,10 +21,13 @@ function sheetStub() {
       getName: () => name,
       getLastRow: () => data.length,
       getLastColumn: () => (data[0] || []).length,
+      getMaxRows: () => 1000,
+      textCols: 0,
       appendRow: (r) => { data.push(r.slice()); },
       getRange: (row, col, nr, nc) => ({
         getValues: () => data.slice(row - 1, row - 1 + nr).map((r) => r.slice(col - 1, col - 1 + nc)),
         setValue: (v) => { data[row - 1][col - 1] = v; },
+        setNumberFormat: function (f) { if (f === '@') sheets[name].textCols = Math.max(sheets[name].textCols || 0, nc); },
         setValues: (vals) => { vals.forEach((v, i) => { data[row - 1 + i] = data[row - 1 + i] || []; v.forEach((x, j) => { data[row - 1 + i][col - 1 + j] = x; }); }); },
       }),
       clearContents: () => { data.length = 0; },
@@ -75,6 +78,7 @@ const get = () => JSON.parse(ctx.doGet({ parameter: {} })._s);
 const post = (body) => JSON.parse(ctx.doPost({ postData: { contents: JSON.stringify(body) } })._s);
 const row = (id, type, extra) => Object.assign({ id, ts: 1762419600000, match: 'football|2026-11-06|09:00', type, minute: '12', a: '9', b: '10', note: '' }, extra);
 
+check('log columns are plain text', SS._sheets.log.textCols === 9 && SS._sheets.roster.textCols === 2);
 check('empty log', get().ok === true && get().rows.length === 0);
 check('wrong PIN refused', post({ pin: '0000', op: 'add', rows: [row('x1', 'goal')] }).error === 'pin' && get().rows.length === 0);
 check('missing PIN refused', post({ op: 'add', rows: [row('x1', 'goal')] }).ok === false);

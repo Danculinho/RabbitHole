@@ -46,7 +46,11 @@ function setup() {
 function sheet_(name, header) {
   var ss = book_();
   var sh = ss.getSheetByName(name) || ss.insertSheet(name);
-  if (sh.getLastRow() === 0) sh.appendRow(header);
+  if (sh.getLastRow() === 0) {
+    // plain text, so "2,5" (a line-up) or "25+3" (a minute) is never read as a number or a date
+    sh.getRange(1, 1, sh.getMaxRows(), header.length).setNumberFormat("@");
+    sh.appendRow(header);
+  }
   return sh;
 }
 function out_(obj) {
