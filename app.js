@@ -239,6 +239,17 @@
       navRules: "Pravidlá",
       tabMine: "Moje", tabAll: "Rozpis", tabTables: "Tabuľky", tabVenues: "Miesta", tabMore: "Viac", tabPick: "Univerzity",
       navTables: "Tabuľky",
+      navPlayoff: "Play-off",
+      segGroups: "Skupiny", segPlayoff: "Play-off pavúk",
+      playoffTitle: "Play-off pavúk",
+      playoffLead: "Kto s kým hrá vo vyraďovacej časti. Víťazi sa posúvajú podľa výsledkov v rozpise.",
+      playoffRules: "Poradie zo skupín sa doplní, až keď sa dohrá celá skupina. Pri remíze (penalty) sa víťaz doplní, keď ho zapíše organizátor. Rugby a tenis majú iný formát, nájdete ich v rozpise.",
+      noPlayoff: "Pre tento šport zatiaľ nie je play-off.",
+      seeBracket: "Pozrieť pavúk",
+      rQ: "Kvalifikácia", rR16: "Osemfinále", rQF: "Štvrťfinále", rSF: "Semifinále", rF: "Finále",
+      finalGame: "Finále", thirdGame: "O 3. miesto",
+      winnerOf: "Víťaz zápasu {n}", sfWinner: "Víťaz semifinále", sfLoser: "Porazený v semifinále", tba: "Doplní organizátor",
+      poolPlace: "{p}. sk. {g}", gameNo: "Zápas {n}",
       tablesTitle: "Tabuľky skupín",
       tablesLead: "Poradie v skupinách počítané z výsledkov v rozpise. Je orientačné, záväzné je u organizátora.",
       tablesRules: "Body: futbal, futsal, hádzaná, florbal a rugby 3 za výhru, 1 za remízu; basketbal 2 za výhru, 1 za prehru; volejbal 3 za 2:0, 2 za 2:1, 1 za 1:2.",
@@ -317,6 +328,17 @@
       navRules: "Rules",
       tabMine: "Mine", tabAll: "Schedule", tabTables: "Tables", tabVenues: "Venues", tabMore: "More", tabPick: "Universities",
       navTables: "Tables",
+      navPlayoff: "Play-off",
+      segGroups: "Groups", segPlayoff: "Play-off bracket",
+      playoffTitle: "Play-off bracket",
+      playoffLead: "Who plays whom in the knockout stage. Winners move on from the results in the schedule.",
+      playoffRules: "Pool places are filled in only once the whole pool has finished. After a draw (penalties) the winner appears once the organisers enter it. Rugby and tennis use a different format; see the schedule.",
+      noPlayoff: "No play-off for this sport yet.",
+      seeBracket: "See the bracket",
+      rQ: "Qualification", rR16: "Round of 16", rQF: "Quarter-finals", rSF: "Semi-finals", rF: "Finals",
+      finalGame: "Final", thirdGame: "3rd place",
+      winnerOf: "Winner of game {n}", sfWinner: "Semi-final winner", sfLoser: "Semi-final loser", tba: "To be confirmed",
+      poolPlace: "{p}{o} in pool {g}", gameNo: "Game {n}",
       tablesTitle: "Group tables",
       tablesLead: "Pool standings calculated from the results in the schedule. Indicative only; the organisers' standings are binding.",
       tablesRules: "Points: football, futsal, handball, floorball and rugby 3 for a win, 1 for a draw; basketball 2 for a win, 1 for a loss; volleyball 3 for 2:0, 2 for 2:1, 1 for 1:2.",
@@ -488,6 +510,14 @@
     if (parts[0] === "venues") return { view: "venues" };
     if (parts[0] === "rules") return { view: "rules" };
     if (parts[0] === "tables") return { view: "tables" };
+    if (parts[0] === "playoff") {
+      // #/playoff/<sport> opens one sport, then the address settles on #/playoff so the chips keep working
+      if (parts[1] && SPORTS[parts[1]]) {
+        state.sport = parts[1]; store.set("wiuc.sport", parts[1]);
+        try { history.replaceState(null, "", "#/playoff"); } catch (e) {}
+      }
+      return { view: "playoff" };
+    }
     if (parts[0] === "party") return { view: "party" };
     if (parts[0] === "pick") return { view: "pick" };
     if (state.school && SCHOOLS[state.school]) return { view: "school", school: state.school };
@@ -510,6 +540,7 @@
     else if (r.view === "venues") renderVenues();
     else if (r.view === "rules") renderRules();
     else if (r.view === "tables") renderTables();
+    else if (r.view === "playoff") renderPlayoff();
     else if (r.view === "party") renderParty();
     else renderSchool(r.school);
     renderFoot();
@@ -524,22 +555,23 @@
     var hasSchool = state.school && SCHOOLS[state.school];
     var first = hasSchool ? ["school", "#/s/" + state.school, t("tabMine"), "star"] : ["pick", "#/pick", t("tabPick"), "star"];
     var tabs = [first, ["all", "#/all", t("tabAll"), "list"], ["tables", "#/tables", t("tabTables"), "table"], ["venues", "#/venues", t("tabVenues"), "pin"]];
-    var inTabs = tabs.some(function (x) { return x[0] === view; });
+    var tabView = view === "playoff" ? "tables" : view;
+    var inTabs = tabs.some(function (x) { return x[0] === tabView; });
     bar.innerHTML = tabs.map(function (x) {
-      var on = x[0] === view;
+      var on = x[0] === tabView;
       return h`<a href="${x[1]}" class="${on ? "on" : ""}"${raw(on ? ' aria-current="page"' : "")}>${raw(icon(x[3]))}<span>${x[2]}</span></a>`;
     }).join("") + h`<button type="button" data-more class="${inTabs ? "" : "on"}" aria-controls="menu">${raw(icon("more"))}<span>${t("tabMore")}</span></button>`;
   }
   function renderMenu(view) {
     var items = [];
     if (state.school && SCHOOLS[state.school]) items.push(["school", "#/s/" + state.school, t("navMine")]);
-    items.push(["all", "#/all", t("navAll")], ["tables", "#/tables", t("navTables")], ["venues", "#/venues", t("navVenues")], ["rules", "#/rules", t("navRules")], ["party", "#/party", t("navParty")], ["game", "hra/", t("navGame")], ["pick", "#/pick", t("navPick")]);
+    items.push(["all", "#/all", t("navAll")], ["tables", "#/tables", t("navTables")], ["playoff", "#/playoff", t("navPlayoff")], ["venues", "#/venues", t("navVenues")], ["rules", "#/rules", t("navRules")], ["party", "#/party", t("navParty")], ["game", "hra/", t("navGame")], ["pick", "#/pick", t("navPick")]);
     renderTabbar(view);
     var menu = document.getElementById("menu");
     if (!menu) return;
     var head = h`<p class="menu-head"><button class="menu-close" type="button" aria-label="${state.lang === "sk" ? "Zavrieť menu" : "Close menu"}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>WIUC 2026 Bratislava<small>${state.lang === "sk" ? "Neoficiálny pomocník · 4. až 8. 11." : "Unofficial helper · 4 to 8 Nov"}</small></p>`;
     menu.innerHTML = head + items.map(function (it) {
-      var on = it[0] === view;
+      var on = it[0] === view || (it[0] === "tables" && view === "playoff");
       return h`<a href="${it[1]}" class="m-${it[0]}${on ? " on" : ""}"${raw(on ? ' aria-current="page"' : "")}>${it[2]}</a>`;
     }).join("");
   }
@@ -853,9 +885,166 @@
     app.innerHTML = h`
       ${raw(destPanel(t("tablesTitle"), t("tablesLead"), back, state.school ? t("mine") : t("back")))}
       <div class="page page-plain">
+        ${raw(segSwitch("tables"))}
         ${raw(chips)}
         <div class="tables-grid">${raw(body)}</div>
         <p class="tables-note">${t("tablesRules")}</p>
+      </div>`;
+  }
+
+  // ---- play-off bracket, built from the knockout rows of the schedule
+  // The organiser writes "(9)" for "winner of game 9", "1A" for "winner of pool A" and leaves the finals empty.
+  var PLAYOFF_SPORTS = ["football", "futsal", "basketball", "volleyball", "handball", "floorball"];
+  var ROUND_RE = [/qualif/i, /1\/8/, /quarter/i, /semi/i, /3\/4|3rd|third/i, /final/i];   // first match wins
+  var ROUND_KEY = ["rQ", "rR16", "rQF", "rSF", "rF", "rF"];
+  function roundOf(stage) {
+    for (var i = 0; i < ROUND_RE.length; i++) if (ROUND_RE[i].test(stage || "")) return i;
+    return -1;
+  }
+  function scoreOf(e) {
+    var a = e.resA, b = e.resB;
+    if (a === "" || b === "" || a == null || b == null || isNaN(+a) || isNaN(+b)) return null;
+    return [+a, +b];
+  }
+  function bracketFor(sport, cat) {
+    var rows = EVENTS.filter(function (e) { return e.sport === sport && e.cat === cat && !e.pool && !e.extra && !e.all; });
+    rows.forEach(function (e) { e._r = roundOf(e.stage); });
+    // a row whose round name got lost in the sheet takes the round of the other rows that day
+    rows.forEach(function (e) {
+      if (e._r >= 0) return;
+      var seen = {};
+      rows.forEach(function (x) { if (x._r >= 0 && x.day === e.day) seen[x._r] = (seen[x._r] || 0) + 1; });
+      var best = -1;
+      Object.keys(seen).forEach(function (k) { if (best < 0 || seen[k] > seen[best]) best = +k; });
+      e._r = best;
+    });
+    rows = rows.filter(function (e) { return e._r >= 0; });
+    if (!rows.length) return null;
+    var count = {}, games = {};
+    rows.forEach(function (e) { if (e.game) count[e.game] = (count[e.game] || 0) + 1; });
+    rows.forEach(function (e) { if (e.game && count[e.game] === 1) games[e.game] = e; });
+    var semis = rows.filter(function (e) { return e._r === 3; });
+    var pools = null;
+    function poolSide(place, letter) {
+      pools = pools || standings(sport);
+      var pool = pools.filter(function (q) { return q.cat === cat && q.pool === letter; })[0];
+      if (!pool || !pool.games.length || !pool.games.every(scoreOf)) return null;
+      var T = pool.rows[place - 1];
+      if (!T) return null;
+      var level = pool.rows.filter(function (x) { return x !== T && x.pts === T.pts; }).length;
+      return level ? null : T.side;           // level on points: the organiser's tie-break decides
+    }
+    function sideOf(e, k, depth) {
+      var sd = e[k] || {};
+      if (sd.school) return sd;
+      if (depth > 8) return null;
+      var lab = (sd.label || "").trim(), m;
+      if ((m = /^\((\d+)\)$/.exec(lab))) return winnerOf(games[m[1]], depth + 1);
+      if ((m = /^([1-4])([A-Z])$/.exec(lab))) return poolSide(+m[1], m[2]);
+      if (!lab && e._r >= 4 && semis.length === 2) {
+        var sf = semis[k === "a" ? 0 : 1];
+        return e._r === 4 ? loserOf(sf, depth + 1) : winnerOf(sf, depth + 1);
+      }
+      return null;
+    }
+    function winnerOf(e, depth) {
+      var sc = e && scoreOf(e);
+      if (!sc || sc[0] === sc[1]) return null;
+      return sideOf(e, sc[0] > sc[1] ? "a" : "b", depth);
+    }
+    function loserOf(e, depth) {
+      var sc = e && scoreOf(e);
+      if (!sc || sc[0] === sc[1]) return null;
+      return sideOf(e, sc[0] > sc[1] ? "b" : "a", depth);
+    }
+    function openLabel(e, k) {
+      var lab = ((e[k] || {}).label || "").trim(), m;
+      if ((m = /^\((\d+)\)$/.exec(lab))) return t("winnerOf").replace("{n}", m[1]);
+      if ((m = /^([1-4])([A-Z])$/.exec(lab))) return t("poolPlace").replace("{p}", m[1]).replace("{o}", ["st", "nd", "rd", "th"][+m[1] - 1]).replace("{g}", m[2]);
+      if (!lab && e._r >= 4) return semis.length === 2 ? t(e._r === 4 ? "sfLoser" : "sfWinner") : t("tba");
+      return lab.replace(/\*+$/, "") || "?";
+    }
+    // order inside a round: game number, else the lowest game it is fed from, else time
+    function feedKey(e) {
+      if (e.game) return +e.game;
+      var n = [e.a, e.b].map(function (sd) { var m = /^\((\d+)\)/.exec((sd && sd.label) || ""); return m ? +m[1] : 999; });
+      return Math.min(n[0], n[1]) + 0.5;
+    }
+    semis.sort(function (x, y) { return feedKey(x) - feedKey(y) || (x.day + x.time).localeCompare(y.day + y.time); });
+    var cols = {};
+    rows.forEach(function (e) {
+      var c = Math.min(e._r, 4);
+      (cols[c] = cols[c] || []).push(e);
+    });
+    return Object.keys(cols).map(Number).sort(function (a, b) { return a - b; }).map(function (c) {
+      var list = cols[c].sort(function (x, y) {
+        if (c === 4) return y._r - x._r;                       // final before the 3rd-place game
+        return feedKey(x) - feedKey(y) || (x.day + x.time).localeCompare(y.day + y.time);
+      });
+      return { name: t(ROUND_KEY[c]), games: list.map(function (e) {
+        return {
+          e: e,
+          no: e._r === 5 ? "F" : e._r === 4 ? "3rd" : (e.game || ""),
+          title: e._r === 5 ? t("finalGame") : e._r === 4 ? t("thirdGame") : (e.game ? t("gameNo").replace("{n}", e.game) : ""),
+          sides: ["a", "b"].map(function (k) { return { side: sideOf(e, k, 0), open: openLabel(e, k) }; }),
+          score: scoreOf(e)
+        };
+      }) };
+    });
+  }
+  function playoffSports() {
+    return PLAYOFF_SPORTS.filter(function (k) { return bracketFor(k, "M") || bracketFor(k, "W"); });
+  }
+  function segSwitch(on) {
+    return h`<nav class="seg" aria-label="${t("navTables")}">
+      <a href="#/tables" class="${on === "tables" ? "on" : ""}"${raw(on === "tables" ? ' aria-current="page"' : "")}>${t("segGroups")}</a>
+      <a href="#/playoff" class="${on === "playoff" ? "on" : ""}"${raw(on === "playoff" ? ' aria-current="page"' : "")}>${t("segPlayoff")}</a>
+    </nav>`;
+  }
+  function renderPlayoff() {
+    var sports = playoffSports();
+    var sport = sports.indexOf(state.sport) >= 0 ? state.sport : null;
+    if (!sport && state.school) sport = sports.filter(function (k) { return schoolSports(state.school).indexOf(k) >= 0; })[0];
+    sport = sport || sports[0] || "football";
+    var mine = state.school;
+    var chips = h`<div class="chips">${raw(sports.map(function (k) {
+      var sp = SPORTS[k] || { c: "#888" };
+      return h`<button class="chip${k === sport ? " on" : ""}" data-sport="${k}" type="button" style="--z:${sp.c}"><span class="dot"></span>${sportName(k)}</button>`;
+    }).join(""))}</div>`;
+    var sp = SPORTS[sport] || { c: "#888" };
+    var body = ["M", "W"].map(function (cat) {
+      var rounds = bracketFor(sport, cat);
+      if (!rounds) return "";
+      var cols = rounds.map(function (r) {
+        var boxes = r.games.map(function (g) {
+          var e = g.e, sc = g.score, win = sc && sc[0] !== sc[1] ? (sc[0] > sc[1] ? 0 : 1) : -1;
+          var sides = g.sides.map(function (x, i) {
+            var L = x.side ? sideLabel(x.side, mine, e) : null;
+            var name = L ? L.name + (L.extra ? " (" + L.extra + ")" : "") : x.open;
+            var me = !!(x.side && x.side.school && x.side.school === mine);
+            var cls = "bx-side" + (L ? "" : " open") + (win === i ? " win" : win >= 0 ? " lose" : "") + (me ? " me" : "");
+            return h`<div class="${cls}"><span class="bx-name" title="${name}">${name}</span>${raw(sc ? h`<b class="bx-score">${sc[i]}</b>` : "")}</div>`;
+          }).join("");
+          var v = VENUES[e.venue];
+          return h`<li class="bx${e.day === todayISO() && statusOf(e) === "live" ? " is-live" : ""}" data-game="${g.no}">
+            <div class="bx-head"><span>${dayName(e.day)} ${e.time}</span><span>${g.title}</span></div>
+            ${raw(sides)}
+            ${raw(v ? h`<a class="bx-where" href="${mapsUrl(e.venue)}" target="_blank" rel="noopener">${raw(icon("pin"))}${v.name}</a>` : "")}
+          </li>`;
+        }).join("");
+        return h`<div class="round"><h3>${r.name}</h3><ol class="round-games">${raw(boxes)}</ol></div>`;
+      }).join("");
+      return h`<section class="bracket" style="--z:${sp.c}"><h2>${sportName(sport)} · ${catLabel(cat)}</h2>
+        <div class="bracket-scroll" tabindex="0"><div class="rounds">${raw(cols)}</div></div></section>`;
+    }).join("") || h`<div class="empty"><p>${t("noPlayoff")}</p></div>`;
+    var back = "#/" + (state.school ? "s/" + state.school : "pick");
+    app.innerHTML = h`
+      ${raw(destPanel(t("playoffTitle"), t("playoffLead"), back, state.school ? t("mine") : t("back")))}
+      <div class="page page-plain">
+        ${raw(segSwitch("playoff"))}
+        ${raw(chips)}
+        ${raw(body)}
+        <p class="tables-note">${t("playoffRules")}</p>
       </div>`;
   }
 
@@ -998,7 +1187,7 @@
         out += Object.keys(groups).map(function (k) {
           var g = groups[k], first = g[0], v = VENUES[first.venue];
           return h`<details class="playoff"><summary>${raw(icon("chev"))}${t("playoff")}: ${sportName(first.sport)} ${catLabel(first.cat)} · ${nMatches(g.length)}, ${v ? v.name : ""} ${state.lang === "sk" ? "od" : "from"} ${first.time}</summary>
-            <p class="day-note">${t("playoffNote")}</p>${raw(eventList(g, sid))}</details>`;
+            <p class="day-note">${t("playoffNote")}${raw(PLAYOFF_SPORTS.indexOf(first.sport) >= 0 ? h` <a href="#/playoff/${first.sport}">${t("seeBracket")}</a>` : "")}</p>${raw(eventList(g, sid))}</details>`;
         }).join("");
       }
       return out;
