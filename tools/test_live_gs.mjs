@@ -23,11 +23,12 @@ function sheetStub() {
       getLastColumn: () => (data[0] || []).length,
       getMaxRows: () => 1000,
       textCols: 0,
-      appendRow: (r) => { data.push(r.slice()); },
+      // like Sheets: appendRow reads "22.5" as a date (Slovak locale), even in a text column
+      appendRow: (r) => { data.push(r.map((v) => (typeof v === 'string' && /^\d{1,2}\.\d{1,2}$/.test(v) ? 'Fri May 22 2026 00:00:00' : v))); },
       getRange: (row, col, nr, nc) => ({
         getValues: () => data.slice(row - 1, row - 1 + nr).map((r) => r.slice(col - 1, col - 1 + nc)),
         setValue: (v) => { data[row - 1][col - 1] = v; },
-        setNumberFormat: function (f) { if (f === '@') sheets[name].textCols = Math.max(sheets[name].textCols || 0, nc); },
+        setNumberFormat: function (f) { if (f === '@') sheets[name].textCols = Math.max(sheets[name].textCols || 0, nc); return this; },
         setValues: (vals) => { vals.forEach((v, i) => { data[row - 1 + i] = data[row - 1 + i] || []; v.forEach((x, j) => { data[row - 1 + i][col - 1 + j] = x; }); }); },
       }),
       clearContents: () => { data.length = 0; },
@@ -94,7 +95,10 @@ check('unknown event type rejected', !g.rows.some((r) => r.id === 'x3'));
 check('long text trimmed', g.rows.find((r) => r.id === 'x4').a.length <= 80);
 post({ pin: '1234', op: 'del', ids: ['x2'] });
 g = get();
-check('delete is soft', g.rows.length === 3 && g.rows.find((r) => r.id === 'x2').deleted === 1);
+post({ pin: '1234', op: 'add', rows: [row('x5', 'lineup', { a: '2,5,6', b: '30', note: '22.5', minute: '' })] });
+g = get();
+check('half length 22.5 stays text, not a date', g.rows.find((r) => r.id === 'x5').note === '22.5', `(${g.rows.find((r) => r.id === 'x5').note})`);
+check('delete is soft', g.rows.length === 4 && g.rows.find((r) => r.id === 'x2').deleted === 1);
 post({ pin: '1234', op: 'roster', roster: [{ n: '9', name: 'Drobný' }, { n: '10', name: 'Komora' }] });
 g = get();
 check('roster saved', Array.isArray(g.roster) && g.roster.length === 2 && g.roster[0].name === 'Drobný');

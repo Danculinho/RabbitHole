@@ -103,6 +103,7 @@ try {
   check('right PIN unlocks writing', await p.eval(`!!document.querySelector('.live-write')`));
 
   const pre = await p.eval(`[...document.querySelectorAll('.live-pick[data-group="lineup"] [data-num].on')].map(b => +b.dataset.num).sort((a, b) => a - b).join(',')`);
+  check('half length defaults to 22.5 minutes', (await p.eval(`(document.getElementById('liveHalf') || {}).value`)) === '22.5');
   check('first-match starting XI is preselected', pre === '2,5,6,8,9,11,14,15,18,21,30', `(${pre})`);
   await click(p, '[data-live="lineup-save"]');
   await sleep(300);
@@ -166,7 +167,12 @@ try {
   await click(p, '[data-live="k2"]');
   await p.eval(`window.__liveSkew = 45 * 60000`);
   await sleep(1200);
-  check('second half counts on from the half length', /2\. polčas/.test(await p.eval(txt('.live-clock'))) && /31'/.test(await p.eval(txt('.live-clock'))), `(${await p.eval(txt('.live-clock'))})`);
+  check('second half counts on from a 22.5-minute half', /2\. polčas/.test(await p.eval(txt('.live-clock'))) && /28'/.test(await p.eval(txt('.live-clock'))), `(${await p.eval(txt('.live-clock'))})`);
+  // nobody pressed full time: well past the end the clock stops instead of counting 50+16'
+  await p.eval(`window.__liveSkew = (40 + 22.5 + 16) * 60000`);
+  await sleep(1200);
+  const late = await p.eval(txt('.live-clock'));
+  check('clock stops when full time was not entered', /skončil/.test(late) && !/\+/.test(late), `(${late})`);
   await p.close();
 
   // --- another person, phone size

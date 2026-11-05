@@ -1066,7 +1066,7 @@
     roster: [[2, "Fabian"], [3, "Galanda"], [4, "Kotulič"], [5, "Maťoška"], [6, "Jurík"], [8, "Hájnik"], [9, "Drobný"], [10, "Komora"],
       [11, "Cibira"], [12, "Chorvát"], [13, "Hmam"], [14, "Strečanský"], [15, "Šimorka"], [17, "Volf"], [18, "Šebeň"], [19, "Orihel"],
       [20, "Baláž"], [21, "Buchel"], [22, "Tanyasi"], [30, "Šága"]],
-    lineup: [30, 2, 18, 6, 21, 5, 8, 14, 15, 11, 9], gk: 30, half: 25
+    lineup: [30, 2, 18, 6, 21, 5, 8, 14, 15, 11, 9], gk: 30, half: 22.5
   };
   var live = { rows: [], roster: null, loaded: false, at: "", msg: "", picking: null, sel: { a: "", b: "" },
                lineupSel: null, unlocking: false, editRoster: false, ev: null, key: "", timer: 0, tick: 0, busy: false };
@@ -1141,18 +1141,26 @@
     });
     return d;
   }
-  function liveMinute(d) {
+  // minutes since the half started; a half can be 22.5 minutes, so the second half starts at 23'
+  function halfElapsed(d) {
     var start = d.phase === "h1" ? d.k1 : d.phase === "h2" ? d.k2 : null;
-    if (!start) return "";
-    var m = Math.max(1, Math.floor((nowMs() - start.ts) / 60000) + 1);
-    var base = d.phase === "h2" ? d.half : 0, cap = base + d.half;
-    var x = base + m;
+    return start ? Math.max(0, (nowMs() - start.ts) / 60000) : -1;
+  }
+  // nobody entered half-time or full time: stop the clock instead of counting 50+16'
+  function liveOverdue(d) { var el = halfElapsed(d); return el >= 0 && el > d.half + 15; }
+  function liveMinute(d) {
+    var el = halfElapsed(d);
+    if (el < 0) return "";
+    var base = d.phase === "h2" ? d.half : 0, cap = Math.ceil(base + d.half);
+    var x = Math.floor(base + el) + 1;
+    if (liveOverdue(d)) return String(cap);
     return x <= cap ? String(x) : cap + "+" + (x - cap);
   }
   function clockText(d) {
     if (d.phase === "pre") return L("Pred zápasom", "Before kick-off");
     if (d.phase === "ht") return L("Polčas", "Half-time");
     if (d.phase === "ft") return L("Koniec zápasu", "Full time");
+    if (liveOverdue(d)) return d.phase === "h1" ? L("1. polčas asi skončil", "First half probably over") : L("Zápas asi skončil", "Match probably over");
     return (d.phase === "h1" ? L("1. polčas", "1st half") : L("2. polčas", "2nd half")) + " · " + liveMinute(d) + "'";
   }
   function rowText(r) {
@@ -1214,7 +1222,7 @@
     if (!d.k1 && !d.score[0] && !d.score[1]) return "";
     var mineFirst = ev.a && ev.a.school === LIVE_TEAM.school;
     var x = mineFirst ? d.score[0] : d.score[1], y = mineFirst ? d.score[1] : d.score[0];
-    return x + " : " + y + " · " + (d.phase === "ft" ? L("zápis", "log") : L("prebieha", "live"));
+    return x + " : " + y + " · " + (d.phase === "ft" || (d.phase === "h2" && liveOverdue(d)) ? L("zápis", "log") : L("prebieha", "live"));
   }
   // goals, assists, cards and matches played over every logged match
   function playerTotals() {
@@ -1250,7 +1258,7 @@
     var goals = d.list.filter(function (r) { return r.type === "goal"; })
       .map(function (r) { return (r.minute ? r.minute + "' " : "") + (r.a ? pname(r.a).replace(/^\d+\s+/, "") : "?"); });
     return h`<a class="live-last" href="${liveHref(ev)}">
-      <span class="ll-head">${L("Posledný zápas", "Last match")} · ${dayName(ev.day)} ${ev.time}${d.phase === "ft" ? "" : " · " + L("prebieha", "live")}</span>
+      <span class="ll-head">${L("Posledný zápas", "Last match")} · ${dayName(ev.day)} ${ev.time}${d.phase === "ft" || liveOverdue(d) ? "" : " · " + L("prebieha", "live")}</span>
       <b class="ll-score">STU ${d.score[0]} : ${d.score[1]} ${them}</b>
       ${raw(goals.length ? h`<span class="ll-goals">${L("Góly STU", "STU goals")}: ${goals.join(", ")}</span>` : "")}
     </a>`;
@@ -1373,7 +1381,7 @@
         inner = h`<h2>${L("Základná zostava", "Starting line-up")} <small>${live.lineupSel.length}</small></h2>
           ${raw(picks("lineup", all, live.lineupSel, true))}
           <div class="live-row"><label>${L("Brankár", "Goalkeeper")} <select id="liveGk">${raw('<option value="">-</option>' + live.lineupSel.map(function (n) { return h`<option value="${n}"${raw(n === gkDefault ? " selected" : "")}>${pname(n)}</option>`; }).join(""))}</select></label>
-          <label>${L("Polčas (min)", "Half (min)")} <input id="liveHalf" type="number" min="10" max="45" value="${d.half}" inputmode="numeric"></label></div>
+          <label>${L("Polčas (min)", "Half (min)")} <input id="liveHalf" type="number" min="5" max="45" step="0.5" value="${d.half}" inputmode="decimal"></label></div>
           <div class="live-row"><button type="button" class="btn primary" data-live="lineup-save">${L("Uložiť zostavu", "Save line-up")}</button>${raw(d.lineup ? h`<button type="button" class="btn" data-live="cancel">${L("Zrušiť", "Cancel")}</button>` : "")}</div>`;
       } else if (live.picking) {
         var tp = live.picking, la = "", lb = "", ga = [], gb = [];
@@ -1464,7 +1472,7 @@
     else if (act === "cancel") { live.unlocking = false; live.picking = null; live.editRoster = false; live.lineupSel = null; live.sel = { a: "", b: "" }; }
     else if (act === "lineup-save") {
       var gk = (document.getElementById("liveGk") || {}).value || "";
-      var half = +((document.getElementById("liveHalf") || {}).value) || LIVE_TEAM.half;
+      var half = parseFloat(String((document.getElementById("liveHalf") || {}).value || "").replace(",", ".")) || LIVE_TEAM.half;
       var sel = live.lineupSel.slice().sort(function (x, y) { return x - y; });
       live.lineupSel = null;
       liveAdd({ type: "lineup", a: sel.join(","), b: sel.indexOf(gk) >= 0 ? gk : "", note: String(half) });

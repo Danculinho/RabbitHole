@@ -111,7 +111,9 @@ function doPost(e) {
         var r = normalise_(raw);
         if (!r || seen[r.id]) return;
         seen[r.id] = true;
-        sh.appendRow(COLS.map(function (k) { return r[k]; }));
+        // written as text: appendRow would turn "22.5" (a half length) into 22 May
+        sh.getRange(sh.getLastRow() + 1, 1, 1, COLS.length).setNumberFormat("@")
+          .setValues([COLS.map(function (k) { return String(r[k]); })]);
       });
       return out_({ ok: true });
     }
