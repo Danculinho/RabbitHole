@@ -515,6 +515,65 @@ h2 small { font-weight: 600; color: var(--muted); font-size: 15px; }
   .menu .m-playoff { display: none; }   /* the header row is full; on wide screens it sits under Tabuľky */
   .bracket { margin-top: 24px; }
 }
+/* ---------- live match log ---------- */
+.live-link { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; color: var(--blue); }
+.live-link .ic { width: 16px; height: 16px; }
+.live-page { padding-bottom: 24px; }
+.live-board { margin: 14px 16px 0; background: var(--sign); color: #fff; padding: 18px 18px 14px; border-left: 8px solid var(--z); }
+.live-teams { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 12px; font-size: 17px; font-weight: 800; }
+.live-teams span:last-child { text-align: right; overflow-wrap: anywhere; }
+.live-score { font-size: 44px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1; }
+.live-clock { margin: 10px 0 0; text-align: center; font-size: 18px; font-weight: 800; color: var(--y); }
+.live-upd { margin: 4px 0 0; text-align: center; font-size: 13px; color: var(--sign-muted); }
+.live-msg { margin: 12px 16px 0; padding: 10px 14px; background: var(--live-field); color: var(--ink); font-weight: 700; }
+.live-write { margin: 14px 16px 0; background: var(--card); padding: 14px; }
+.live-write h2 { margin: 0 0 10px; font-size: 18px; }
+.live-write h2 small, .live-squad h2 small { color: var(--muted); font-weight: 600; }
+.live-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.live-actions .btn { min-height: 52px; font-size: 16px; justify-content: center; }
+.live-actions .phase { grid-column: 1 / -1; }
+.live-actions .act-goal { background: var(--next); color: #fff; }
+.live-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+.live-row.small .btn { font-size: 14px; padding: 8px 12px; }
+.live-row label { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; }
+.live-row input, .live-row select, .live-unlock input { font: inherit; padding: 8px 10px; min-height: 44px; border: 2px solid var(--field); background: var(--bg); color: var(--ink); }
+.live-row input[type=number] { width: 5em; }
+.live-lab { margin: 10px 0 6px; font-weight: 700; color: var(--muted); font-size: 14px; }
+.live-pick { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 6px; }
+.live-pick button { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; min-height: 52px; padding: 6px 8px; border: 0; background: var(--field); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.live-pick button b { font-size: 18px; }
+.live-pick button span { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.live-pick button.on { background: var(--blue); color: #fff; }
+.live-write textarea { width: 100%; font: inherit; padding: 10px; border: 2px solid var(--field); background: var(--bg); color: var(--ink); }
+.live-queue { margin: 10px 0 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-weight: 700; color: var(--live-ink); }
+.live-cols { display: grid; gap: 14px; margin: 14px 16px 0; }
+.live-squad, .live-tl { background: var(--card); padding: 14px; }
+.live-squad h2, .live-tl h2 { margin: 0 0 8px; font-size: 18px; }
+.live-squad h2 + ul { margin-bottom: 14px; }
+.live-squad ul, .live-timeline { list-style: none; margin: 0; padding: 0; }
+.live-squad li { display: flex; align-items: center; gap: 6px; padding: 6px 0; border-top: 2px solid var(--field); font-size: 16px; }
+.live-squad li b { min-width: 2ch; text-align: right; font-variant-numeric: tabular-nums; }
+.live-bench li { color: var(--ink-2); }
+.gk { font-size: 12px; font-weight: 800; padding: 1px 5px; background: var(--field); color: var(--ink); }
+.goals { display: inline-flex; align-items: center; gap: 2px; font-weight: 800; }
+.goals .ic, .tl-ic .ic { width: 16px; height: 16px; }
+.card-y, .card-r { display: inline-block; width: 10px; height: 14px; background: var(--live); vertical-align: -2px; }
+.card-r { background: var(--r); }
+.live-timeline li { display: grid; grid-template-columns: 3.2em 20px minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 8px 0; border-top: 2px solid var(--field); font-size: 15px; }
+.live-timeline .tl-min { font-weight: 800; font-variant-numeric: tabular-nums; text-align: right; }
+.live-timeline .tl-goal .tl-txt { font-weight: 800; }
+.live-timeline .tl-empty { display: block; color: var(--muted); }
+.tl-del { border: 0; background: transparent; color: var(--muted); font-size: 22px; line-height: 1; min-width: 44px; min-height: 44px; cursor: pointer; }
+.live-foot { margin: 16px 16px 0; color: var(--muted); }
+.live-unlock { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.live-unlock label { display: inline-flex; gap: 6px; align-items: center; font-weight: 700; color: var(--ink); }
+.linkish { border: 0; background: none; padding: 0; font: inherit; color: var(--blue); font-weight: 700; text-decoration: underline; cursor: pointer; min-height: 44px; }
+@media (min-width: 1024px) {
+  .live-board, .live-write, .live-cols, .live-msg, .live-foot { margin-left: 0; margin-right: 0; }
+  .live-cols { grid-template-columns: minmax(280px, 1fr) minmax(0, 2fr); align-items: start; }
+  .live-actions { grid-template-columns: repeat(6, auto); justify-content: start; }
+  .live-actions .phase { grid-column: auto; }
+}
 /* ---------- phones: bottom tab bar and a compact top ---------- */
 .tabbar { display: none; }
 .dest .lead.sub { margin-bottom: 0; }

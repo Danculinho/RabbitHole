@@ -510,6 +510,7 @@
     if (parts[0] === "venues") return { view: "venues" };
     if (parts[0] === "rules") return { view: "rules" };
     if (parts[0] === "tables") return { view: "tables" };
+    if (parts[0] === "zapas" && parts[1] && parts[2]) return { view: "live", day: parts[1], hm: parts[2] };
     if (parts[0] === "playoff") {
       // #/playoff/<sport> opens one sport, then the address settles on #/playoff so the chips keep working
       if (parts[1] && SPORTS[parts[1]]) {
@@ -541,6 +542,7 @@
     else if (r.view === "rules") renderRules();
     else if (r.view === "tables") renderTables();
     else if (r.view === "playoff") renderPlayoff();
+    else if (r.view === "live") renderLive(r.day, r.hm);
     else if (r.view === "party") renderParty();
     else renderSchool(r.school);
     renderFoot();
@@ -555,7 +557,7 @@
     var hasSchool = state.school && SCHOOLS[state.school];
     var first = hasSchool ? ["school", "#/s/" + state.school, t("tabMine"), "star"] : ["pick", "#/pick", t("tabPick"), "star"];
     var tabs = [first, ["all", "#/all", t("tabAll"), "list"], ["tables", "#/tables", t("tabTables"), "table"], ["venues", "#/venues", t("tabVenues"), "pin"]];
-    var tabView = view === "playoff" ? "tables" : view;
+    var tabView = view === "playoff" ? "tables" : view === "live" ? "school" : view;
     var inTabs = tabs.some(function (x) { return x[0] === tabView; });
     bar.innerHTML = tabs.map(function (x) {
       var on = x[0] === tabView;
@@ -599,6 +601,9 @@
     table: '<rect x="3" y="4" width="18" height="16"/><path d="M3 9h18M3 14.5h18M9 9v11"/>',
     more: '<path d="M5 12h.01M12 12h.01M19 12h.01"/>',
     chev: '<path d="M9 6l6 6-6 6"/>',
+    swap: '<path d="M7 4v14M4 15l3 3 3-3M17 20V6M14 9l3-3 3 3"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    live: '<circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 000 11.4M17.7 6.3a8 8 0 010 11.4"/>',
     flag: '<path d="M5 21V4M5 4h12l-2 4 2 4H5"/>',
     football: '<circle cx="12" cy="12" r="9"/><path d="M12 7.5l4.3 3.1-1.6 5h-5.4l-1.6-5z"/>',
     futsal: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/>',
@@ -724,6 +729,7 @@
     if (v) meta.push(h`<a href="${mapsUrl(ev.venue)}" target="_blank" rel="noopener">${raw(icon("pin"))}${v.name}</a>`);
     if (ev.pool && !ev.extra) meta.push(esc(t("group") + " " + ev.pool));
     if (ev.stage && !ev.extra) meta.push(esc(ev.stage));
+    if (liveOn(ev)) meta.push(h`<a class="live-link" href="${liveHref(ev)}">${raw(icon("live"))}${state.lang === "sk" ? "Priebeh zápasu" : "Match log"}</a>`);
     var match;
     if (ev.sport === "ceremony") {
       match = h`<div class="match">${t("ceremony")}</div>`;
@@ -1047,6 +1053,372 @@
         <p class="tables-note">${t("playoffRules")}</p>
       </div>`;
   }
+
+  // ---- live match log for STU football, backed by tools/live.gs (a Google Apps Script on a Sheet)
+  // Every entry is a row: lineup, k1 (kick-off), h1 (half-time), k2 (second half), ft, goal, ogoal, yellow, red, sub.
+  // The clock, the score and who is on the pitch are worked out from the rows, so everyone sees the same.
+  var LIVE_URL = "";   // the Apps Script /exec address; empty keeps the feature hidden
+  var LIVE_TEAM = {
+    school: "slovak-university-of-technology-in-bratislava", sport: "football",
+    roster: [[2, "Fabian"], [3, "Galanda"], [4, "Kotulič"], [5, "Maťoška"], [6, "Jurík"], [8, "Hájnik"], [9, "Drobný"], [10, "Komora"],
+      [11, "Cibira"], [12, "Chorvát"], [13, "Hmam"], [14, "Strečanský"], [15, "Šimorka"], [17, "Volf"], [18, "Šebeň"], [19, "Orihel"],
+      [20, "Baláž"], [21, "Buchel"], [22, "Tanyasi"], [30, "Šága"]],
+    lineup: [30, 2, 18, 6, 21, 5, 8, 14, 15, 11, 9], gk: 30, half: 25
+  };
+  var live = { rows: [], roster: null, loaded: false, at: "", msg: "", picking: null, sel: { a: "", b: "" },
+               lineupSel: null, unlocking: false, editRoster: false, ev: null, key: "", timer: 0, tick: 0, busy: false };
+  function L(sk, en) { return state.lang === "sk" ? sk : en; }
+  function liveUrl() { return window.WIUC_LIVE_URL || LIVE_URL; }
+  function liveOn(ev) { return !!liveUrl() && !!ev && ev.sport === LIVE_TEAM.sport && involves(ev, LIVE_TEAM.school); }
+  function liveHref(ev) { return "#/zapas/" + ev.day + "/" + ev.time.replace(":", ""); }
+  function nowMs() { return Date.now() + (window.__liveSkew || 0); }
+  function livePin() { return store.get("wiuc.livePin") || ""; }
+  function liveQueue() { try { return JSON.parse(store.get("wiuc.liveQueue")) || []; } catch (e) { return []; } }
+  function setQueue(q) { store.set("wiuc.liveQueue", JSON.stringify(q)); }
+  function liveId() { return "r" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+  function teamMatches(day) {
+    return EVENTS.filter(function (e) { return e.day === day && liveOn(e); });
+  }
+  function nearest(list, hm) {
+    var m = minutesOf(hm), best = null;
+    list.forEach(function (e) { if (!best || Math.abs(minutesOf(e.time) - m) < Math.abs(minutesOf(best.time) - m)) best = e; });
+    return best && Math.abs(minutesOf(best.time) - m) <= 180 ? best : null;
+  }
+  // rows of this match: keyed "football|day|time" when the log was started; a later time change still finds them
+  function liveKeyFor(ev, rows) {
+    var day = ev.day, mine = teamMatches(day), keys = {};
+    rows.forEach(function (r) { var p = r.match.split("|"); if (p[0] === ev.sport && p[1] === day) keys[r.match] = p[2]; });
+    var found = Object.keys(keys).filter(function (k) { return nearest(mine, keys[k]) === ev; })
+      .sort(function (a, b) { return Math.abs(minutesOf(keys[a]) - minutesOf(ev.time)) - Math.abs(minutesOf(keys[b]) - minutesOf(ev.time)); })[0];
+    return found || ev.sport + "|" + ev.day + "|" + ev.time;
+  }
+  function allRows() {
+    var rows = live.rows.map(function (r) { return Object.assign({}, r); }), ids = {};
+    rows.forEach(function (r) { ids[r.id] = true; });
+    liveQueue().forEach(function (op) {
+      if (op.op === "add") op.rows.forEach(function (r) { if (!ids[r.id]) { rows.push(Object.assign({ deleted: 0 }, r)); ids[r.id] = true; } });
+    });
+    liveQueue().forEach(function (op) {
+      if (op.op === "del") rows.forEach(function (r) { if (op.ids.indexOf(r.id) >= 0) r.deleted = 1; });
+    });
+    return rows;
+  }
+  function liveRoster() {
+    var q = liveQueue().filter(function (op) { return op.op === "roster"; }).pop();
+    var list = q ? q.roster : live.roster;
+    if (list && list.length) return list.map(function (p) { return [+p.n, p.name]; });
+    return LIVE_TEAM.roster;
+  }
+  function pname(n) {
+    var p = liveRoster().filter(function (x) { return String(x[0]) === String(n); })[0];
+    return p ? p[0] + " " + p[1] : String(n || "?");
+  }
+  function deriveLive(rows, key) {
+    var list = rows.filter(function (r) { return r.match === key && !r.deleted; })
+      .sort(function (a, b) { return a.ts - b.ts || (a.id < b.id ? -1 : 1); });
+    var d = { list: list, score: [0, 0], phase: "pre", k1: null, k2: null, lineup: null, gk: "", half: LIVE_TEAM.half,
+              field: [], stats: {} };
+    function st(n) { return d.stats[n] = d.stats[n] || { g: 0, y: 0, r: 0 }; }
+    list.forEach(function (r) {
+      if (r.type === "lineup") {
+        d.lineup = r; d.field = (r.a || "").split(",").filter(Boolean); d.gk = r.b || ""; d.half = +r.note || LIVE_TEAM.half;
+      } else if (r.type === "k1") { d.phase = "h1"; d.k1 = r; }
+      else if (r.type === "h1") d.phase = "ht";
+      else if (r.type === "k2") { d.phase = "h2"; d.k2 = r; }
+      else if (r.type === "ft") d.phase = "ft";
+      else if (r.type === "goal") { d.score[0]++; if (r.a) st(r.a).g++; }
+      else if (r.type === "ogoal") d.score[1]++;
+      else if (r.type === "yellow") { st(r.a).y++; if (st(r.a).y >= 2) d.field = d.field.filter(function (n) { return n !== r.a; }); }
+      else if (r.type === "red") { st(r.a).r++; d.field = d.field.filter(function (n) { return n !== r.a; }); }
+      else if (r.type === "sub") {
+        d.field = d.field.filter(function (n) { return n !== r.a; });
+        if (r.b && d.field.indexOf(r.b) < 0) d.field.push(r.b);
+        if (r.a === d.gk) d.gk = r.b;
+      }
+    });
+    return d;
+  }
+  function liveMinute(d) {
+    var start = d.phase === "h1" ? d.k1 : d.phase === "h2" ? d.k2 : null;
+    if (!start) return "";
+    var m = Math.max(1, Math.floor((nowMs() - start.ts) / 60000) + 1);
+    var base = d.phase === "h2" ? d.half : 0, cap = base + d.half;
+    var x = base + m;
+    return x <= cap ? String(x) : cap + "+" + (x - cap);
+  }
+  function clockText(d) {
+    if (d.phase === "pre") return L("Pred zápasom", "Before kick-off");
+    if (d.phase === "ht") return L("Polčas", "Half-time");
+    if (d.phase === "ft") return L("Koniec zápasu", "Full time");
+    return (d.phase === "h1" ? L("1. polčas", "1st half") : L("2. polčas", "2nd half")) + " · " + liveMinute(d) + "'";
+  }
+  function rowText(r) {
+    switch (r.type) {
+      case "lineup": return L("Základná zostava", "Starting line-up") + ": " + (r.a || "").split(",").filter(Boolean).length + " " + L("hráčov", "players");
+      case "k1": return L("Výkop", "Kick-off");
+      case "h1": return L("Koniec 1. polčasu", "Half-time");
+      case "k2": return L("Začiatok 2. polčasu", "Second half starts");
+      case "ft": return L("Koniec zápasu", "Full time");
+      case "goal": return L("Gól STU", "STU goal") + ": " + (r.a ? pname(r.a) : "?") + (r.b ? " (" + L("asistencia", "assist") + " " + pname(r.b) + ")" : "");
+      case "ogoal": return L("Gól súpera", "Opponent goal");
+      case "yellow": return L("Žltá karta", "Yellow card") + ": " + pname(r.a);
+      case "red": return L("Červená karta", "Red card") + ": " + pname(r.a);
+      case "sub": return L("Striedanie", "Substitution") + ": " + L("von", "off") + " " + pname(r.a) + ", " + L("dnu", "on") + " " + pname(r.b);
+    }
+    return r.type;
+  }
+  var NEXT_PHASE = { pre: ["k1", "Výkop", "Kick-off"], h1: ["h1", "Koniec 1. polčasu", "Half-time"], ht: ["k2", "Začiatok 2. polčasu", "Start 2nd half"], h2: ["ft", "Koniec zápasu", "Full time"] };
+
+  function liveFetch() {
+    var url = liveUrl();
+    if (!url) return;
+    fetch(url + (url.indexOf("?") < 0 ? "?" : "&") + "t=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (!j || !j.ok) return;
+        var first = !live.loaded;
+        live.offline = false;
+        live.rows = (j.rows || []).map(function (r) { return Object.assign({}, r, { ts: +r.ts, deleted: +r.deleted ? 1 : 0, a: String(r.a || ""), b: String(r.b || ""), minute: String(r.minute || "") }); });
+        live.roster = j.roster || null; live.loaded = true; live.at = nowHM();
+        if (first || (!live.picking && !live.unlocking && !live.editRoster && !live.lineupSel)) { if (first) live.lineupSel = null; liveRerender(); }
+      }).catch(function () { if (!live.loaded && !live.offline) { live.offline = true; liveRerender(); } });
+  }
+  function livePost(body) {
+    return fetch(liveUrl(), { method: "POST", body: JSON.stringify(body) }).then(function (r) { return r.json(); });
+  }
+  function liveFlush() {
+    if (live.busy) return Promise.resolve();
+    var q = liveQueue();
+    if (!q.length || !livePin()) return Promise.resolve();
+    live.busy = true;
+    var op = q[0];
+    return livePost(Object.assign({ pin: livePin() }, op)).then(function (j) {
+      live.busy = false;
+      if (j && j.ok) {
+        if (op.op === "add") op.rows.forEach(function (r) { if (!live.rows.some(function (x) { return x.id === r.id; })) live.rows.push(Object.assign({ deleted: 0 }, r)); });
+        if (op.op === "del") live.rows.forEach(function (r) { if (op.ids.indexOf(r.id) >= 0) r.deleted = 1; });
+        if (op.op === "roster") live.roster = op.roster;
+        setQueue(liveQueue().slice(1));
+        liveRerender();
+        return liveFlush();
+      }
+      if (j && j.error === "pin") { store.set("wiuc.livePin", ""); live.msg = L("PIN už neplatí. Zadajte ho znova.", "The PIN is no longer valid. Enter it again."); liveRerender(); }
+    }).catch(function () { live.busy = false; liveRerender(); });
+  }
+  function liveAdd(row) {
+    row.id = liveId(); row.ts = nowMs(); row.match = live.key;
+    row.minute = row.minute || ""; row.a = row.a || ""; row.b = row.b || ""; row.note = row.note || "";
+    var q = liveQueue(); q.push({ op: "add", rows: [row] }); setQueue(q);
+    liveRerender(); liveFlush();
+  }
+  function liveRerender() {
+    if (!/^#\/zapas\//.test(location.hash)) return;
+    var y = window.scrollY; render(true); window.scrollTo(0, y);
+  }
+  function liveTimers() {
+    if (!live.timer) live.timer = setInterval(function () {
+      if (!/^#\/zapas\//.test(location.hash)) { clearInterval(live.timer); clearInterval(live.tick); live.timer = live.tick = 0; return; }
+      if (!document.hidden) { liveFetch(); liveFlush(); }
+    }, 20000);
+    if (!live.tick) live.tick = setInterval(function () {
+      var c = document.querySelector(".live-clock");
+      if (c && live.ev) c.textContent = clockText(deriveLive(allRows(), live.key));
+    }, 1000);
+  }
+
+  function renderLive(day, hm) {
+    var hhmm = hm.slice(0, 2) + ":" + hm.slice(2, 4);
+    var ev = liveUrl() ? nearest(teamMatches(day), hhmm) : null;
+    var back = "#/" + (state.school ? "s/" + state.school : "pick");
+    if (!ev) {
+      app.innerHTML = h`${raw(destPanel(L("Priebeh zápasu", "Match log"), "", back, t("mine")))}
+        <div class="page page-plain"><div class="empty"><p>${L("Tento zápas sa nezapisuje.", "This match has no live log.")}</p></div></div>`;
+      return;
+    }
+    if (live.ev !== ev) { live.ev = ev; live.loaded = false; live.offline = false; live.picking = null; live.lineupSel = null; live.msg = ""; liveFetch(); }
+    liveTimers();
+    var rows = allRows();
+    live.key = liveKeyFor(ev, rows);
+    var d = deriveLive(rows, live.key);
+    var writer = !!livePin();
+    var canWrite = writer && (live.loaded || live.offline);   // wait for the log, so a line-up is not asked for twice
+    var us = LIVE_TEAM.school, A = sideLabel(ev.a, us, ev), B = sideLabel(ev.b, us, ev);
+    var mineFirst = A.me;
+    var them = mineFirst ? B.name : A.name;
+    var v = VENUES[ev.venue];
+    var roster = liveRoster();
+
+    function player(n, extraCls) {
+      var s = d.stats[n] || {}, cls = extraCls || "";
+      var name = (roster.filter(function (x) { return String(x[0]) === String(n); })[0] || [n, ""])[1];
+      return h`<li data-num="${n}" class="${cls}"><b>${n}</b> <span class="pn">${name}</span>${raw(String(n) === String(d.gk) ? h` <span class="gk" title="${L("Brankár", "Goalkeeper")}">${L("B", "GK")}</span>` : "")}${raw(s.g ? h` <span class="goals" title="${L("Góly", "Goals")}">${raw(icon("football"))}${s.g > 1 ? "×" + s.g : ""}</span>` : "")}${raw(s.y ? h` <span class="card-y" title="${L("Žltá karta", "Yellow card")}"></span>` : "")}${raw(s.r || s.y > 1 ? h` <span class="card-r" title="${L("Červená karta", "Red card")}"></span>` : "")}</li>`;
+    }
+    var squad;
+    if (d.lineup) {
+      var bench = roster.map(function (x) { return String(x[0]); }).filter(function (n) { return d.field.indexOf(n) < 0; });
+      squad = h`<h2>${L("Na ihrisku", "On the pitch")} <small>${d.field.length}</small></h2><ul class="live-field">${raw(d.field.map(function (n) { return player(n); }).join(""))}</ul>
+        <h2>${L("Lavička", "Bench")}</h2><ul class="live-bench">${raw(bench.map(function (n) { return player(n); }).join(""))}</ul>`;
+    } else {
+      squad = h`<h2>${L("Súpiska", "Squad")}</h2><ul class="live-roster">${raw(roster.map(function (x) { return player(String(x[0])); }).join(""))}</ul>`;
+    }
+    var timeline = d.list.slice().reverse().map(function (r) {
+      var ic = r.type === "goal" || r.type === "ogoal" ? icon("football") : r.type === "sub" ? icon("swap") : r.type === "yellow" ? '<span class="card-y"></span>' : r.type === "red" ? '<span class="card-r"></span>' : icon("clock");
+      return h`<li class="tl-${r.type}"><span class="tl-min">${r.minute ? r.minute + "'" : ""}</span><span class="tl-ic">${raw(ic)}</span><span class="tl-txt">${rowText(r)}</span>${raw(writer ? h`<button type="button" class="tl-del" data-live="del" data-id="${r.id}" aria-label="${L("Zmazať záznam", "Delete entry")}">×</button>` : "")}</li>`;
+    }).join("") || h`<li class="tl-empty">${L("Zatiaľ bez záznamov.", "No entries yet.")}</li>`;
+
+    function picks(group, list, sel, multi) {
+      return h`<div class="live-pick" data-group="${group}">${raw(list.map(function (n) {
+        var on = multi ? sel.indexOf(String(n)) >= 0 : String(sel) === String(n);
+        var nm = (roster.filter(function (x) { return String(x[0]) === String(n); })[0] || [n, ""])[1];
+        return h`<button type="button" data-num="${n}" class="${on ? "on" : ""}" aria-pressed="${on ? "true" : "false"}"><b>${n}</b><span>${nm}</span></button>`;
+      }).join(""))}</div>`;
+    }
+    var write = "";
+    if (canWrite) {
+      var all = roster.map(function (x) { return String(x[0]); });
+      var benchNow = all.filter(function (n) { return d.field.indexOf(n) < 0 && !(d.stats[n] && d.stats[n].r); });
+      var fieldNow = d.lineup ? d.field : all;
+      var inner;
+      if (live.lineupSel || !d.lineup) {
+        if (!live.lineupSel) {
+          var prev = live.rows.filter(function (r) { return r.type === "lineup" && !r.deleted; }).sort(function (a, b) { return a.ts - b.ts; }).pop();
+          live.lineupSel = (d.lineup ? d.field : prev ? prev.a.split(",") : LIVE_TEAM.lineup.map(String)).filter(Boolean);
+        }
+        var gkDefault = d.gk || (live.lineupSel.indexOf(String(LIVE_TEAM.gk)) >= 0 ? String(LIVE_TEAM.gk) : "");
+        inner = h`<h2>${L("Základná zostava", "Starting line-up")} <small>${live.lineupSel.length}</small></h2>
+          ${raw(picks("lineup", all, live.lineupSel, true))}
+          <div class="live-row"><label>${L("Brankár", "Goalkeeper")} <select id="liveGk">${raw('<option value="">-</option>' + live.lineupSel.map(function (n) { return h`<option value="${n}"${raw(n === gkDefault ? " selected" : "")}>${pname(n)}</option>`; }).join(""))}</select></label>
+          <label>${L("Polčas (min)", "Half (min)")} <input id="liveHalf" type="number" min="10" max="45" value="${d.half}" inputmode="numeric"></label></div>
+          <div class="live-row"><button type="button" class="btn primary" data-live="lineup-save">${L("Uložiť zostavu", "Save line-up")}</button>${raw(d.lineup ? h`<button type="button" class="btn" data-live="cancel">${L("Zrušiť", "Cancel")}</button>` : "")}</div>`;
+      } else if (live.picking) {
+        var tp = live.picking, la = "", lb = "", ga = [], gb = [];
+        if (tp === "goal") { la = L("Strelec", "Scorer"); ga = fieldNow; lb = L("Asistencia (nepovinné)", "Assist (optional)"); gb = fieldNow.filter(function (n) { return n !== live.sel.a; }); }
+        if (tp === "sub") { la = L("Ide von", "Off"); ga = fieldNow; lb = L("Ide dnu", "On"); gb = benchNow; }
+        if (tp === "yellow" || tp === "red") { la = L("Hráč", "Player"); ga = all; }
+        inner = h`<h2>${rowText({ type: tp, a: "", b: "" }).split(":")[0]}</h2>
+          ${raw(la ? h`<p class="live-lab">${la}</p>${raw(picks("a", ga, live.sel.a))}` : "")}
+          ${raw(lb ? h`<p class="live-lab">${lb}</p>${raw(picks("b", gb, live.sel.b))}` : "")}
+          <div class="live-row"><label>${L("Minúta", "Minute")} <input id="liveMin" type="text" inputmode="numeric" value="${liveMinute(d)}" size="5"></label></div>
+          <div class="live-row"><button type="button" class="btn primary" data-live="save">${L("Uložiť", "Save")}</button><button type="button" class="btn" data-live="cancel">${L("Zrušiť", "Cancel")}</button></div>`;
+      } else if (live.editRoster) {
+        inner = h`<h2>${L("Súpiska", "Squad")}</h2><p class="live-lab">${L("Jeden hráč na riadok: číslo a meno.", "One player per line: number and name.")}</p>
+          <textarea id="liveRoster" rows="12">${roster.map(function (x) { return x[0] + " " + x[1]; }).join("\n")}</textarea>
+          <div class="live-row"><button type="button" class="btn primary" data-live="roster-save">${L("Uložiť súpisku", "Save squad")}</button><button type="button" class="btn" data-live="cancel">${L("Zrušiť", "Cancel")}</button></div>`;
+      } else {
+        var np = NEXT_PHASE[d.phase];
+        inner = h`<div class="live-actions">
+            ${raw(np ? h`<button type="button" class="btn primary phase" data-live="${np[0]}">${L(np[1], np[2])}</button>` : "")}
+            <button type="button" class="btn act-goal" data-live="goal">${L("Gól STU", "STU goal")}</button>
+            <button type="button" class="btn" data-live="ogoal">${L("Gól súpera", "Opponent goal")}</button>
+            <button type="button" class="btn" data-live="sub">${L("Striedanie", "Substitution")}</button>
+            <button type="button" class="btn" data-live="yellow"><span class="card-y"></span> ${L("Žltá", "Yellow")}</button>
+            <button type="button" class="btn" data-live="red"><span class="card-r"></span> ${L("Červená", "Red")}</button>
+          </div>
+          <div class="live-row small">
+            <button type="button" class="btn" data-live="undo"${raw(d.list.length ? "" : " disabled")}>${L("Vrátiť posledný záznam", "Undo last entry")}</button>
+            <button type="button" class="btn" data-live="relineup">${L("Upraviť zostavu", "Edit line-up")}</button>
+            <button type="button" class="btn" data-live="roster">${L("Upraviť súpisku", "Edit squad")}</button>
+          </div>`;
+      }
+      var q = liveQueue().length;
+      write = h`<section class="live-write">${raw(inner)}
+        ${raw(q ? h`<p class="live-queue">${L("Neodoslané záznamy", "Unsent entries")}: ${q} <button type="button" class="btn" data-live="retry">${L("Skúsiť znova", "Try again")}</button></p>` : "")}</section>`;
+    }
+    var foot = writer
+      ? h`<p class="live-foot">${L("Zapisujete ako tím.", "You are writing for the team.")} <button type="button" class="linkish" data-live="lock">${L("Prestať zapisovať", "Stop writing")}</button></p>`
+      : live.unlocking
+        ? h`<div class="live-foot live-unlock"><label>PIN <input id="livePin" type="password" inputmode="numeric" autocomplete="off"></label><button type="button" class="btn primary" data-live="pin-ok">${L("Odomknúť zápis", "Unlock")}</button><button type="button" class="btn" data-live="cancel">${L("Zrušiť", "Cancel")}</button></div>`
+        : h`<p class="live-foot"><button type="button" class="linkish" data-live="unlock">${L("Zapisovať (pre tím)", "Write the log (team only)")}</button></p>`;
+
+    app.innerHTML = h`
+      ${raw(destPanel(A.name + " vs " + B.name, dayName(ev.day) + " " + ev.time + (v ? " · " + v.name : ""), back, t("mine")))}
+      <div class="page page-plain live-page">
+        <section class="live-board" style="--z:${(SPORTS.football || {}).c}">
+          <div class="live-teams"><span class="me">${shortName(SCHOOLS[us].name)}</span><b class="live-score">${d.score[0]} : ${d.score[1]}</b><span>${them}</span></div>
+          <p class="live-clock">${clockText(d)}</p>
+          <p class="live-upd">${live.loaded ? L("Aktualizované", "Updated") + " " + live.at + " · " + L("obnovuje sa samo", "refreshes by itself") : live.offline ? L("Bez spojenia, skúšam znova", "Offline, trying again") : L("Načítavam…", "Loading…")}</p>
+        </section>
+        ${raw(live.msg ? h`<p class="live-msg" role="alert">${live.msg}</p>` : "")}
+        ${raw(write)}
+        <div class="live-cols">
+          <section class="live-squad">${raw(squad)}</section>
+          <section class="live-tl"><h2>${L("Priebeh", "Timeline")}</h2><ol class="live-timeline">${raw(timeline)}</ol></section>
+        </div>
+        ${raw(foot)}
+      </div>`;
+  }
+
+  app.addEventListener("click", function (e) {
+    var num = e.target.closest(".live-pick [data-num]");
+    var b = e.target.closest("[data-live]");
+    if (!num && !b) return;
+    if (num) {
+      var g = num.parentNode.getAttribute("data-group"), n = num.getAttribute("data-num");
+      if (g === "lineup") {
+        var i = live.lineupSel.indexOf(n);
+        if (i >= 0) live.lineupSel.splice(i, 1); else live.lineupSel.push(n);
+      } else live.sel[g] = live.sel[g] === n ? "" : n;
+      liveRerender();
+      return;
+    }
+    var act = b.getAttribute("data-live");
+    var d = deriveLive(allRows(), live.key);
+    live.msg = "";
+    if (act === "unlock") { live.unlocking = true; }
+    else if (act === "pin-ok") {
+      var pin = (document.getElementById("livePin") || {}).value || "";
+      livePost({ pin: pin, op: "check" }).then(function (j) {
+        if (j && j.ok) { store.set("wiuc.livePin", pin); live.unlocking = false; live.msg = ""; }
+        else live.msg = L("Nesprávny PIN.", "Wrong PIN.");
+        liveRerender(); liveFlush();
+      }).catch(function () { live.msg = L("PIN sa nepodarilo overiť. Skontrolujte pripojenie a skúste znova.", "Could not check the PIN. Check your connection and try again."); liveRerender(); });
+      return;
+    }
+    else if (act === "lock") { store.set("wiuc.livePin", ""); }
+    else if (act === "cancel") { live.unlocking = false; live.picking = null; live.editRoster = false; live.lineupSel = null; live.sel = { a: "", b: "" }; }
+    else if (act === "lineup-save") {
+      var gk = (document.getElementById("liveGk") || {}).value || "";
+      var half = +((document.getElementById("liveHalf") || {}).value) || LIVE_TEAM.half;
+      var sel = live.lineupSel.slice().sort(function (x, y) { return x - y; });
+      live.lineupSel = null;
+      liveAdd({ type: "lineup", a: sel.join(","), b: sel.indexOf(gk) >= 0 ? gk : "", note: String(half) });
+      return;
+    }
+    else if (act === "k1" || act === "h1" || act === "k2" || act === "ft") { liveAdd({ type: act, minute: act === "k1" ? "" : act === "k2" ? "" : liveMinute(d) }); return; }
+    else if (act === "goal" || act === "sub" || act === "yellow" || act === "red") { live.picking = act; live.sel = { a: "", b: "" }; }
+    else if (act === "ogoal") { live.picking = "ogoal"; live.sel = { a: "", b: "" }; }
+    else if (act === "save") {
+      var tp = live.picking, a = live.sel.a, bb = live.sel.b;
+      if ((tp === "sub" && (!a || !bb)) || ((tp === "yellow" || tp === "red") && !a)) {
+        live.msg = tp === "sub" ? L("Vyberte, kto ide von a kto dnu.", "Pick who goes off and who comes on.") : L("Vyberte hráča.", "Pick a player.");
+      } else {
+        var min = ((document.getElementById("liveMin") || {}).value || "").trim().slice(0, 8);
+        live.picking = null; live.sel = { a: "", b: "" };
+        liveAdd({ type: tp, a: a, b: bb, minute: min });
+        return;
+      }
+    }
+    else if (act === "undo" || act === "del") {
+      var id = act === "del" ? b.getAttribute("data-id") : (d.list[d.list.length - 1] || {}).id;
+      if (!id) return;
+      var q = liveQueue(), queued = false;
+      q.forEach(function (op) { if (op.op === "add") { var before = op.rows.length; op.rows = op.rows.filter(function (r) { return r.id !== id; }); if (op.rows.length !== before) queued = true; } });
+      q = q.filter(function (op) { return op.op !== "add" || op.rows.length; });
+      if (!queued) q.push({ op: "del", ids: [id] });
+      setQueue(q); liveRerender(); liveFlush();
+      return;
+    }
+    else if (act === "relineup") { live.lineupSel = null; live.lineupSel = d.field.slice(); }
+    else if (act === "roster") { live.editRoster = true; }
+    else if (act === "roster-save") {
+      var lines = ((document.getElementById("liveRoster") || {}).value || "").split(/\n/);
+      var list = lines.map(function (l) { var m = /^\s*(\d{1,3})\s+(.+?)\s*$/.exec(l); return m ? { n: m[1], name: m[2] } : null; }).filter(Boolean);
+      live.editRoster = false;
+      if (list.length) { var qq = liveQueue(); qq.push({ op: "roster", roster: list }); setQueue(qq); liveFlush(); }
+    }
+    else if (act === "retry") { liveRerender(); liveFlush(); return; }
+    liveRerender();
+  });
 
   // ---- calendar export (.ics) of your university's matches
   function icsStamp(day, hm, addMinutes) {
