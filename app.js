@@ -1070,7 +1070,15 @@
     store.set("wiuc.lang", state.lang);
     render();
   });
-  window.addEventListener("hashchange", function () { setMenu(false); render(); });
+  window.addEventListener("hashchange", function () { setMenu(false); render(); track(); });
+
+  // anonymous visit counting (GoatCounter, no cookies): one count per view, e.g. /tables or /s/<university>
+  function track() {
+    if (!window.goatcounter || !window.goatcounter.count) return;
+    window.goatcounter.count({ path: "/" + location.hash.replace(/^#\/?/, ""), title: document.title });
+  }
+  window.wiucTrack = track;
+  track();
 
   // side menu on phones and tablets
   function setMenu(open) {
