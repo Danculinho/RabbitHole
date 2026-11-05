@@ -49,7 +49,7 @@ try {
 
   // every map link in the rows opens a transit route
   await page.goto(base + '?now=2026-11-05T08:30' + STU, { settleMs: 700 });
-  const links = await page.eval(() => [...document.querySelectorAll('#list .ev a.plate, #list .ev .meta a')].map((a) => a.href));
+  const links = await page.eval(() => [...document.querySelectorAll('#list .ev a.plate, #list .ev .meta a:not(.live-link)')].map((a) => a.href));
   check('map links open transit routes', links.length > 0 && links.every((h) => /travelmode=transit/.test(h)), `(${links.length})`);
 } finally {
   await browser.close();

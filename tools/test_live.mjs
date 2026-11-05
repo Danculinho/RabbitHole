@@ -23,7 +23,7 @@ function check(name, ok, detail) {
 
 // fetch mock of tools/live.gs: GET -> {ok, rows, roster}; POST {pin, op, ...}
 const MOCK = (opts) => `(function () {
-  ${opts.url ? `window.WIUC_LIVE_URL = ${JSON.stringify(LIVE)};` : ''}
+  window.WIUC_LIVE_URL = ${JSON.stringify(opts.url ? LIVE : '')};
   try {
     localStorage.setItem('wiuc.school', ${JSON.stringify(STU)}); localStorage.setItem('wiuc.lang', 'sk');
     ${opts.reader ? "localStorage.removeItem('wiuc.livePin'); localStorage.removeItem('wiuc.liveQueue');" : ''}

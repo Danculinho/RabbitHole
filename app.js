@@ -1057,7 +1057,8 @@
   // ---- live match log for STU football, backed by tools/live.gs (a Google Apps Script on a Sheet)
   // Every entry is a row: lineup, k1 (kick-off), h1 (half-time), k2 (second half), ft, goal, ogoal, yellow, red, sub.
   // The clock, the score and who is on the pitch are worked out from the rows, so everyone sees the same.
-  var LIVE_URL = "";   // the Apps Script /exec address; empty keeps the feature hidden
+  // the Apps Script /exec address (Sheet "WIUC 2026 - zapis STU futbal" in the owner's Drive); empty keeps the feature hidden
+  var LIVE_URL = "https://script.google.com/macros/s/AKfycbwcQHh0VU4bk4DGCVGZPk81MzfmboxuiIi7OGHCTiIFZxcbcIGnKxuyMYpjbCNiJB5O/exec";
   var LIVE_TEAM = {
     school: "slovak-university-of-technology-in-bratislava", sport: "football",
     roster: [[2, "Fabian"], [3, "Galanda"], [4, "Kotulič"], [5, "Maťoška"], [6, "Jurík"], [8, "Hájnik"], [9, "Drobný"], [10, "Komora"],
@@ -1068,7 +1069,7 @@
   var live = { rows: [], roster: null, loaded: false, at: "", msg: "", picking: null, sel: { a: "", b: "" },
                lineupSel: null, unlocking: false, editRoster: false, ev: null, key: "", timer: 0, tick: 0, busy: false };
   function L(sk, en) { return state.lang === "sk" ? sk : en; }
-  function liveUrl() { return window.WIUC_LIVE_URL || LIVE_URL; }
+  function liveUrl() { return typeof window.WIUC_LIVE_URL === "string" ? window.WIUC_LIVE_URL : LIVE_URL; }
   function liveOn(ev) { return !!liveUrl() && !!ev && ev.sport === LIVE_TEAM.sport && involves(ev, LIVE_TEAM.school); }
   function liveHref(ev) { return "#/zapas/" + ev.day + "/" + ev.time.replace(":", ""); }
   function nowMs() { return Date.now() + (window.__liveSkew || 0); }
