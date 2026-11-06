@@ -42,6 +42,17 @@ try {
   c = await card();
   check('evening before shows tomorrow', !!c && /(zajtra|tomorrow)/i.test(c.text), c ? `"${c.text.slice(0, 60)}"` : '');
 
+  // Friday 10:20 with Football picked: the next football match, not the swimming that is on now
+  await page.goto(base + '?now=2026-11-06T10:20' + STU, { settleMs: 700 });
+  await page.eval(() => { const ch = document.querySelector('.chips [data-sport="football"]'); if (ch) ch.click(); });
+  await new Promise((r) => setTimeout(r, 400));
+  c = await card();
+  check('sport filter: next match is the football one', !!c && /Futbal/.test(c.text) && c.text.includes('12:00') && !/Plávanie/.test(c.text), c ? `"${c.text.slice(0, 80)}"` : '');
+  await page.eval(() => { const ch = document.querySelector('.chips [data-sport="all"]'); if (ch) ch.click(); });
+  await new Promise((r) => setTimeout(r, 400));
+  c = await card();
+  check('all sports again: any sport counts', !!c && /Plávanie/.test(c.text), c ? `"${c.text.slice(0, 80)}"` : '');
+
   // after the championship: no card
   await page.goto(base + '?now=2026-11-09T12:00' + STU, { settleMs: 700 });
   c = await card();

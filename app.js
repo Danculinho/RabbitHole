@@ -1549,7 +1549,8 @@
     var today = todayISO(), now = minutesOf(nowHM());
     var last = DAYS[DAYS.length - 1].d;
     if (today > last) return null;
-    var list = EVENTS.filter(function (e) { return involves(e, sid) && !resultOf(e); })
+    // with a sport picked, the next match of that sport
+    var list = EVENTS.filter(function (e) { return involves(e, sid) && !resultOf(e) && (state.sport === "all" || e.sport === state.sport); })
       .sort(function (a, b) { return (a.day + a.time).localeCompare(b.day + b.time); });
     for (var i = 0; i < list.length; i++) {
       var e = list[i];
