@@ -32,6 +32,12 @@ const MOCK = (opts) => `(function () {
     ${opts.offline ? 'window.__liveOffline = true;' : ''}
     ${opts.fresh ? "localStorage.removeItem('__mock'); localStorage.removeItem('wiuc.livePin'); localStorage.removeItem('wiuc.liveQueue');" : ''}
   } catch (e) {}
+  // the test match must not have an official result yet (the organiser fills it in on the day)
+  var store;
+  Object.defineProperty(window, 'WIUC_DATA', { configurable: true, get: function () { return store; }, set: function (v) {
+    v.events.forEach(function (e) { if (e.sport === 'football' && e.day === '2026-11-06') { e.resA = ''; e.resB = ''; } });
+    store = v;
+  } });
   function db() { try { return JSON.parse(localStorage.getItem('__mock')) || { rows: [], roster: null }; } catch (e) { return { rows: [], roster: null }; } }
   function save(d) { localStorage.setItem('__mock', JSON.stringify(d)); }
   var real = window.fetch;
